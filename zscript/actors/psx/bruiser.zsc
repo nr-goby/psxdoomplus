@@ -1,0 +1,389 @@
+class PsxBaronOfHell : PsxActor replaces BaronOfHell
+{
+    Default
+    {
+		//$Title "Baron of Hell"
+	
+        Health 1000;
+		Radius 24;
+		Height 64;
+		Mass 1000;
+		Speed 8;
+		PainChance 50;
+		Monster;
+		+FLOORCLIP
+		+BOSSDEATH
+		SeeSound "baron/sight";
+		PainSound "baron/pain";
+		DeathSound "baron/death";
+		ActiveSound "baron/active";
+		Obituary "$OB_BARON";
+		HitObituary "$OB_BARONHIT";
+		Tag "$FN_BARON";
+
+        +DONTHARMSPECIES;
+        +DONTHARMCLASS;
+        +MOVEWITHSECTOR;
+        MeleeRange 50;
+	    BloodColor "DarkGreen";
+        PsxActor.FootstepSound "monster/baronstep";
+        PsxActor.DeathThudSound "monster/xbody";
+        +PsxActor.WAITLOOK;
+        +PsxActor.SEETARGET;
+    }
+
+    States
+	{
+        Spawn:
+            BOSS A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            BOSS AB 10 A_Look;
+            Loop;
+        SmoothSpawn:
+            SBSS AB 10 A_Look;
+		    Loop;
+
+        See:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothSee");
+            BOSS A 2 A_Chase;
+            BOSS A 4 A_Chase;
+            BOSS B 2 A_Chase;
+            BOSS B 4 { A_Chase(); A_Footstep(); }
+            BOSS C 2 A_Chase;
+            BOSS C 4 A_Chase;
+            BOSS D 2 A_Chase;
+            BOSS D 4 { A_Chase(); A_Footstep(); }
+            Loop;
+        SmoothSee:
+            SBSS ABC 3 A_Chase;
+            SBSS D 3 { A_Chase(); A_Footstep(); }
+            SBSS DCB 3 A_Chase;
+            SBSS A 3 { A_Chase(); A_Footstep(); }
+		    Loop;
+
+        Melee:
+        Missile:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothMissile");
+            BOSS EF 8 A_FaceTarget;
+            BOSS G 8 A_BruisAttack;
+            Goto See;
+        SmoothMissile:
+            zBOS a 4 a_facetarget;
+            zBOS b 3 a_facetarget;
+            zBOS cde 3 a_facetarget;
+            zBOS f 8 A_BruisAttack;
+            Goto See;
+
+        Pain:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothPain");
+            BOSS H 2;
+            BOSS H 2 A_Pain;
+            Goto See;
+        SmoothPain:
+            BARP a 2;
+            BARP b 2 A_Pain;
+            Goto See;
+
+        Death:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothDeath");
+            BOSS I 8;
+            BOSS J 8 A_Scream;
+            BOSS K 8;
+            BOSS L 8 A_NoBlocking;
+            BOSS M 8;
+            BOSS N 8 A_DeathThud;
+            BOSS O -1 A_BossDeath;
+            Stop;
+        SmoothDeath:
+            BSDS ab 3;
+            BSDS c 3 A_Scream;
+			BSDS d 3;
+            BSDS efgh 3 A_NoBlocking;
+            BSDS i 3;
+            BSDS j 3 A_DeathThud;
+            BSDS kl 3;
+            BSDS m -1 A_BossDeath;
+            Stop;
+
+        XDeath:
+			TNT1 A 0 a_jumpif(IsSmooth(), "SmoothXDeath");
+            TNT1 A 0 A_JumpIf(!kch_enabled,"Death");
+            XBAR A 4;
+			XBAR C 4 A_XScream;
+			XBAR E 4 A_GoreExplosion(10, PsxActor.GORE_Green);
+			XBAR G 4;
+			XBAR I 4 A_NoBlocking;
+			XBAR KM 4;
+            XBAR O 4 A_BossDeath;
+			XBAR Q -1;
+		    Stop;
+        SmoothXDeath:
+			XBAR AB 2;
+			XBAR C 2 A_XScream;
+			XBAR D 2 A_GoreExplosion(10, PsxActor.GORE_Green);
+			XBAR EFGH 2;
+			XBAR I 2 A_NoBlocking;
+			XBAR JKLMNO 2;
+			XBAR P 2 A_BossDeath;
+			XBAR Q -1;
+		    Stop;
+
+        Raise:
+			TNT1 A 0 a_jumpif(IsSmooth(), "SmoothRaise");
+            BOSS O 8;
+            BOSS NMLKJI 8;
+            Goto See;
+        SmoothRaise:
+            BSDS mlkj 3;
+            BSDS lhgfedcba 3;
+            Goto See;
+	}
+}
+
+class PsxHellKnight : PsxActor replaces HellKnight
+{
+    Default
+    {
+		//$Title "Hell Knight"
+		
+	    Health 500;
+		Radius 24;
+		Height 64;
+		Mass 1000;
+		Speed 8;
+		PainChance 50;
+		Monster;
+		+FLOORCLIP
+		SeeSound "knight/sight";
+		ActiveSound "knight/active";
+		PainSound "knight/pain";
+		DeathSound "knight/death";
+		HitObituary "$OB_KNIGHTHIT";
+		Obituary "$OB_KNIGHT";
+		Tag "$FN_HELL";
+
+        +DONTHARMSPECIES;
+        +DONTHARMCLASS;
+        +MOVEWITHSECTOR;
+        MeleeRange 50;
+	    BloodColor "DarkGreen";
+        PsxActor.FootstepSound "monster/hellstep";
+        PsxActor.DeathThudSound "monster/xbody";
+        +PsxActor.WAITLOOK;
+        +PsxActor.SEETARGET;
+	}
+    
+    States
+	{
+        Spawn:
+            BOS2 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            BOS2 AB 10 A_Look;
+            Loop;
+        SmoothSpawn:
+            SHLK AB 10 A_Look;
+            Loop;
+
+        See:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothSee");
+            BOS2 AAB 4 { A_PCTics(3); A_Chase(); }
+            BOS2 B 4 { A_PCTics(3); A_Chase(); A_Footstep(); }
+            BOS2 CCD 4 { A_PCTics(3); A_Chase(); }
+            BOS2 D 4 { A_PCTics(3); A_Chase(); A_Footstep(); }
+            Loop;
+        SmoothSee:
+            SHLK ABC 4 { A_PCTics(3); A_Chase(); }
+            SHLK D 4 { A_PCTics(3); A_Chase(); A_Footstep(); }
+            SHLK DCB 4 { A_PCTics(3); A_Chase(); }
+            SHLK A 4 { A_PCTics(3); A_Chase(); A_Footstep(); }
+            Loop;
+
+        Melee:
+        Missile:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothMissile");
+            BOS2 EF 8 A_FaceTarget;
+            BOS2 G 8 A_BruisAttack;
+            Goto See;
+        SmoothMissile:
+            sBOS a 4 a_facetarget;
+            sBOS b 3 a_facetarget;
+            sBOS cde 3 a_facetarget;
+            sBOS f 8 A_BruisAttack;
+            Goto See;
+
+        Pain:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothPain");
+            BOS2 H 2;
+            BOS2 H 2 A_Pain;
+            Goto See;
+        SmoothPain:
+            PKNI a 2;
+            PKNI b 2 A_Pain;
+            Goto See;
+
+        Death:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothDeath");
+            BOS2 I 8;
+            BOS2 J 8 A_Scream;
+            BOS2 K 8;
+            BOS2 L 8 A_NoBlocking;
+            BOS2 M 8;
+            BOS2 N 8 A_DeathThud;
+            BOS2 O -1 A_BossDeath;
+            Stop;
+        SmoothDeath:
+            SKNI ab 3;
+            SKNI c 3 A_Scream;
+			SKNI d 3;
+            SKNI efgh 3 a_noblocking;
+            SKNI i 3;
+            SKNI j 3 A_DeathThud;
+            SKNI kl 3;
+            SKNI m -1 A_BossDeath;
+            Stop;
+
+        XDeath:
+			TNT1 A 0 a_jumpif(IsSmooth(), "SmoothXDeath");
+            TNT1 A 0 A_JumpIf(!kch_enabled,"Death");
+            XKNI A 4;
+			XKNI C 4;
+			XKNI E 4 { A_GoreExplosion(10, PsxActor.GORE_Green); A_XScream(); }
+			XKNI GI 4;
+			XKNI K 4 A_NoBlocking; 
+			XKNI M 4;
+            XKNI O 4 A_BossDeath;
+			XKNI Q -1;
+            Stop;
+        SmoothXDeath:
+			XKNI AB 2;
+			XKNI C 2 A_XScream;
+			XKNI D 2 A_GoreExplosion(10, PsxActor.GORE_Green);
+			XKNI EFGH 2;
+			XKNI I 2 A_NoBlocking;
+			XKNI JKLMNO 2;
+			XKNI P 2 A_BossDeath;
+			XKNI Q -1;
+		    Stop;
+
+        Raise:
+			TNT1 A 0 a_jumpif(IsSmooth(), "SmoothRaise");
+            BOS2 O 8;
+            BOS2 NMLKJI  8;
+            Goto See;
+        SmoothRaise:
+            SKNI mlkj 3;
+            SKNI ihgfedcba 3;
+            Goto See;
+	}
+}
+
+class PsxBaronBall : PsxProjectile replaces BaronBall
+{
+    Default
+	{
+		Radius 6;
+		//Height 16;
+		Speed 15;
+		FastSpeed 20;
+		Damage 8;
+		Projectile;
+		+RANDOMIZE
+		+ZDOOMTRANS
+		RenderStyle "Add";
+		Alpha 1;
+		SeeSound "baron/attack";
+		DeathSound "baron/shotx";
+
+        PsxActor.AmbientSound "fireball/loop";
+        Height 8;
+		PsxProjectile.NightmareMissileSpeedFactor 1.6;
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay A_HQSetup;
+            BAL7 A 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            BAL7 A 1 BRIGHT A_ZPTrail;
+            BAL7 A 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            BAL7 A 1 BRIGHT A_ZPTrail;
+            BAL7 B 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            BAL7 B 1 BRIGHT A_ZPTrail;
+            BAL7 B 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            BAL7 B 1 BRIGHT A_ZPTrail;
+            Loop;
+            
+        Death:
+            TNT1 A 0 A_StopAmbientSound;
+            TNT1 A 0 a_jumpif(zp_enabled && hq_enabled, "HQDeath");
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothDeath");
+            BAL7 C 6 BRIGHT A_ZPExplosion;
+            BAL7 DE 6 BRIGHT;
+            Stop;
+        SmoothDeath:
+	        boog a 2 BRIGHT A_ZPExplosion;
+            boog bcdefgi 2 bright;
+            Stop;
+        HQDeath:
+            TNT1 A 0 { A_SetTranslation("ZPBaronBall"); A_SetScale(0.6); }
+            TNT1 D 6 Light("BARONBALL_X1") A_ZPExplosion;
+            TNT1 D 6 Light("BARONBALL_X2");
+            TNT1 D 6 Light("BARONBALL_X3");
+            Stop;
+	}
+
+    void A_HQSetup()
+    {
+        if (zp_enabled && hq_enabled)
+        {
+            A_SetRenderStyle(0.5,STYLE_ADD);
+            A_SetTranslation("ZPBaronBall");
+            A_SetScale(1.15);
+        }
+    }
+
+    void A_ZPFlare()
+    {
+        if (zp_enabled && !hq_enabled)
+        {
+            A_SpawnItemEx("SmallGreenFlare", 0, 0, 2, 0, 0, 0, 0, 0, 108);
+        }
+    }
+
+    void A_ZPTrail()
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+                A_SpawnItemEx("BaronBallTrailSpawner",-Vel.X,-Vel.Y,-Vel.Z,Vel.X,Vel.Y,Vel.Z,Angle,SXF_ABSOLUTEMOMENTUM|SXF_ABSOLUTEANGLE|SXF_ABSOLUTEPOSITION);
+            }
+            else
+            {
+                A_SpawnItemEx("Trail_BaronBall",frandom(-1,1),frandom(-1,1),frandom(-1,1),0,0,0,0,SXF_NOCHECKPOSITION);
+            }
+        }
+    }
+
+    void A_ZPExplosion()
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+                for(int i=0;i<10;i++) A_SpawnItemEx("BFGExplosionSprite",0,0,0,Random(0,5),0,FRandom(-5,5),Random(1,360),SXF_TRANSFERSCALE|1);
+            }
+            else
+            {
+                A_SpawnItem("BaronBoom");
+                A_SpawnItemEx("DeathSpawner_BaronBall",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION);
+            }
+        }
+    }
+}
+
+extend class PsxActor
+{
+	void A_BruisAttack()
+    {
+        A_CustomComboAttack("BaronBall", 32, random(1, 8) * 11, "baron/melee", "", 1);
+    }
+}

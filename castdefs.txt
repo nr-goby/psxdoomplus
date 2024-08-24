@@ -1,0 +1,159 @@
+Cast
+{
+	CastClass = "PsxZombiemanCast"
+	CastName = "$CC_ZOMBIE"
+	AttackSound = "Missile", 1, "grunt/attack"
+}
+
+Cast
+{
+	CastClass = "PsxShotgunguyCast"
+	CastName = "$CC_SHOTGUN"
+	AttackSound = "Missile", 1, "shotguy/attack"
+}
+
+Cast
+{
+	CastClass = "PsxChaingunguyCast"
+	CastName = "$CC_HEAVY"
+	AttackSound = "Missile", 1, "chainguy/attack"
+	AttackSound = "Missile", 2, "chainguy/attack"
+	AttackSound = "Missile", 3, "chainguy/attack"
+	AttackSound = "Missile", 4, "chainguy/attack"
+	AttackSound = "Missile", 5, "chainguy/attack"
+	AttackSound = "Missile", 6, "chainguy/attack"
+	AttackSound = "Missile", 7, "chainguy/attack"
+	AttackSound = "Missile", 8, "chainguy/attack"
+}
+
+Cast
+{
+	CastClass = "PsxDoomImpCast"
+	CastName = "$CC_IMP"
+	AttackSound = "Missile", 2, "imp/attack"
+	AttackSound = "Melee", 2, "imp/melee"
+}
+
+Cast
+{
+	CastClass = "PsxDemonCast"
+	CastName = "$CC_DEMON"
+	AttackSound = "Melee", 1, "demon/melee"
+}
+
+Cast
+{
+	CastClass = "PsxSpectreCast"
+	CastName = "$FN_SPECTRE"
+	AttackSound = "Melee", 1, "demon/melee"
+	ConditionCVar = "spd_enabled"
+	ConditionCVar = "vil_enabled"
+}
+
+Cast
+{
+	CastClass = "PsxNightmareSpectreCast"
+	CastName = "$CC_NIGHTMARESPECTRE"
+	AttackSound = "Melee", 1, "demon/melee"
+	ConditionCVar = "spd_enabled"
+	ConditionCVar = "vil_enabled"
+}
+	
+Cast
+{
+	CastClass = "PsxLostSoulCast"
+	CastName = "$CC_LOST"
+	AttackSound = "Missile", 0, "skull/melee"
+}
+
+Cast
+{
+	CastClass = "PsxCacodemonCast"
+	CastName = "$CC_CACO"
+	AttackSound = "Missile", 1, "caco/attack"
+}
+
+Cast
+{
+	CastClass = "PsxHellKnightCast"
+	CastName = "$CC_HELL"
+	AttackSound = "Missile", 1, "baron/attack"
+}
+
+Cast
+{
+	CastClass = "PsxBaronOfHellCast"
+	CastName = "$CC_BARON"
+	AttackSound = "Missile", 1, "baron/attack"
+}
+
+Cast
+{
+	CastClass = "PsxArachnotronCast"
+	CastName = "$CC_ARACH"
+	AttackSound = "Missile", 1, "baby/attack"
+	AttackSound = "Missile", 3, "baby/attack"
+	AttackSound = "Missile", 5, "baby/attack"
+	AttackSound = "Missile", 7, "baby/attack"
+}
+
+Cast
+{
+	CastClass = "PsxPainElementalCast"
+	CastName = "$CC_PAIN"
+	AttackSound = "Missile", 2, "skull/melee"
+}
+	
+Cast
+{
+	CastClass = "PsxRevenantCast"
+	CastName = "$CC_REVEN"
+	AttackSound = "Missile", 1, "skeleton/attack"
+	AttackSound = "Melee", 1, "skeleton/swing"
+	AttackSound = "Melee", 3, "skeleton/melee"
+}
+
+Cast
+{
+	CastClass = "PsxFatsoCast"
+	CastName = "$CC_MANCU"
+	AttackSound = "Missile", 1, "fatso/attack"
+	AttackSound = "Missile", 4, "fatso/attack"
+	AttackSound = "Missile", 7, "fatso/attack"
+}
+
+Cast
+{
+	CastClass = "PsxArchvileCast"
+	CastName = "$CC_ARCH"
+	AttackSound = "Missile", 1, "vile/start"
+	ConditionCVar = "vil_enabled"
+}
+	
+Cast
+{
+	CastClass = "PsxSpiderMastermindCast"
+	CastName = "$CC_SPIDER"
+	AttackSound = "Missile", 1, "spider/attack"
+	AttackSound = "Missile", 2, "spider/attack"
+	AttackSound = "Missile", 3, "spider/attack"
+	AttackSound = "Missile", 4, "spider/attack"
+	AttackSound = "Missile", 5, "spider/attack"
+	AttackSound = "Missile", 6, "spider/attack"
+}
+
+Cast
+{
+	CastClass = "PsxCyberdemonCast"
+	CastName = "$CC_CYBER"
+	AttackSound = "Missile", 1, "weapons/rocklf"
+	AttackSound = "Missile", 3, "weapons/rocklf"
+	AttackSound = "Missile", 5, "weapons/rocklf"
+}
+
+Cast
+{
+	CastClass = "PsxDoomPlayerCast"
+	CastName = "$CC_HERO"
+	AttackSound = "Missile", 0, "weapons/sshotf"
+}

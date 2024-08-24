@@ -1,0 +1,359 @@
+class TallyCutscenes ui
+{
+	static void Statistics(ScreenJobRunner runner)
+	{
+		if (stl_enabled) return;
+		let obj = new(CEConfig.Get().statisticsJobProvider);
+		CEStatisticsJobProvider(obj).Append(runner);
+	}
+}
+
+class CEStatisticsJobProvider ui
+{
+	virtual void Append(ScreenJobRunner runner) { }
+}
+
+class PsxStatisticsJobProvider : CEStatisticsJobProvider
+{
+	override void Append(ScreenJobRunner runner)
+	{
+		runner.Append(new("PsxStatisticsScreenJob").Init());
+	}
+}
+
+class PsxStatisticsScreenJob : SkippableScreenJob
+{
+	const WIDTH_TEXT = 274;
+	const HEIGHT_TEXT = 240;
+	const WIDTH_BACKGROUND = 274;
+	const HEIGHT_BACKGROUND = 240;
+	const STATE_TIME = int(1.2 * TICRATE);
+	const PAGE_TIME = 12 * TICRATE;
+		
+	enum EPages
+	{
+		PAGE_START,
+		PAGE_STATS,
+		PAGE_CLEARED_ITEMS,
+		PAGE_END
+	}
+	
+	enum EStatsPageStates
+	{
+		STATE_STATS_KILLS,
+		STATE_STATS_ITEMS,
+		STATE_STATS_SECRETS,
+		STATE_STATS_TIME,
+		STATE_STATS_END
+	}
+	
+	enum EClearPageStates
+	{
+		STATE_CLEAR_DIFFICULTY,
+		STATE_CLEAR_MAPS,
+		STATE_CLEAR_OVERALL,
+		STATE_CLEAR_END
+	}
+
+	TallyTracker tracker;
+	int page;
+	int pageState;
+	TextureID background;
+	String title;
+	int fontColor;
+	int tics;
+	int ticsLimit;
+	int percentSum;
+	int percentTotal;
+	
+	ScreenJob Init()
+	{
+		Super.Init();
+		let it = ThinkerIterator.Create("TallyTracker",Thinker.STAT_STATIC);
+		tracker = TallyTracker(it.Next());
+		let bgName = StringTable.Localize("$TALLYBKG");
+		background = TexMan.CheckForTexture(bgName);
+		title = StringTable.Localize("$TALLYMAP");
+		fontColor = Font.FindFontColor("MenuRed");
+		ticsLimit = STATE_TIME;
+		return self;
+	}
+	
+	override void Start()
+	{
+		super.Start();
+		if (!tracker) Skip();
+		let music = CEMusicTracker.GetMusic("$TALLYMUS");
+		S_ChangeMusic(music, 0, true);
+		TallyAverage(tracker.killedMonsters, tracker.totalMonsters);
+		TallyAverage(tracker.foundSecrets, tracker.totalSecrets);
+		TallyAverage(tracker.completedMaps.Size(), tracker.foundMaps.Size());
+	}
+	
+	override void Draw(double smoothRatio)
+	{
+		super.Draw(smoothRatio);
+		
+		screen.DrawTexture(background,
+			true,
+			0,
+			0,
+			DTA_VirtualWidth, WIDTH_BACKGROUND,
+			DTA_VirtualHeight, HEIGHT_BACKGROUND);
+			
+		if (page == PAGE_END) return;
+		
+		screen.DrawText(BigFont, 
+			fontColor, 
+			(WIDTH_TEXT/2.0)  - (BigFont.StringWidth(title)/2),
+			HEIGHT_TEXT/11.0,
+			title,
+			DTA_VirtualWidth, WIDTH_TEXT,
+			DTA_VirtualHeight, HEIGHT_TEXT);
+		
+		switch (page)
+		{
+			case PAGE_STATS:
+				HandleStatsPage();
+				break;
+			case PAGE_CLEARED_ITEMS:
+				HandleClearedItemsPage();
+				break;
+			default:
+				break;
+		}
+	}
+	
+	override void OnTick()
+	{
+		super.OnTick();
+		if (tics == ticsLimit) AdvanceState();
+		if (page == PAGE_END) Skip();
+		tics++;
+	}
+	
+	override bool OnEvent(InputEvent evt)
+	{
+		if (evt.type == InputEvent.Type_KeyDown && !System.specialKeyEvent(evt))
+		{
+			AdvanceState();
+		}
+		return true;
+	}
+	
+	void AdvanceState()
+	{
+		pageState++;
+		tics = 0;
+		ticsLimit = STATE_TIME;
+		let pageLimit = GetPageLimit();
+		let nextState = pageState + 1;
+		if (pageState == pageLimit)
+		{
+			page++;
+			pageState = 0;
+		}
+		else if (nextState == pageLimit)
+		{
+			ticsLimit = PAGE_TIME;
+		}
+		if (page != PAGE_END)
+			S_StartSound("weapons/rocklx", CHAN_VOICE, CHANF_MAYBE_LOCAL|CHANF_UI, 1, ATTN_NONE);
+	}
+	
+	void Skip()
+	{
+		jobstate = skipped;
+		OnSkip();
+	}
+	
+	int GetPageLimit()
+	{
+		switch(page)
+		{
+			case PAGE_START:
+				return 1;
+			case PAGE_STATS:
+				return STATE_STATS_END;
+			case PAGE_CLEARED_ITEMS:
+				return STATE_CLEAR_END;
+			default:
+				return 0;
+		}
+	}
+	
+	void TallyAverage(int count, int total)
+	{
+		let percentage = total > 0 ? (count*100)/total : 100;
+		percentSum += percentage;
+		percentTotal += 100;
+	}
+	
+	void HandleStatsPage()
+	{
+		int x = int(WIDTH_TEXT/6.0);
+		int y = int(HEIGHT_TEXT/4.0);
+		int bigLineBreak = BigFont.GetHeight() + 2;
+		int smallLineBreak = (SmallFont.GetHeight() * 2) + 2;
+
+		if (pageState >= STATE_STATS_KILLS)
+		{
+			DrawLabel("$TXT_KILLS", x, y);
+			DrawPercentage(tracker.killedMonsters, tracker.totalMonsters, x, y);
+			y += bigLineBreak;
+			DrawCount(tracker.killedMonsters, tracker.totalMonsters, x, y);
+			y += smallLineBreak;
+		}
+		if (pageState >= STATE_STATS_ITEMS)
+		{
+			DrawLabel("$TXT_ITEMS", x, y);
+			DrawPercentage(tracker.foundItems, tracker.totalItems, x, y);
+			y += bigLineBreak;
+			DrawCount(tracker.foundItems, tracker.totalItems, x, y);
+			y += smallLineBreak;
+		}
+		if (pageState >= STATE_STATS_SECRETS)
+		{
+			DrawLabel("$TXT_SECRETS", x, y);
+			DrawPercentage(tracker.foundSecrets, tracker.totalSecrets, x, y);
+			y += bigLineBreak;
+			DrawCount(tracker.foundSecrets, tracker.totalSecrets, x, y);
+			y += smallLineBreak;
+		}
+		if (pageState >= STATE_STATS_TIME)
+		{
+			DrawLabel("$TXT_TIME", x, y);
+			DrawTime(tracker.totalTime, x, y);
+			y += bigLineBreak + smallLineBreak;
+			if (tracker.parTime > 0)
+			{
+				DrawLabel("$TXT_PAR", x, y);
+				DrawTime(tracker.parTime, x, y);
+			}
+		}
+	}
+	
+	void HandleClearedItemsPage()
+	{
+		int x = int(WIDTH_TEXT/6.0);
+		int y = int(HEIGHT_TEXT/4.0);
+		int bigLineBreak = BigFont.GetHeight() + 2;
+		int smallLineBreak = (SmallFont.GetHeight() * 2) + 2;
+
+		if (pageState >= STATE_CLEAR_DIFFICULTY)
+		{
+			DrawLabel("$TXT_DIFFICULTY", x, y);
+			y += bigLineBreak;
+			DrawValue(G_SkillName(), x, y);
+			y += bigLineBreak + smallLineBreak;
+		}
+		if (pageState >= STATE_CLEAR_MAPS)
+		{
+			if (tracker.completedEpisodes > 1)
+			{
+				DrawLabel("$TXT_EPISODES", x, y);
+				DrawValue(""..tracker.completedEpisodes, x, y);
+				y += bigLineBreak + smallLineBreak;
+			}
+			DrawLabel("$TXT_MAPS", x, y);
+			DrawPercentage(tracker.completedMaps.Size(), tracker.foundMaps.Size(), x, y);
+			y += bigLineBreak;
+			DrawCount(tracker.completedMaps.Size(), tracker.foundMaps.Size(), x, y);
+			y += smallLineBreak;
+		}
+		if (pageState >= STATE_CLEAR_OVERALL)
+		{
+			DrawLabel("$TXT_OVERALL", x, y);
+			y += bigLineBreak;
+			DrawPercentage(percentSum, percentTotal, x, y);
+			y += bigLineBreak + smallLineBreak;
+		}
+	}
+	
+	void DrawLabel(String text, int x, int y)
+	{
+		screen.DrawText(BigFont, 
+			fontColor, 
+			x,
+			y,
+			StringTable.Localize(text),
+			DTA_VirtualWidth, WIDTH_TEXT,
+			DTA_VirtualHeight, HEIGHT_TEXT);
+	}
+	
+	void DrawPercentage(int count, int total, int x, int y)
+	{
+		let percentage = total > 0 ? (count*100)/total : 100;
+		let percentageString = percentage.." %";
+		screen.DrawText(BigFont, 
+			fontColor, 
+			WIDTH_TEXT - BigFont.StringWidth(percentageString) - x,
+			y,
+			percentageString,
+			DTA_VirtualWidth, WIDTH_TEXT,
+			DTA_VirtualHeight, HEIGHT_TEXT);
+	}
+	
+	void DrawCount(int count, int total, int x, int y)
+	{
+		let countString = count.." / "..total;
+		screen.DrawText(SmallFont, 
+			fontColor, 
+			WIDTH_TEXT - SmallFont.StringWidth(countString) - x,
+			y,
+			countString,
+			DTA_VirtualWidth, WIDTH_TEXT,
+			DTA_VirtualHeight, HEIGHT_TEXT);
+	}
+	
+	void DrawTime(int time, int x, int y)
+	{
+		let totalSeconds = Thinker.Tics2Seconds(time);
+		let hours = totalSeconds / 3600;
+		let minutes = (totalSeconds % 3600) / 60;
+		let seconds = totalSeconds % 60;
+		
+		let secondsString = String.Format(":%02d",seconds);
+		let minutesString = String.Format(":%02d",minutes);
+		let hoursString = ""..hours;
+		
+		screen.DrawText(BigFont, 
+			fontColor, 
+			WIDTH_TEXT - BigFont.StringWidth(secondsString) - x,
+			y,
+			secondsString,
+			DTA_VirtualWidth, WIDTH_TEXT,
+			DTA_VirtualHeight, HEIGHT_TEXT);
+		if (minutes > 0 || hours > 0)
+		{
+			screen.DrawText(BigFont, 
+				fontColor, 
+				WIDTH_TEXT - BigFont.StringWidth(minutesString) - BigFont.StringWidth(secondsString) - x,
+				y,
+				minutesString,
+				DTA_VirtualWidth, WIDTH_TEXT,
+				DTA_VirtualHeight, HEIGHT_TEXT);
+		}
+		if (hours > 0)
+		{
+			screen.DrawText(BigFont, 
+				fontColor, 
+				WIDTH_TEXT - BigFont.StringWidth(hoursString) - BigFont.StringWidth(minutesString) - BigFont.StringWidth(secondsString) - x,
+				y,
+				hoursString,
+				DTA_VirtualWidth, WIDTH_TEXT,
+				DTA_VirtualHeight, HEIGHT_TEXT);
+		}
+	}
+	
+	void DrawValue(String value, int x, int y)
+	{
+		screen.DrawText(BigFont, 
+			fontColor, 
+			WIDTH_TEXT - BigFont.StringWidth(value) - x,
+			y,
+			value,
+			DTA_VirtualWidth, WIDTH_TEXT,
+			DTA_VirtualHeight, HEIGHT_TEXT);
+	}
+}

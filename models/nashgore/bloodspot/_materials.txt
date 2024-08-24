@@ -1,0 +1,33 @@
+/*
+Material Texture "graphics/nashgore/decals/nbsplat1.png"
+{
+	Normal "graphics/nashgore/decals/nbsplat1_n.png"
+	Specular "graphics/nashgore/decals/nbsplat1_s.png"
+	Glossiness 25
+	SpecularLevel 10
+}
+
+Material Texture "graphics/nashgore/decals/nbsplat2.png"
+{
+	Normal "graphics/nashgore/decals/nbsplat2_n.png"
+	Specular "graphics/nashgore/decals/nbsplat2_s.png"
+	Glossiness 25
+	SpecularLevel 10
+}
+
+Material Texture "graphics/nashgore/decals/nbsplat3.png"
+{
+	Normal "graphics/nashgore/decals/nbsplat3_n.png"
+	Specular "graphics/nashgore/decals/nbsplat3_s.png"
+	Glossiness 25
+	SpecularLevel 10
+}
+
+Material Texture "graphics/nashgore/decals/nbsplat4.png"
+{
+	Normal "graphics/nashgore/decals/nbsplat4_n.png"
+	Specular "graphics/nashgore/decals/nbsplat4_s.png"
+	Glossiness 25
+	SpecularLevel 10
+}
+*/

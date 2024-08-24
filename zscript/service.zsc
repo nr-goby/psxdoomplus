@@ -1,0 +1,25 @@
+class PsxDoomCEAltInterMusicService : Service
+{
+	override String GetStringUI(String mapname)
+	{
+		if (CEConfig.Get().isPwad) return "$ODINTERMUS";
+		let li = level.info.FindLevelInfo(mapname);
+		switch (li.cluster)
+		{
+			case 5:
+			case 6:
+			case 7:
+				return "$ODINTERMUS";
+			case 8:
+				return "$ONRFTINTER";
+			case 9:
+				return "$OSIGLINTER";
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			default:
+				return "$OINTERMUS";
+		}
+	}
+}

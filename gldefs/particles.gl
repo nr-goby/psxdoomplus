@@ -1,0 +1,156 @@
+//Burning Barrel
+material sprite FLXMA0
+{
+    Shader "shaders/psx.fp"
+	define BASE_COLOR = "0xFF, 0xFF, 0xFF"
+	define HIGH_COLOR = "0xFF, 0xD0, 0x00"
+	define LOW_COLOR = "0xFF, 0x88, 0x88"
+	define FLAME
+	define SKIP_ADDITIVE_LIGHT
+	define SPRITE_PSX
+    speed "1.8"
+    texture FilterEnabled "FilterDummyCanvas"
+}
+
+//Red Torch
+material sprite FLXMB0
+{
+    Shader "shaders/psx.fp"
+	define BASE_COLOR = "0xFF, 0xFF, 0xFF"
+	define HIGH_COLOR = "0xFF, 0xFF, 0x00"
+	define LOW_COLOR = "0xFF, 0x00, 0x00"
+	define FLAME
+	define SKIP_ADDITIVE_LIGHT
+	define SPRITE_PSX
+    speed "2.0"
+    texture FilterEnabled "FilterDummyCanvas"
+}
+
+//Blue Torch
+material sprite FLXMC0
+{
+    Shader "shaders/psx.fp"
+	define BASE_COLOR = "0xFF, 0xFF, 0xFF"
+	define HIGH_COLOR = "0xB0, 0xB0, 0xFF"
+	define LOW_COLOR = "0x00, 0x00, 0xFF"
+	define FLAME
+	define SKIP_ADDITIVE_LIGHT
+	define SPRITE_PSX
+    speed "2.0"
+    texture FilterEnabled "FilterDummyCanvas"
+}
+
+//Green Torch
+material sprite FLXMD0
+{
+    Shader "shaders/psx.fp"
+	define BASE_COLOR = "0xFF, 0xFF, 0xFF"
+	define HIGH_COLOR = "0xB8, 0xFF, 0xA8"
+	define LOW_COLOR = "0x00, 0xFF, 0x00"
+	define FLAME
+	define SKIP_ADDITIVE_LIGHT
+	define SPRITE_PSX
+    speed "2.0"
+    texture FilterEnabled "FilterDummyCanvas"
+}
+
+// Chunk Lights
+
+lightsizefactor 1.5
+
+flickerlight TntChunkLight
+{
+    color 0.8 0.1 0.0
+    size 12
+    secondarySize 20
+    chance 0.7
+    offset 0 0 0
+	attenuate 1
+}
+
+flickerlight RedChunkLight
+{
+    color 0.8 0.2 0.0
+    size 12
+    secondarySize 20
+    chance 0.7
+    offset 0 0 0
+	attenuate 1
+}
+
+flickerlight GreenChunkLight
+{
+    color 0.4 1.0 0.4
+    size 12
+    secondarySize 20
+    chance 0.7
+    offset 0 0 0
+	attenuate 1
+}
+
+flickerlight YellowChunkLight
+{
+    color 0.7 0.7 0.0
+    size 12
+    secondarySize 20
+    chance 0.7
+    offset 0 0 0
+	attenuate 1
+}
+
+flickerlight BloodChunkLight
+{
+    color 1.0 0.0 0.0
+    size 12
+    secondarySize 20
+    chance 0.7
+    offset 0 0 0
+	attenuate 1
+}
+
+flickerlight CacoChunkLight
+{
+    color 0.4 0.0 0.8
+    size 12
+    secondarySize 20
+    chance 0.7
+    offset 0 0 0
+	attenuate 1
+}
+
+flickerlight SparkLight
+{
+    color 0.9 0.9 0.0
+    size 3
+    secondarySize 4
+    chance 0.8
+	attenuate 1
+}
+
+flickerlight PlasmaSparkLight
+{
+    color 0.2 0.2 1.0
+    size 8
+    secondarySize 12
+    chance 0.8
+	attenuate 1
+}
+
+flickerlight ArachSparkLight
+{
+    color 0.4 1.0 0.2
+    size 8
+    secondarySize 12
+    chance 0.8
+	attenuate 1
+}
+
+flickerlight VileFireLight
+{
+    color 0.7 0.7 0.0
+    size 40
+    secondarySize 48
+    chance 0.8
+    offset 0 8 0
+	attenuate 1
+}

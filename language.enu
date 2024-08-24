@@ -1,0 +1,902 @@
+[enu default]
+
+GOTHTHBONUS = "You pick up a health bonus.";
+GOTARMBONUS = "You pick up an armor bonus.";
+GOTARMOR = "You pick up the armor.";
+GOTMEGA = "You got the MegaArmor!";
+GOTMSPHERE = "Mega Sphere!";
+GOTSTIM = "You pick up a stimpack.";
+GOTMEDIKIT = "You pick up a medikit.";
+GOTMEDINEED = "You pick up a medikit that you REALLY need!";
+GOTINVIS = "Partial Invisibility!";
+GOTVISOR = "Light Amplification Goggles";
+GOTBACKPACK = "You got the backpack!";
+GOTSHELLS = "Picked up %i shotgun shells.";
+
+GOTBLUECARD = "You pick up a blue keycard.";
+GOTYELWCARD = "You pick up a yellow keycard.";
+GOTREDCARD = "You pick up a red keycard.";
+GOTBLUESKUL = "You pick up a blue skull key.";
+GOTYELWSKUL = "You pick up a yellow skull key.";
+GOTREDSKUL = "You pick up a red skull key.";
+
+PD_BLUEC = "You need a blue key";
+PD_REDC = "You need a red key";
+PD_YELLOWC = "You need a yellow key";
+PD_BLUECO = "You need a blue key";
+PD_REDCO = "You need a red key";
+PD_YELLOWCO = "You need a yellow key";
+PD_BLUES = "You need a blue key";
+PD_REDS = "You need a red key";
+PD_YELLOWS = "You need a yellow key";
+PD_BLUESO = "You need a blue key";
+PD_REDSO = "You need a red key";
+PD_YELLOWSO = "You need a yellow key";
+PD_BLUEO = "You need a blue key";
+PD_REDO = "You need a red key";
+PD_YELLOWO = "You need a yellow key";
+PD_BLUEK = "You need a blue key";
+PD_REDK = "You need a red key";
+PD_YELLOWK = "You need a yellow key";
+
+GOTPISTOL = "You got the pistol!";
+GOTCHAINSAW = "A chainsaw!  Find some meat!";
+GOTBFG9000 = "You got the BFG9000!  Oh, yes.";
+
+GGAUTORUNON = "Autorun ON";
+GGAUTORUNOFF = "Autorun OFF";
+AMSTR_FOLLOWON = "Follow Mode ON";
+AMSTR_FOLLOWOFF = "Follow Mode OFF";
+STSTR_DQDON = "All Powerful Mode ON";
+STSTR_DQDOFF = "All Powerful Mode OFF";
+//STSTR_NCON = "No Clip ON";
+//STSTR_NCOFF = "No Clip OFF";
+STSTR_FAADDED = "Lots of Ammo!";
+STSTR_KFAADDED = "Lots of Goodies!";
+
+QUITMSG = "Quit DOOM?";
+LEVELSELECT_LOCKED = "---";
+SCORE_OTHER = "Other";
+TXT_IMSUCKS = "Sucks";
+SECRETMESSAGE = "\cfA secret is revealed!\cl";
+CASTTITLE = "Cast Of Characters";
+
+CC_BARREL = "Barrel";
+CC_HEALTHBONUS = "Health Potion";
+CC_ARMORBONUS = "Spiritual Armor";
+CC_STIMPACK = "Stimpack";
+CC_MEDIKIT = "Medikit";
+CC_GREENARMOR = "Security Armor";
+CC_BLUEARMOR = "Combat Armor";
+CC_ALLMAP = "Computer Map";
+CC_BERSERK = "Berserk Package";
+CC_RADSUIT = "Radiation Suit";
+CC_BACKPACK = "Backpack";
+CC_INFRARED = "Night Vision Goggles";
+CC_BLURSPHERE = "Blur Artifact";
+CC_INVULNERABILITYSPHERE = "Invulnerability Artifact";
+CC_MEGASPHERE = "Megasphere";
+CC_SOULSPHERE = "Soul Sphere";
+CC_BLUECARD = "Blue Security Card";
+CC_REDCARD = "Red Security Card";
+CC_YELLOWCARD = "Yellow Security Card";
+CC_BLUESKULL = "Blue Skull Key";
+CC_REDSKULL = "Red Skull Key";
+CC_YELLOWSKULL = "Yellow Skull Key";
+CC_NIGHTMARESPECTRE = "Nightmare Spectre";
+FN_DEMON = "Bull Demon";
+FN_NMIMP = "Nightmare Imp";
+FN_KEEN = "Commander Keen";
+
+GOTUNSEE = "You've gone totally invisible!";
+UNSEEOFF = "The Unseer has worn off.";
+ALLALONE = "You are now alone...";
+CC_UNSEER = "Unseer Artifact";
+CC_DOOMSDAY = "Doomsday Artifact";
+
+OB_NMSPECTREHIT = "%o was devoured by a Nightmare Spectre.";
+OB_NMIMP = "%o was burned by a Nightmare Imp.";
+OB_NMIMPHIT = "%o was slashed by a Nightmare Imp.";
+
+SKILL_HARDCORE =
+	"Same as Watch Me Die, but with "
+	"fast monsters and extra ammo.\n\n"
+	"WARNING: These levels were not balanced "
+	"in any way for this difficulty.";
+
+SKILL_DSLAYR =
+	"The forces of Hell stand before you, stronger "
+	"and fueled by hate... can you defeat them?\n\n"
+	"WARNING: These levels were not balanced "
+	"in any way for this difficulty.";
+
+TAG_FIST = "Fists";
+
+MNU_EPISODE			= "Which Episode?";
+MNU_CHOOSESKILL		= "Choose Skill Level:";
+
+E1_INTROTIT1 = "The Story So Far";
+E1_INTROTIT2 = "It's Up To You";
+
+E1_INTROTXT1 = "You're a marine, one of Earth's\n"
+				"toughest, hardened in combat and\n"
+				"trained for action. You have been\n"
+				"transferred to Mars, home of the\n"
+				"Union Aerospace Corporation.\n"
+				"\n"
+				"For the last four years the military,\n"
+				"its biggest provider, has used the\n"
+				"remote facilities on Phobos and Deimos\n"
+				"to conduct research on inter-dimensional\n"
+				"space travel.";
+E1_INTROTXT2 = "A few hours ago, Mars received a garbled\n"
+				"message from Phobos. 'We require\n"
+				"immediate military support. Something\n"
+				"fraggin' evil is coming out of the\n"
+				"Gateways! Computer systems have gone\n"
+				"berserk!' The rest was incoherent. Soon\n"
+				"afterwards, Deimos simply vanished from\n"
+				"the sky. Since then, attempts to\n"
+				"establish contact with either moon have\n"
+				"been unsuccessful.\n"
+				"\n"
+				"You and your buddies were sent to\n"
+				"Phobos. You were ordered to secure the\n"
+				"perimeter while the rest went inside.\n"
+				"For several hours, your radio picked up\n"
+				"the sounds of combat: guns firing,\n"
+				"screams, then finally, silence. Seems\n"
+				"your buddies are dead.";
+E1_INTROTXT3 = "Things aren't looking too good. All the\n"
+				"heavy weapons were taken by the assault\n"
+				"team leaving you with only a pistol.\n"
+				"Securing your helmet, you exit the\n"
+				"landing pod.\n"
+				"\n"
+				"As you walk through the main entrance,\n"
+				"you hear animal-like growls echoing\n"
+				"throughout the distant corridors. They\n"
+				"know you're here. There's no turning\n"
+				"back now.";
+			
+E2_INTROTIT1 = "The Story Continues...";
+	
+E2_INTROTXT1 = "Back at last. After days of hard\n"
+				"fighting in space, you've returned home\n"
+				"on well-earned leave. Damn! The city\n"
+				"ahead is on fire. Packs of refugees are\n"
+				"fleeing the flaming metropolis. Hell,\n"
+				"not again!\n"
+				"\n"
+				"You can feel it. It's all starting\n"
+				"again, just like on Mars. First, people\n"
+				"are taken over, turned into cannibal\n"
+				"Things. Then the real horror starts, the\n"
+				"deformed monstrosities from Outside. But\n"
+				"now it's on Earth!";		
+E2_INTROTXT2 = "Unfortunately, Earth's only ground\n"
+				"spaceport has just been taken over by\n"
+				"the demons. They've instituted a sort of\n"
+				"force field -- a flame barrier -- over\n"
+				"the port; no ships can land or take off.\n"
+				"You gotta go back into action. If you\n"
+				"win, you might be able to turn off the\n"
+				"barrier, so that the ships can leave.\n"
+				"\n"
+				"Something hisses with rage from the\n"
+				"steel tunnels ahead. They know you're\n"
+				"here. They have no pity, no mercy, take\n"
+				"no quarter, and crave none. They're the\n"
+				"perfect enemy, in a way. No one's left\n"
+				"but you. You... and Them.";
+
+E8_INTROTIT1 = "The Return...";
+
+E7_INTROTXT1 = "Hell's forces have seemingly been\n"
+				"vanquished. The military is succesfully\n"
+				"fighting back against whatever remnants\n"
+				"of the invasion are left.\n"
+				"\n"
+				"During your vacation, you receive an\n"
+				"urgent notice. A portal to a pocket\n"
+				"dimension of Hell has opened, and\n"
+				"inside, a Cyberdemon is building an army\n"
+				"of demons for his own personal use!\n"
+				"\n"
+				"You must travel there, and end this\n"
+				"threat before it is too late.";
+				
+E7_INTROTIT1 = "...And Back Again";
+
+E8_INTROTXT1 = "Your next stop is Earth... you must save\n"
+				"it from the hellspawn that is causing\n"
+				"unimaginable carnage.\n"
+				"\n"
+				"But Baphomet glitched the final\n"
+				"teleporter with his hidden sigil whose\n"
+				"eldritch power brings you to even darker\n"
+				"shores of Hell.\n"
+				"\n"
+				"You fight through this stygian pocket of\n"
+				"evil to confront the ultimate harbingers\n"
+				"of Satan, then finally return to become\n"
+				"the savior of Earth.";
+
+E1_INTERTXT1 = "once you beat the big\n"
+	"badasses and clean out\n"
+	"the moon base you're\n"
+	"supposed to win, aren't\n"
+	"you? aren't you? where's\n"
+	"your fat reward and ticket\n"
+	"home? what the hell is this?\n"
+	"it's not supposed to end\n"
+	"this way!";
+E1_INTERTXT2 = "it stinks like rotten\n"
+	"meat, but looks like the\n"
+	"lost deimos base. looks like\n"
+	"you're stuck on the shores\n"
+	"of hell. the only way out is\n"
+	"through.";
+E1_INTERTXT3 = "you've done it! the hideous\n"
+	"cyber-demon lord that\n"
+	"ruled the lost deimos moon\n"
+	"base has been slain and\n"
+	"you are triumphant! but...\n"
+	"where are you?\n"
+	"\n"
+	"you clamber to the edge of\n"
+	"the moon and look down to\n"
+	"see the awful truth.";
+E1_INTERTXT4 = "deimos floats above hell\n"
+	"itself! you've never heard\n"
+	"of anyone escaping from\n"
+	"hell, but you'll make the\n"
+	"bastards sorry they ever\n"
+	"heard of you!\n"
+	"\n"
+	"quickly, you rappel down to\n"
+	"the surface of hell.";
+E1_INTERTXT5 = "the loathsome spiderdemon\n"
+	"that masterminded the\n"
+	"invasion of the moon bases\n"
+	"and caused so much death\n"
+	"has had its ass kicked for\n"
+	"all time.\n"
+	"\n"
+	"a hidden doorway opens\n"
+	"and you enter. you've\n"
+	"proven too tough for hell\n"
+	"to contain, and now hell at\n"
+	"last plays fair -- for you\n"
+	"emerge from the door";
+E1_INTERTXT6 = "to see the green fields of\n"
+	"earth!\n"
+	"home at last.\n"
+	"\n"
+	"you wonder what's been\n"
+	"happening on earth while\n"
+	"you were battling evil\n"
+	"unleashed. it's good that\n"
+	"no hell-spawn could have\n"
+	"come through that door\n"
+	"with you...";
+
+E2_INTERTXT1 = "you have entered deeply\n"
+	"into the infested starport.\n"
+	"but something is wrong.\n"
+	"\n"
+	"the monsters have brought\n"
+	"their own reality with\n"
+	"them, and the starport's\n"
+	"technology is being\n"
+	"subverted by their\n"
+	"presence.";
+E2_INTERTXT2 = "ahead, you see an outpost\n"
+	"of hell, a fortified zone.\n"
+	"\n"
+	"if you can get past it, you\n"
+	"can penetrate into the\n"
+	"haunted heart of the\n"
+	"starbase and find the\n"
+	"controlling switch which\n"
+	"holds earth's population\n"
+	"hostage.";
+E2_INTERTXT3 = "you have won! your victory\n"
+	"has enabled humankind to\n"
+	"evacuate earth and escape\n"
+	"the nightmare.\n"
+	"\n"
+	"now you are the only\n"
+	"human left on the face of\n"
+	"the planet. cannibal\n"
+	"mutations, carnivorous\n"
+	"aliens, and evil spirits\n"
+	"are your only neighbors.";
+E2_INTERTXT4 = "you sit back and wait for\n"
+	"death, content that you\n"
+	"have saved your species.\n"
+	"\n"
+	"but then, earth control\n"
+	"beams down a message from\n"
+	"space.\n"
+	"\n"
+	"\"sensors have located the\n"
+	"source of the alien\n"
+	"invasion.\"";
+E2_INTERTXT5 = "\"if you go there, you may be\n"
+	"able to block their entry.\n"
+	"the alien base is in the\n"
+	"heart of your own home\n"
+	"city, not far from the\n"
+	"starport.\"\n"
+	"\n"
+	"slowly and painfully you\n"
+	"get up and return to the\n"
+	"fray.";
+E2_INTERTXT6 = "you are at the corrupt\n"
+	"heart of the city,\n"
+	"surrounded by the corpses\n"
+	"of your enemies.\n"
+	"\n"
+	"you see no way to destroy\n"
+	"the creatures' entryway\n"
+	"on this side, so you clench\n"
+	"your teeth and plunge\n"
+	"through it.";
+E2_INTERTXT7 = "there must be a way to\n"
+	"close it on the other side.\n"
+	"what do you care if you've\n"
+	"got to go through hell to\n"
+	"get to it?";
+E2_INTERTXT8 = "congratulations, you've\n"
+	"found the secret level!\n"
+	"looks like it's been\n"
+	"built by humans, rather\n"
+	"than demons.\n"
+	"you wonder who the inmates\n"
+	"of this corner of hell will\n"
+	"be.";
+E2_INTERTXT9 = "congratulations, you've\n"
+	"found the super secret\n"
+	"level!\n"
+	"\n"
+	"you'd better blaze through\n"
+	"this one!";
+
+E1_ENDTXT1 = "you have won!\n"
+	"your victory enabled\n"
+	"humankind to evacuate\n"
+	"earth and escape the\n"
+	"nightmare.\n"
+	"but then earth control\n"
+	"pinpoints the source\n"
+	"of the alien invasion.\n"
+	"you are their only hope.\n"
+	"you painfully get up\n"
+	"and return to the fray.";
+E1_ENDTXT2 = "the spider mastermind must\n"
+	"have sent forth its legions\n"
+	"of hellspawn before your\n"
+	"final confrontation with\n"
+	"that terrible beast from\n"
+	"hell. but you stepped\n"
+	"forward and brought forth\n"
+	"eternal damnation and\n"
+	"suffering upon the horde\n"
+	"as a true hero would in the\n"
+	"face of something so evil.";		
+E1_ENDTXT3 = "besides, someone was\n"
+	"gonna pay for what\n"
+	"happened to daisy, your\n"
+	"pet rabbit.\n"
+	"\n"
+	"but now, you see spread\n"
+	"before you more potential\n"
+	"pain and gibbitude as a\n"
+	"nation of demons run amok\n"
+	"in our cities.\n"
+	"\n"
+	"next stop, hell on earth!";
+	
+E2_ENDTXT1 = "you did it!\n"
+	"by turning the evil of\n"
+	"the horrors of hell in\n"
+	"upon itself you have\n"
+	"destroyed the power of\n"
+	"the demons.\n"
+	"their dreadful invasion\n"
+	"has been stopped cold!\n"
+	"now you can retire to\n"
+	"a lifetime of frivolity.\n"
+	"congratulations!";	
+E2_ENDTXT2 = "the horrendous visage of\n"
+	"the biggest demon you've\n"
+	"ever seen crumbles before\n"
+	"you, after you pump your\n"
+	"rockets into his exposed\n"
+	"brain.\n"
+	"\n"
+	"the monster shrivels up\n"
+	"and dies, its thrashing\n"
+	"limbs devastating untold\n"
+	"miles of hell's surface.";
+E2_ENDTXT3 = "you've done it. the invasion\n"
+	"is over. earth is saved.\n"
+	"hell is a wreck.\n"
+	"\n"
+	"you wonder where bad\n"
+	"folks will go when they die,\n"
+	"now. wiping the sweat from\n"
+	"your forehead you begin\n"
+	"the long trek back home.\n"
+	"rebuilding earth ought to\n"
+	"be a lot more fun than\n"
+	"ruining it was.";
+	
+E7_ENDTXT1 = "trouble was brewing again\n"
+	"in your favorite vacation\n"
+	"spot... hell. some\n"
+	"cyberdemon punk thought\n"
+	"he could turn hell into a\n"
+	"personal amusement park,\n"
+	"and make earth the ticket\n"
+	"booth.\n"
+	"\n"
+	"well that half-robot\n"
+	"freak show didn't know who\n"
+	"was coming to the fair.";
+E7_ENDTXT2 = "there's nothing like a\n"
+	"shooting gallery full of\n"
+	"hellspawn to get the blood\n"
+	"pumping...\n"
+	"\n"
+	"now the walls of the\n"
+	"demon's labyrinth echo\n"
+	"with the sound of his\n"
+	"metallic limbs hitting the\n"
+	"floor. his death moan\n"
+	"gurgles out through the\n"
+	"mess you left of his face.\n"
+	"\n"
+	"this ride is closed.";
+	
+E8_ENDTXT1 = "baphomet was only doing\n"
+	"satan's bidding by bringing\n"
+	"you back to hell.\n"
+	"\n"
+	"somehow they didn't\n"
+	"understand that you're the\n"
+	"reason they failed in the\n"
+	"first place.";
+E8_ENDTXT2 = "after mopping up the place\n"
+	"with your arsenal, you're\n"
+	"ready to face the more\n"
+	"advanced demons that were\n"
+	"sent to earth.\n"
+	"\n"
+	"lock and load. rip and\n"
+	"tear.";
+	
+//======MENUS======
+
+CEMNU_FEATURES = "Features";
+
+CEMNU_FIRSTTIMESETUP = "First Time Setup";
+CEMNU_FIRSTTIMESETUP_DESC = "Select a features preset.";
+CEMNU_FIRSTTIMESETUP_DESC2 = "You can select a different one or customize everything later in the Features menu.";
+CEMNU_FIRSTTIMESETUP_SKIP = "Skip Setup";
+CEMNU_FIRSTTIMESETUP_SKIP_DESC = "Use the default preset or what was already configured if upgrading from a previous version.";
+CEMNU_CONFIRM = "Are you sure?";
+
+CEMNU_CHOOSEPRESET = "Feature Presets";
+CEMNU_CHOOSEPRESET_DESC = "Select from a premade set of options if you are unsure of what to change.";
+CEMNU_EXAGGERATEDPRESET = "Experimental";
+CEMNU_EXAGGERATEDPRESET_DESC = "Same as Modern, but with new visuals and music style will change over time.";
+CEMNU_DEFAULTPRESET = "Modern (default)";
+CEMNU_DEFAULTPRESET_DESC = "Various visual and audio features and subtle gameplay changes will be applied.\n\nArch-Viles and more Masterminds will appear in the original campaign, and some monsters will have the same speed as in PC DOOM.";
+CEMNU_ENHANCEDPRESET = "Faithful Enhanced";
+CEMNU_ENHANCEDPRESET_DESC = "Gameplay will remain faithful to the original, but the game's appearance will be different.";
+CEMNU_VANILLAPRESET = "Faithful";
+CEMNU_VANILLAPRESET_DESC = "Features will be set as faithful as possible to the original.";
+
+CEMNU_NOTE = "*: Only effective after ending the level or starting a new game.";
+
+CEMNU_PSXLIGHT = "PSX DOOM Lighting";
+CEMNU_PSXLIGHTMODE = "Light mode";
+CEMNU_PSXLIGHTMODE_DESC = "Method to use for managing diminishing of ambient light levels.";
+CEMNU_PSXBANDING = "PSX color banding";
+CEMNU_PSXBANDING_DESC = "Emulates software rendering color banding.";
+CEMNU_PSXASPECT = "PSX aspect ratio correction";
+CEMNU_PSXASPECT_DESC = "Changes the scene pixel ratio to match the original.";
+CEMNU_PSXBRIGHT = "PSX gamma correction";
+CEMNU_PSXBRIGHT_DESC = "Makes everything brighter to emulate the PSX gamma level.";
+
+CEMNU_D64LIGHT = "DOOM 64 Lighting";
+CEMNU_D64GRADIENTS = "Gradient sector colors*";
+CEMNU_D64GRADIENTS_DESC = "Applies different colors for floors, ceilings, sprites and upper and lower parts of walls.";
+CEMNU_D64FILTER = "N64 texture filter";
+CEMNU_D64FILTER_DESC = "Enables the Nintendo 64's three-point texture filter. GZDoom's texture filter should be disabled before enabling this.";
+CEMNU_D64SECTORCOLOR = "Intensify sector colors*";
+CEMNU_D64SECTORCOLOR_DESC = "Applies gradient lighting over regular sector coloring for darker, more saturated colors.";
+CEMNU_D64ADDITIVE = "Additive light effects*";
+CEMNU_D64ADDITIVE_DESC = "Use additive color mixing when a sector's light level changes.";
+CEMNU_D64OVERALLBRIGHTNESS = "Overall brightness";
+CEMNU_D64OVERALLBRIGHTNESS_DESC = "Increases the overall brightness.";
+CEMNU_FEATURES_MENU = "DOOM CE Features";
+CEMNU_FEATURES_GAMEPLAY = "Gameplay Features";
+CEMNU_FEATURES_GAMEPLAY_DESC = "Customize gameplay features.";
+CEMNU_FEATURES_INTERFACE = "Interface Features";
+CEMNU_FEATURES_INTERFACE_DESC = "Customize user interface features.";
+CEMNU_FEATURES_AUDIO = "Audio Features";
+CEMNU_FEATURES_AUDIO_DESC = "Customize audio features.";
+CEMNU_FEATURES_GRAPHICS = "Graphics Features";
+CEMNU_FEATURES_GRAPHICS_DESC = "Customize graphics features.";
+CEMNU_FEATURES_EFFECTS = "Special Effects Features";
+CEMNU_FEATURES_EFFECTS_DESC = "Customize special effects features.";
+CEMNU_FEATURES_OTHER = "Other Features";
+CEMNU_FEATURES_OTHER_DESC = "Customize other features.";
+
+CEMNU_GENERAL = "General";
+
+CEMNU_SLOWSWITCH = "Slower weapon switch";
+CEMNU_SLOWSWITCH_DESC = "Doubles the time it takes to switch weapons.";
+CEMNU_WEAPONRECOIL = "Weapon recoil";
+CEMNU_WEAPONRECOIL_DESC = "Enables vertical recoil when firing a weapon.";
+CEMNU_WEAPONRECOIL_STRENGTH = "Weapon recoil strength";
+CEMNU_WEAPONRECOIL_STRENGTH_DESC = "Vertical recoil strength multiplier. The strength varies when Smooth Animations are enabled.";
+CEMNU_ACTORTHRUST = "Larger damage thrust";
+CEMNU_ACTORTHRUST_DESC = "Doubles the thrust after getting hit, like in the PSX/D64.";
+CEMNU_AUTOSTART = "Auto-start next episode after ending";
+CEMNU_AUTOSTART_DESC = "After finishing an episode, starts the next one automatically.";
+CEMNU_SPEED = "Speed";
+CEMNU_SPEED_PLAYER = "Player speed*";
+CEMNU_SPEED_PLAYER_DESC = "Changes player movement speed.";
+CEMNU_SPEED_WEAPON = "Weapon speed*";
+CEMNU_SPEED_WEAPON_DESC = "Changes weapon speed. Original is recommended because the console version has fast animations.";
+CEMNU_SPEED_ACTOR = "Actor speed*";
+CEMNU_SPEED_ACTOR_DESC = "Changes actor animation and movement speed.";
+CEMNU_SPEED_SSG = "Shift Super Shotgun firing delay";
+CEMNU_SPEED_SSG_DESC = "Shifts the delay before firing the Super Shotgun to later in the animation sequence to make it more in line with the PC Super Shotgun.";
+CEMNU_SPEED_PC = "PC monster and projectile speed*";
+CEMNU_SPEED_PC_DESC = "Some monsters and projectiles that had reduced speed in the PSX will act faster if this is enabled.";
+CEMNU_GIB_RULES = "Weapons determine extreme deaths*";
+CEMNU_GIB_RULES_DESC = "When enabled, berserk, chainsaw, rockets and the BFG will always gib, and guns wil never gib. Disable to restore their original behavior.";
+CEMNU_SKULLLIMIT = "Lost Soul limit";
+CEMNU_SKULLLIMIT_DESC = "Max. amout of Lost Souls spawned by Pain Elementals, if the compatibility option is enabled.";
+CEMNU_SKULLLIMIT_PC = "20 (PSX DOOM/PC)";
+CEMNU_SKULLLIMIT_CONSOLE = "16 (DOOM 64/PSX FINAL DOOM)";
+MOUSEMNU_ALWAYSMOUSELOOK_DESC = "Allows or disallows looking up and down with the mouse.";
+CMPTMNU_LIMITPAIN_DESC = "Prevent Pain Elementals from spawning Lost Souls if there are more than the limit in the level.";
+CMPTMNU_EXPLODE1_DESC = "Disable vertical thrust from explosion damage.";
+CEMNU_NIGHTMARESTYLE = "Nightmare monster style*";
+CEMNU_NIGHTMARESTYLE_DESC = "Render style for nightmare monsters. Some mods may ignore this option and force a specific style.";
+CEMNU_NIGHTMARESTYLE_PSX = "Subtractive (PSX DOOM)";
+CEMNU_NIGHTMARESTYLE_D64 = "Shaded (DOOM 64)";
+CEMNU_NIGHTMARECOLOR = "Nightmare monster color*";
+CEMNU_NIGHTMARECOLOR_DESC = "Color for nightmare monsters with shaded style.";
+CEMNU_MAPALTERATIONS = "Map Alterations";
+CEMNU_REPLACE_FATSO = "Replace Mancubus in E2M8*";
+CEMNU_REPLACE_FATSO_DESC = "Replaces the Mancubus with Lost Souls in the Tower of Babel level.";
+CEMNU_ADD_ARCHVILE = "Add Arch-Vile monsters*";
+CEMNU_ADD_ARCHVILE_DESC = "Restores most Arch-Vile monsters to their PC locations.";
+CEMNU_ADD_SPIDER = "Add Spider Mastermind monsters*";
+CEMNU_ADD_SPIDER_DESC = "Restores some Spider Mastermind monsters to their PC locations.";
+CEMNU_ADD_WOLF = "Add Wolfenstein monsters*";
+CEMNU_ADD_WOLF_DESC = "Restores the Wolfenstein SS monsters to their PC locations.";
+CEMNU_COOPERATIVE = "Cooperative Mode";
+CEMNU_COOPERATIVE_HEALTH = "Health after resurrection";
+CEMNU_COOPERATIVE_HEALTH_DESC = "How much health a player will have after being resurrected by a teammate.";
+CEMNU_COOPERATIVE_TIME = "Resurrection wait time";
+CEMNU_COOPERATIVE_TIME_DESC = "How much time it takes to resurrect a fallen teammate.";
+
+CEMNU_HUDTYPE = "Fullscreen HUD type";
+CEMNU_HUDTYPE_DESC = "Changes the style of the HUD.";
+CEMNU_HUDBERSERK = "Show berserk indicator";
+CEMNU_HUDBERSERK_DESC = "Shows an icon on the fullscreen HUD when berserk is active.";
+CEMNU_HUDCOLOR = "Fullscreen HUD color";
+CEMNU_HUDCOLOR_DESC = "Font color for the fullscreen HUD.";
+CEMNU_HUDCOLOR_DEFAULT = "\cgGame default";
+CEMNU_HUDALPHA = "Fullscreen HUD alpha";
+CEMNU_HUDALPHA_DESC = "Transparency factor of the fullscreen HUD. 1.0 is the same as the original.";
+CEMNU_HUDSTYLE = "Message notification style";
+CEMNU_HUDSTYLE_DESC = "Style of the HUD notifications for pickup and death messages. Does not apply if GZDoom's Alternative HUD is active.";
+CEMNU_HUDSTYLE_GZDOOM = "GZDoom";
+CEMNU_HUDSTYLE_PSXDOOM = "PSX DOOM";
+CEMNU_HUDSTYLE_DOOM64 = "DOOM 64";
+CEMNU_HUDSTYLE_PSXDOOM_WIDE = "PSX DOOM (Wide)";
+CEMNU_HUDSTYLE_DOOM64_WIDE = "DOOM 64 (Wide)";
+CEMNU_TITLEPIC = "Show title pictures";
+CEMNU_TITLEPIC_DESC = "Displays a picture when starting a new game.";
+CEMNU_SHOWMOVIE = "Show opening logo video";
+CEMNU_SHOWMOVIE_DESC = "Displays a video with the Williams logo on startup";
+CEMNU_SKIPCOPYRIGHT = "Skip legals screen";
+CEMNU_SKIPCOPYRIGHT_DESC = "Skips displaying the legals screen on startup.";
+CEMNU_SKIPINTRO = "Skip story introductions";
+CEMNU_SKIPINTRO_DESC = "Skips the story text when starting a new game.";
+CEMNU_LEVELNAME = "Show level names at start";
+CEMNU_LEVELNAME_DESC = "Displays the level name when starting a level.";
+CEMNU_AUTHORNAME = "Show level authors at start";
+CEMNU_AUTHORNAME_DESC = "Displays the level author when starting a level.";
+CEMNU_EPISODENAME = "Use original episode names";
+CEMNU_EPISODENAME_DESC = "Displays the same episode names as the console versions.";
+CEMNU_ORIGINALINTER = "Use original intermission backgrounds";
+CEMNU_ORIGINALINTER_DESC = "Displays the same stats screen and intermission backgrounds as the console versions.";
+CEMNU_ORIGINALEPISODES = "Hide bonus episodes not in the original";
+CEMNU_ORIGINALEPISODES_DESC = "Hides episodes from the main menu that were not in the original game.";
+CEMNU_ORIGINALSKILLS = "Hide bonus difficulties not in the original";
+CEMNU_ORIGINALSKILLS_DESC = "Hides difficulties from the main menu that were not in the original game.";
+CEMNU_TRANSSOUL = "Lost Soul translucency";
+CEMNU_TRANSSOUL_DESC = "How translucent Lost Souls are. Lower values are more translucent.";
+CEMNU_PARTICLELIMIT = "Max. simultaneous enhanced particles";
+CEMNU_PARTICLELIMIT_DESC = "Maximum number of enhanced particles visible at once. Should be kept low to maintain performance in maps that use too many actors.";
+CEMNU_SINGLEINTER = "Single screen stats screen";
+CEMNU_SINGLEINTER_DESC = "Whether the \"Entering\" part of the stats screen is drawn in a new page.";
+CEMNU_PASSWORDINTER = "Display password on stats screen";
+CEMNU_PASSWORDINTER_DESC = "Whether passwords are visible on level completion. Passwords are not supported for Ultra-Nightmare skill.";
+CEMNU_SKIPTALLY = "Skip ending statistics";
+CEMNU_SKIPTALLY_DESC = "Skips the statistics report when ending an episode.";
+CEMNU_PARTIMES = "Hide par times";
+CEMNU_PARTIMES_DESC = "Hides par and \"sucks\" times.";
+CEMNU_HUD = "HUD";
+CEMNU_CUTSCENES = "Cutscenes";
+CEMNU_INTERMISSIONS = "Intermissions";
+CEMNU_MENUS = "Menus";
+CEMNU_EFFECTS = "Effects";
+CEMNU_FADEIN = "Fade in effect when entering a level";
+CEMNU_FADEIN_DESC = "Applies a fade in effect in when starting a level.";
+CEMNU_FADEOUT = "Fade out effect when exiting a level";
+CEMNU_FADEOUT_DESC = "Applies a fade out effect when ending a level.";
+CEMNU_WIPE = "Wipe effect when dying or exiting a level";
+CEMNU_WIPE_DESC = "Covers the screen with blood when dying or ending a level.";
+CEMNU_OVERLAYS = "Overlays";
+CEMNU_DAMAGEDIRECTION = "Damage direction indicator";
+CEMNU_DAMAGEDIRECTION_DESC = "Displays an arrow showing the direction the player took damage from.";
+CEMNU_DAMAGEDIRECTION_SCALE = "Damage indicator scale";
+CEMNU_DAMAGEDIRECTION_SCALE_DESC = "Size of the damage direction indicator.";
+CEMNU_DAMAGEDIRECTION_ALPHA = "Damage indicator alpha";
+CEMNU_DAMAGEDIRECTION_ALPHA_DESC = "Transparency level of the damage direction indicator.";
+MSGMNU_SHOWSECRETS_DESC = "Displays a notification when a secret is found.";
+MSGMNU_SHOWOBITUARIES_DESC = "Displays messages when the player dies.";
+
+CEMNU_SOUND = "Sound";
+CEMNU_WORLDAMBIENT = "World ambient sounds*";
+CEMNU_WORLDAMBIENT_DESC = "Plays ambient sounds coming from walls and floors such as water, computers, etc.";
+CEMNU_WORLDAMBIENT_VOLUME = "World ambient sound volume";
+CEMNU_WORLDAMBIENT_VOLUME_DESC = "Adjusts the volume of world sounds.";
+CEMNU_DECORATIONAMBIENT = "Decoration ambient sounds*";
+CEMNU_DECORATIONAMBIENT_DESC = "Plays ambient sounds coming from decorative items such as torches, lamps, etc.";
+CEMNU_DECORATIONAMBIENT_VOLUME = "Decoration ambient sound volume";
+CEMNU_DECORATIONAMBIENT_VOLUME_DESC = "Adjusts the volume of decoration sounds.";
+CEMNU_MUSIC = "Music";
+CEMNU_MUSIC_AUTHOR = "Show music name and author";
+CEMNU_MUSIC_AUTHOR_DESC = "Displays the music track's name and author when starting a level.";
+CEMNU_MUSIC_STYLE = "Music style";
+CEMNU_MUSIC_STYLE_DESC = "Plays an action oriented (PC) or dark ambient (Console) soundtrack.";
+CEMNU_MUSIC_STYLE_BOTH = "Play both music styles";
+CEMNU_MUSIC_STYLE_BOTH_DESC = "Plays the level's PC track first and then fades into the Console one.";
+CEMNU_MUSIC_STYLE_TIME = "Minimum seconds playing before music changes";
+CEMNU_MUSIC_STYLE_TIME_DESC = "Minimum time a track plays before looping and changing music style.";
+CEMNU_MUSIC_STYLE_CHANGE = "Change Music Style Now";
+CEMNU_MUSIC_COMPUTER = "PC";
+CEMNU_MUSIC_CONSOLE = "Console";
+
+CEMNU_BRIGHTNESS_CORRECTION_TITLE = "General";
+CEMNU_CONTRAST = "Overall brightness";
+CEMNU_CONTRAST_DESC = "Increases the overall world brightness.";
+CEMNU_LOWRES = "Low resolution shader";
+CEMNU_LOWRES_DESC = "Emulates playing at the original resolution.";
+
+CEMNU_GZDOOM = "GZDoom Option Shortcuts";
+GLLIGHTMNU_LIGHTSENABLED_DESC = "Enable dynamic lights (objects that provide point-based light sources).";
+CEMNU_MAXDECALS = "Max. decals";
+CEMNU_MAXDECALS_DESC = "How many decals can be placed before the oldest ones are removed.";
+CEMNU_NOTIFYLINES = "Max. number of messages";
+CEMNU_NOTIFYLINES_DESC = "How many messages can be displayed at the same time.";
+DSPLYMNU_OLDTRANS_DESC = "Make certain projectiles translucent.";
+DSPLYMNU_SPRITESHADOW_DESC = "Draw shadows beneath sprites.";
+
+CEMNU_EJECTCASINGS = "Eject casings";
+CEMNU_EJECTCASINGS_DESC = "Weapons will eject empty casings after firing.";
+CEMNU_PSXMUGSHOT = "Use console mugshot";
+CEMNU_PSXMUGSHOT_DESC = "Uses the mugshot present in the original version. Smooth animations or upscaled textures are not applied.";
+CEMNU_PSXWEAPONS = "Use console weapon sprites";
+CEMNU_PSXWEAPONS_DESC = "Uses the weapon sprites present in the original version. Smooth animations or upscaled textures are not applied.";
+CEMNU_ALTSSG = "Use alternate super shotgun sprite";
+CEMNU_ALTSSG_DESC = "Uses the super shotgun sprite from PSX FINAL DOOM.";
+CEMNU_PCTEXTURES = "Add some PC textures*";
+CEMNU_PCTEXTURES_DESC = "Restores some textures that were missing from the PSX version in some levels.";
+CEMNU_WOLFTEXTURES = "Add Wolfenstein textures*";
+CEMNU_WOLFTEXTURES_DESC = "Use Wolfenstein-themed textures in the DOOM 2 secret levels (Only if the Lost Levels addon is loaded).";
+CEMNU_ICONOFSIN_MODEL = "Use Icon of Sin Model*";
+CEMNU_ICONOFSIN_MODEL_DESC = "Use a 3D model for the Icon of Sin's appearance.";
+CEMNU_SMOOTHANIMATIONS = "Smooth Animations";
+CEMNU_SMOOTHWEAPONS = "Smooth weapons";
+CEMNU_SMOOTHWEAPONS_DESC = "Increases the frames for weapon animations.";
+CEMNU_BLACKGLOVES = "Wear black gloves";
+CEMNU_BLACKGLOVES_DESC = "Changes the player weapon sprites to use black gloves.";
+CEMNU_SMOOTHPROJECTILES = "Smooth projectiles";
+CEMNU_SMOOTHPROJECTILES_DESC = "Increases the frames for projectile animations.";
+CEMNU_SMOOTHMONSTERS = "Smooth monsters*";
+CEMNU_SMOOTHMONSTERS_DESC = "Increases the frames for monster animations.";
+CEMNU_SMOOTHDECORATIONS = "Smooth decorations*";
+CEMNU_SMOOTHDECORATIONS_DESC = "Increases the frames for decoration animations";
+CEMNU_SMOOTHITEMS = "Smooth items*";
+CEMNU_SMOOTHITEMS_DESC = "Increases the frames for item animations.";
+
+CEMNU_TRACERS_MONSTER = "Monster weapon tracers";
+CEMNU_TRACERS_MONSTER_DESC = "Display a tracer for bullets originated from monsters.";
+CEMNU_TRACERS_PLAYER = "Player weapon tracers";
+CEMNU_TRACERS_PLAYER_DESC = "Display a tracer for bullets originated from the player.";
+
+CEMNU_SKYBOXES = "Skyboxes";
+CEMNU_SKYBOX_CUBEMAP = "Cubemap based sky*";
+CEMNU_SKYBOX_CUBEMAP_DESC = "Changes the skybox to a 3D cubemap.";
+CEMNU_SKYBOX_PCTEXTURES = "Use PC sky textures*";
+CEMNU_SKYBOX_PCTEXTURES_DESC = "Replaces the sky texture in some levels to match the PC skies.";
+CEMNU_SKYBOX_NEWFIRE = "Enhanced fire sky effect*";
+CEMNU_SKYBOX_NEWFIRE_DESC = "Replaces the classic flaming skies with a modern, shader-based fire effect.";
+
+CEMNU_ENHANCEDPARTICLES = "Enhanced particles";
+CEMNU_ENHANCEDPARTICLES_DESC = "Adds multiple particle effects. May affect performance.";
+CEMNU_EXAGGERATEDEXPLOSIONS = "New explosion visuals";
+CEMNU_EXAGGERATEDEXPLOSIONS_DESC = "Changes the explosion effects. May affect performance.";
+CEMNU_EXAGGERATEDFIRE = "New decoration fire effect visuals*";
+CEMNU_EXAGGERATEDFIRE_DESC = "Changes the fire effect for decorations such as torches. May affect performance.";
+CEMNU_EXAGGERATEDLOSTSOUL = "New Lost Soul fire visuals*";
+CEMNU_EXAGGERATEDLOSTSOUL_DESC = "Changes the fire effect for Lost Souls. May affect performance.";
+
+CEMNU_GORE_EXPLOSION = "Gib mist explosion";
+CEMNU_GORE_EXPLOSION_DESC = "Enable blood explosions when gibbing.";
+
+CEMNU_FOOTSTEPS_TITLE = "Footsteps";
+CEMNU_FOOTSTEPS_PLAYER = "Player footsteps";
+CEMNU_FOOTSTEPS_PLAYER_DESC = "Enables footstep sounds when the player moves.";
+CEMNU_FOOTSTEPS_PLAYER_DELAY = "Player footstep delay";
+CEMNU_FOOTSTEPS_PLAYER_DELAY_DESC = "Adjusts the time between each player footstep.";
+CEMNU_FOOTSTEPS_PLAYER_VOLUME = "Player footstep volume";
+CEMNU_FOOTSTEPS_PLAYER_VOLUME_DESC = "Adjusts the volume of player footsteps.";
+CEMNU_FOOTSTEPS_MONSTER = "Monster footsteps";
+CEMNU_FOOTSTEPS_MONSTER_DESC = "Enables footstep sounds when monsters move.";
+CEMNU_FOOTSTEPS_MONSTER_VOLUME = "Monster footstep volume";
+CEMNU_FOOTSTEPS_MONSTER_VOLUME_DESC = "Adjusts the volume of monster footsteps.";
+
+CEMNU_CASINGS_DISABLED = "Disabled";
+CEMNU_CASINGS_PLAYER = "Player Only";
+CEMNU_CASINGS_BOTH = "Player And Monster";
+
+CEMNU_HUD_WIDE = "Wide";
+CEMNU_HUD_CENTERED = "Centered";
+CEMNU_HUD_GZDOOM = "GZDoom";
+CEMNU_HUD_LEGACY = "Legacy TC";
+	
+CEMNU_LIGHTMODE_STANDARD = "Standard";
+CEMNU_LIGHTMODE_PSX = "PSX Software";
+CEMNU_LIGHTMODE_DARK = "Dark";
+
+CEMNU_PLAYERSPEED_VANILLA = "PSX DOOM (Faster)";
+CEMNU_PLAYERSPEED_FASTER = "PSX FINAL DOOM/DOOM 64 (Fast)";
+CEMNU_PLAYERSPEED_SLOW = "Adjusted (Slower)";
+
+CEMNU_SPEED_VANILLA = "Original (30 tics)";
+CEMNU_SPEED_FASTER = "Faster (35 tics)";
+
+CEMNU_PASSWORD = "Password";
+CEMNU_PASSWORD_DESC = "Enter a password provided on level completion to resume gameplay.";
+CEMNU_INVALIDPASSWORD = "Invalid Password";
+CEMNU_ENTERPASSWORD = "Enter Password";
+CEMNU_CONFIRMPASSWORD = "Confirm";
+CEMNU_SKILL = "Skill";
+CEMNU_DEMO_WARNING = "This demo may not play properly unless using the Faithful preset and not loading any addons. Are you sure?";
+
+CEMNU_LEVELSELECT = "Level Select";
+CEMNU_LEVELSELECT_DESC = "Warp to a level with a custom loadout.";
+CEMNU_MUSICPLAYER = "Music Player";
+CEMNU_MUSICPLAYER_DESC = "Change the currently playing music track.";
+CEMNU_SETUP = "Setup";
+CEMNU_HEALTH = "Health";
+CEMNU_ARMOR = "Armor";
+CEMNU_LOADOUT = "Starting Loadout";
+CEMNU_RESET_TITLE = "Reset Progress";
+CEMNU_RESET = "Reset Unlocked Levels";
+CEMNU_RESET_DESC = "All available levels will be locked again. Are you sure?";
+
+CEMNU_MUSIC_PSX = "DOOM PlayStation Soundtrack";
+CEMNU_MUSIC_DOOM = "DOOM Soundtrack";
+CEMNU_MUSIC_SIGIL = "SIGIL MIDI Soundtrack";
+CEMNU_MUSIC_DOOM2 = "DOOM 2 Soundtrack";
+CEMNU_MUSIC_NRFTL = "No Rest for the Living Community MIDI Pack";
+
+CEMNU_CREDITS = "Credits";
+CEMNU_CREDITS_DESC = "View the list of credits for this mod.";
+
+CEKEY_TITLE = "DOOM CE Features";
+CEKEY_STATS = "Statistics Screen";
+CEKEY_MUSIC = "Change Music Style";
+CEKEY_MELEE = "Melee Attack";
+
+CERESET_DEFAULT = "Features reset to default values.";
+CERESET_EXAGGERATED = "Features reset to experimental values.";
+CERESET_ENHANCED = "Features reset to enhanced faithful values.";
+CERESET_VANILLA = "Features reset to faithful values.";
+CERESET_LEVELS = "All unlocked levels have been reset.";
+
+SECTION_RESURRECT = "Ally Resurrection";
+KEY_RESURRECT = "Resurrect Ally (Cooperative Mode)";
+MSG_STARTED_RESURRECT = " is being resuscitated by ";
+MSG_FINISHED_RESURRECT = " was brought back to life by ";
+
+OPTMNU_NASHGORE = "Customize Nash's Gore Mod";
+
+NASHGOREMNU_TITLE = "Nash's Gore Mod Options";
+
+NASHGOREMNU_BLOOD_TITLE = "Blood Options";
+NASHGOREMNU_GIB_TITLE = "Gib Options";
+NASHGOREMNU_MISC_TITLE = "Misc Options";
+NASHGOREMNU_CONTROLS_TITLE = "Controls";
+
+NASHGOREMNU_BLOOD_TYPE = "Blood type";
+NASHGOREMNU_BLOOD_AMOUNT = "Blood amount";
+NASHGOREMNU_BLOOD_SPRITES = "Blood spot type";
+NASHGOREMNU_BLOOD_SPURTS = "Blood spurts";
+
+NASHGOREMNU_GIB_TYPE = "Gib type";
+NASHGOREMNU_GIB_AMOUNT = "Gib amount";
+
+NASHGOREMNU_MISC_CLEARGORENOW = "Clear Gore Now";
+NASHGOREMNU_MISC_MAXGORE = "Max gore objects";
+NASHGOREMNU_MISC_CORPSEBLOOD = "Corpse blood";
+NASHGOREMNU_MISC_FOOTPRINTS = "Footprints";
+NASHGOREMNU_MISC_DEATHFLIP = "Flip death sprite";
+NASHGOREMNU_MISC_SQUISH = "Squish effect";
+NASHGOREMNU_MISC_ICEDEATH = "Ice effects";
+NASHGOREMNU_MISC_SPLAT = "Fall splat";
+
+NASHGOREMNU_CONTROLS_CLEARGORE = "Clear Gore Effects";
+
+NASHGOREMNU_ENABLED = "Enabled";
+NASHGOREMNU_DEFAULT = "Default";
+NASHGOREMNU_VANILLA = "Vanilla";
+NASHGOREMNU_REALISTIC = "Realistic";
+
+NASHGOREMNU_BLOOD_TYPE_CLASSIC = "Classic";
+NASHGOREMNU_GIB_TYPE_NOSTICKYGIBS = "No wall & ceiling gibs";
+NASHGOREMNU_BLOOD_SPRITE_DECALS = "Decals";
+NASHGOREMNU_BLOOD_SPRITE_SPRITES = "Sprites";
+
+NASHGOREMNU_HELPTEXT_BLOOD_TYPE = "Hitscan blood effect type.";
+NASHGOREMNU_HELPTEXT_BLOOD_AMOUNT = "Adjusts amount of blood.";
+NASHGOREMNU_HELPTEXT_BLOOD_SPRITES = "Use decals or sprites for blood spots.";
+NASHGOREMNU_HELPTEXT_BLOOD_SPURTS = "Enable blood spurts on corpses.";
+NASHGOREMNU_HELPTEXT_GIB_TYPE = "Gib effect type.";
+NASHGOREMNU_HELPTEXT_GIB_AMOUNT = "Adjusts amount of gibs. May have a strong impact on performance.";
+NASHGOREMNU_HELPTEXT_MISC_MAXGORE = "Maximum number of blood & gore objects to spawn. May have a strong impact on performance.";
+NASHGOREMNU_HELPTEXT_MISC_CORPSEBLOOD = "Enable pool of blood under corpses.";
+NASHGOREMNU_HELPTEXT_MISC_FOOTPRINTS = "Enable bloody footprints.";
+NASHGOREMNU_HELPTEXT_MISC_DEATHFLIP = "Randomly flip sprite upon death.";
+NASHGOREMNU_HELPTEXT_MISC_SQUISH = "Enable squishy flesh when corpse is crushed.";
+NASHGOREMNU_HELPTEXT_MISC_ICEDEATH = "Enhanced effects upon breaking a frozen enemy.";
+NASHGOREMNU_HELPTEXT_MISC_SPLAT = "Enable splat effect when corpse falls from tall height.";
+NASHGOREMNU_HELPTEXT_MISC_CLEARGORENOW = "Removes all gore effects immediately.";
+
+NASHGOREMNU_HELPTEXT_CONTROLS_CLEARGORE = "Key bind to remove all gore objects.";
+
+//======STATISTICS======
+
+TALLYMAP = "Statistics";
+
+TXT_KILLS = "Kills";
+TXT_ITEMS = "Items";
+TXT_SECRETS = "Secrets";
+TXT_TIME = "Time";
+TXT_PAR = "Par";
+TXT_DIFFICULTY = "Difficulty";
+TXT_EPISODES = "Episodes played";
+TXT_MAPS = "Levels found";
+TXT_OVERALL = "Avg. clear rate";
+TXT_FRAGS = "Frags";
+TXT_DEATHS = "Deaths";
+TXT_CHEATER = "Cheater!";
+
+//INTRO_CONT = "press use to continue";
+INTRO_CONT = "";
+INTRO_WAIT = "waiting for other players";

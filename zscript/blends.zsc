@@ -1,0 +1,59 @@
+extend class CEEventHandler
+{
+	Array<int> baseLightLevel;
+
+	void BlendHandlerWorldTick()
+	{
+		if (!CVar.GetCVar("d64_additiveblend", players[consoleplayer]).GetBool()) return;
+		Sector sector;
+		for (int i=0; i<level.sectors.Size(); i++)
+		{
+			sector = level.sectors[i];
+			if (sector.lightlevel != baseLightLevel[i])
+			{
+				int intensity = sector.lightlevel - baseLightLevel[i];
+				if (intensity >= abs(28))
+				{
+					intensity = clamp(intensity, -28, 28);
+				}
+				else if (intensity >= abs(6))
+				{
+					intensity = (int)(Round(intensity / 2.5));
+				}
+				else if (abs(intensity) == 2)
+				{
+					intensity /= 2;
+				}
+				BlendColor(sector, intensity);
+				baseLightLevel[i] = sector.lightlevel;
+			}
+		}
+	}
+	
+	void BlendHandlerWorldLoaded(WorldEvent e)
+	{
+		Sector sector;
+		for (int i=0; i<level.sectors.Size(); i++)
+		{
+			sector = level.sectors[i];
+			baseLightLevel.Push(sector.lightlevel);
+		}
+	}
+	
+	private void BlendColor(Sector sector, int intensity)
+	{
+		for (int i=0; i<5; i++)
+		{
+			sector.SetAdditiveColor(i, AddColor(sector.AdditiveColors[i], intensity));
+		}
+	}
+	
+	private Color AddColor(Color original, int intensity)
+	{
+		return Color(
+			clamp(original.a+intensity,0,40),
+			clamp(original.r+intensity,0,40), 
+			clamp(original.g+intensity,0,40), 
+			clamp(original.b+intensity,0,40));
+	}
+}

@@ -1,0 +1,546 @@
+Sprite "_BFGA0", 62, 37
+{
+	Patch "BFUGA0", 0, 0
+}
+
+Sprite "_MGNA0", 56, 17
+{
+	Patch "MGUNA0", 0, 0
+}
+
+Sprite "_CSWA0", 64, 25
+{
+	Patch "CSAWA0", 0, 0
+}
+
+Sprite "_PISA0", 29, 15
+{
+	Patch "PISTA0", 0, 0
+}
+
+Sprite "_PLSA0", 56, 17
+{
+	Patch "PLASA0", 0, 0
+}
+
+Sprite "_LANA0", 64, 17
+{
+	Patch "LAUNA0", 0, 0
+}
+
+Sprite "_SHTA0", 64, 13
+{
+	Patch "SHOTA0", 0, 0
+}
+
+Sprite "_SG2A0", 56, 15
+{
+	Patch "SGN2A0", 0, 0
+}
+
+Sprite "_XNGC0", 64, 20
+{
+	Patch "XUNGC0", 0, 0
+}
+
+Sprite "_CLPA0", 10, 12
+{
+	Patch "CLIPA0", 0, 0
+}
+
+Sprite "_RCKA0", 14, 28
+{
+	Patch "ROCKA0", 0, 0
+}
+
+Sprite "_CELA0", 18, 13
+{
+	Patch "CELLA0", 0, 0
+}
+
+Sprite "_SHLA0", 16, 8
+{
+	Patch "SHELA0", 0, 0
+}
+
+Sprite "_MEDA0", 30, 20
+{
+	Patch "MEDIA0", 0, 0
+}
+
+Sprite "_PSTA0", 30, 20
+{
+	Patch "PSTRA0", 0, 0
+}
+
+Sprite "_AR1A0", 32, 18
+{
+	Patch "ARM1A0", 0, 0
+}
+
+Sprite "_AR2A0", 32, 18
+{
+	Patch "ARM2A0", 0, 0
+}
+
+Graphic "psxdead3", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfdead0", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxdead2", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfdead0", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxdead1", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfdead0", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxdead0", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfdead0", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxevl0", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfevl0", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxevl1", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfevl1", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxevl2", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfevl2", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxevl3", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfevl3", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxevl4", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfevl4", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxexp5", 28, 31
+{
+	XScale 0.80625
+	Patch "ptfexpl5", 0, 0
+	Offset -1, -2
+}
+
+Graphic "psxgod0", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfgod0", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxkill0", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfkill0", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxkill1", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfkill1", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxkill2", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfkill2", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxkill3", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfkill3", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxkill4", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfkill4", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxouch0", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfouch0", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxouch1", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfouch1", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxouch2", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfouch2", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxouch3", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfouch3", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxouch4", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfouch4", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst01", 19, 30
+{
+	XScale 0.80625
+	Patch "ptfst01", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst04", 19, 30
+{
+	XScale 0.80625
+	Patch "ptfst00", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst02", 19, 30
+{
+	XScale 0.80625
+	Patch "ptfst00", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst03", 19, 30
+{
+	XScale 0.80625
+	Patch "ptfst02", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst00", 19, 30
+{
+	XScale 0.80625
+	Patch "ptfst02", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst05", 19, 30
+{
+	XScale 0.80625
+	Patch "ptfst01", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst10", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst11", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst11", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst10", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst12", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst10", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst13", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst12", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst14", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst12", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst15", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst11", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst20", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst21", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst21", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst20", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst22", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst20", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst23", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst22", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst24", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst22", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst25", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst21", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst30", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst31", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst31", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst30", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst32", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst30", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst33", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst32", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst34", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst32", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst35", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst31", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst40", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst41", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst41", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst40", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst42", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst40", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst43", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst42", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst44", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst42", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxst45", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfst41", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxtl00", 21, 30
+{
+	XScale 0.80625
+	Patch "ptftl00", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxtl10", 21, 31
+{
+	XScale 0.80625
+	Patch "ptftl10", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxtl20", 22, 31
+{
+	XScale 0.80625
+	Patch "ptftl20", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxtl30", 23, 31
+{
+	XScale 0.80625
+	Patch "ptftl30", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxtl40", 24, 31
+{
+	XScale 0.80625
+	Patch "ptftl40", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxtr00", 21, 30
+{
+	XScale 0.80625
+	Patch "ptftr00", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxtr10", 21, 31
+{
+	XScale 0.80625
+	Patch "ptftr10", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxtr20", 23, 31
+{
+	XScale 0.80625
+	Patch "ptftr20", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxtr30", 23, 31
+{
+	XScale 0.80625
+	Patch "ptftr30", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxtr40", 23, 31
+{
+	XScale 0.80625
+	Patch "ptftr40", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxxdth0", 19, 31
+{
+	XScale 0.80625
+	Patch "ptfexpl0", 0, 0
+	Offset -4, -2
+}
+
+Graphic "psxxdth1", 25, 31
+{
+	XScale 0.80625
+	Patch "ptfexpl1", 0, 0
+	Offset -1, -2
+}
+
+Graphic "psxxdth2", 28, 31
+{
+	XScale 0.80625
+	Patch "ptfexpl2", 0, 0
+	Offset -1, -2
+}
+
+Graphic "psxxdth3", 28, 31
+{
+	XScale 0.80625
+	Patch "ptfexpl3", 0, 0
+	Offset -1, -2
+}
+
+Graphic "psxxdth4", 28, 31
+{
+	XScale 0.80625
+	Patch "ptfexpl4", 0, 0
+	Offset -1, -2
+}

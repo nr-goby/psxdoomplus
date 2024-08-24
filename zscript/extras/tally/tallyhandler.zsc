@@ -1,0 +1,48 @@
+extend class CEExtrasHandler
+{
+	TallyTracker tallyTracker;
+	TallyPainter tallyPainter;
+	ui bool shouldRenderOverlay;
+
+	void TallyWorldLoaded(WorldEvent e)
+	{
+		tallyTracker = TallyTracker.Get();
+		tallyTracker.UpdateMapCount();
+		
+		tallyPainter = new ("TallyPainter");
+		tallyPainter.tracker = tallyTracker;
+	}
+
+	void TallyWorldUnloaded(WorldEvent e)
+	{
+		tallyTracker.UpdateLevelStats();
+		tallyTracker.UpdateEpisodeCount(e.NextMap);
+		tallyTracker.UpdateParTime();
+		tallyTracker.UpdateMultiplayerStats();
+	}
+	
+	void TallyPlayerDied(PlayerEvent e)
+	{
+		tallyTracker.AddPlayerDeath(e.playerNumber);
+	}
+	
+	ui void TallyConsoleProcess(ConsoleEvent e)
+	{
+		if (e.Name == "ToggleTallyScreen")
+		{
+			shouldRenderOverlay = !shouldRenderOverlay;
+		}
+	}
+	
+	ui void TallyRenderOverlay (RenderEvent e)
+	{
+		if (shouldRenderOverlay)
+		{
+			tallyPainter.DrawStats();
+		}
+		else
+		{
+			tallyPainter.ClearOverlay();
+		}
+	}
+}

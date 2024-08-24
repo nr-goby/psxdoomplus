@@ -1,0 +1,170 @@
+class PsxDeadCacodemon : DeadCacodemon replaces DeadCacodemon
+{
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Dead cacodemon"
+		//$Sprite "DED6A0"
+		
+		+MOVEWITHSECTOR;
+	}
+
+	States
+	{
+		Spawn:
+			DED6 A -1;
+			Stop;
+	}
+}
+
+class PsxDeadDemon : DeadDemon replaces DeadDemon
+{
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Dead demon"
+		//$Sprite "DED5A0"
+		
+		+MOVEWITHSECTOR;
+	}
+	States
+	{
+		Spawn:
+			DED5 A -1;
+			Stop;
+	}
+}
+
+class PsxDeadDoomImp : DeadDoomImp replaces DeadDoomImp
+{
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Dead imp"
+		//$Sprite "DED4A0"
+		
+		+MOVEWITHSECTOR;
+	}
+	States
+	{
+	Spawn:
+		DED4 A -1;
+		Stop;
+	}
+}
+
+class PsxDeadMarine : DeadMarine replaces DeadMarine
+{
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Dead player"
+		//$Sprite "PLAYN0"
+		
+		+MOVEWITHSECTOR;
+	}
+
+	States
+	{
+		Spawn:
+			PLAY N -1;
+			Stop;
+	}
+}
+
+class PsxDeadShotgunGuy : DeadShotgunGuy replaces DeadShotgunGuy
+{
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Dead former sargeant"
+		//$Sprite "DED3A0"
+		
+		+MOVEWITHSECTOR;
+	}
+	States
+	{
+		Spawn:
+			DED3 A -1;
+			Stop;
+	}
+}
+
+class PsxDeadZombieMan : DeadZombieMan replaces DeadZombieMan
+{
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Dead former human"
+		//$Sprite "DED2A0"
+		
+		+MOVEWITHSECTOR;
+	}
+	States
+	{
+		Spawn:
+			DED2 A -1;
+			Stop;
+	}
+}
+
+class PsxGibbedMarine : GibbedMarine replaces GibbedMarine
+{
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Bloody mess 1"
+		//$Sprite "DED1A0"
+		
+		+MOVEWITHSECTOR;
+	}
+
+	States
+	{
+		Spawn:
+			DED1 A -1;
+			Stop;
+	}
+}
+
+class PsxGibbedMarineExtra : PsxGibbedMarine replaces GibbedMarineExtra
+{
+	Default
+	{
+		//$Title "Bloody mess 2"
+	}
+}
+
+class PsxDeadLostSoul : DeadLostSoul replaces DeadLostSoul
+{
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Dead lost soul"
+		//$Sprite "SKULK0"
+	}
+}

@@ -1,0 +1,354 @@
+//there's no way to infer the starting map, so it needs to be passed manually
+class PsxDoomIntros ui
+{
+	static void Doom(ScreenJobRunner runner)
+	{
+		IntroCutscenes.IntroScreen(runner, "MAP01");
+	}
+	
+	static void Doom2(ScreenJobRunner runner)
+	{
+		IntroCutscenes.IntroScreen(runner, "MAP31");
+	}
+	
+	static void Sigil(ScreenJobRunner runner)
+	{
+		IntroCutscenes.IntroScreen(runner, "SIG01");
+	}
+	
+	static void NRFTL(ScreenJobRunner runner)
+	{
+		IntroCutscenes.IntroScreen(runner, "NRV01");
+	}
+}
+
+//=========================================
+
+class IntroCutscenes ui
+{
+	static void Movie(ScreenJobRunner runner)
+	{
+		if (!mov_enabled) return;
+		runner.append(MoviePlayerJob.CreateWithSound("graphics/videos/movie.ivf",
+													"graphics/videos/movie.ogg",
+													0));
+	}
+	
+	static void IntroScreen(ScreenJobRunner runner, String nextMap)
+	{
+		if (isk_disabled) return;
+		
+		Map<string,PsxIntroScreen> introMap;
+		ReadLump("intrdefs", introMap);
+		
+		let next = nextMap.MakeLower();
+		if (!introMap.CheckKey(next)) return;
+		
+		let obj = new(CEConfig.Get().introJobProvider);
+		CEIntroJobProvider(obj).Append(runner, introMap.Get(next));
+	}
+	
+	static void ReadLump(String lumpname, out Map<string,PsxIntroScreen> introMap)
+	{
+		let lump = -1;
+		let content = "";
+		while (-1 != (lump = Wads.FindLump(lumpname, lump + 1)))
+		{
+			let content = Wads.ReadLump(lump);
+			Array<String> lines;
+			content.Split(lines, "\n");
+			
+			let i = -1;
+			while (++i < lines.Size())
+			{
+				let line = StringUtils.Clean(lines[i].MakeLower());
+				if (!line.Length() || line == "{" || line.Left(2) == "//") continue;
+				
+				if (line == "intro")
+				{
+					Array<String> properties;
+					while ("}" != (line = StringUtils.Clean(lines[++i]))) properties.Push(line);
+					MapIntros(properties, introMap);
+				}
+			}
+		}
+	}
+	
+	static void MapIntros(Array<String> properties, out Map<string,PsxIntroScreen> introMap)
+	{
+		let key = "";
+		let background = "";
+		let music = "";
+		let fontColor = "";
+		let titleBackground = "";
+		let titleMusic = "";
+		Array<string> titles;
+		Array<string> texts;
+				
+		foreach (prop : properties)
+		{
+			if (prop == "{" || prop.Left(2) == "//") continue;
+			
+			prop = prop.MakeLower();
+			let equal = prop.IndexOf("=");
+			if (equal == -1) continue;
+			
+			let propName = prop.Left(equal);
+			let propValue = prop.Mid(equal+1);
+			
+			if (propName == "map")
+			{
+				key = propValue;
+			}
+			else if (propName == "background")
+			{
+				background = propValue;
+			}
+			else if (propName == "music")
+			{
+				music = propValue;
+			}
+			else if (propName == "fontcolor")
+			{
+				fontColor = propValue;
+			}
+			else if (propName == "titlemusic")
+			{
+				titleMusic = propValue;
+			}
+			else if (propName == "titlepic")
+			{
+				titleBackground = propValue;
+			}
+			else if (propName == "titles")
+			{
+				propValue.Split(titles, ",");
+			}
+			else if (propName == "texts")
+			{
+				if (propValue == "")
+				{
+					texts.Push("");
+				}
+				else
+				{
+					propValue.Split(texts, ",");
+				}
+			}
+		}
+		
+		Array<PsxIntroPage> pages;
+		for (int i = 0; i < texts.Size(); i++)
+		{
+			let page = new("PsxIntroPage");
+			page.background = background;
+			page.fontColor = fontColor ? Font.FindFontColor(fontColor) : Font.CR_UNTRANSLATED;
+			page.music = CEMusicTracker.GetMusic(music);
+			page.text = texts[i];
+			if (titles.Size() >= texts.Size()) page.title = titles[i];
+			pages.Push(page);
+		}
+		
+		PsxIntroScreen introscr = new("PsxIntroScreen");
+		introscr.pages.Copy(pages);
+		introscr.titleBackground = titleBackground;
+		introscr.titleMusic = CEMusicTracker.GetMusic(titleMusic);
+		introMap.Insert(key.MakeLower(), introscr);
+	}
+}
+
+class CEIntroJobProvider ui
+{
+	virtual void Append(ScreenJobRunner runner, PsxIntroScreen def) { }
+}
+
+class PsxIntroJobProvider : CEIntroJobProvider
+{
+	override void Append(ScreenJobRunner runner, PsxIntroScreen def)
+	{
+		for (int i = 0; i < def.pages.Size(); i++)
+		{
+			let page = def.pages[i];
+			let flags = 0;
+			let music = page.music;
+			if (i == 0 && itt_enabled && def.titleBackground)
+			{
+				page.titlepic = def.titleBackground;
+				page.music = def.titleMusic;
+				runner.append(new("PsxShowTitlepicJob").Init(page));
+				flags = ScreenJob.fadein|ScreenJob.transition_crossfade;
+			}
+			page.music = music;
+			runner.append(new("PsxWriteIntroTextJob").Init(page, flags));
+			runner.append(new("PsxShowIntroTextJob").Init(page));
+		}
+	}
+}
+
+class PsxIntroScreen
+{
+	Array<PsxIntroPage> pages;
+	String titleMusic;
+	String titleBackground;
+}
+
+class PsxIntroPage
+{
+	String titlepic;
+	String background;
+	String title;
+	String text;
+	int fontColor;
+	String music;
+}
+
+class PsxShowTitlepicJob : PsxIntroJob
+{
+	ScreenJob Init(PsxIntroPage page)
+	{
+		return super.Init(page, fadein|transition_crossfade);
+	}
+
+	override void Start()
+	{
+		super.Start();
+		showTitle = True;
+	}
+}
+
+class PsxWriteIntroTextJob : PsxIntroJob
+{
+	int lineIndex;
+	int charIndex;
+	
+	override void OnTick()
+	{
+		super.OnTick();
+		if (ticks % 2) return;
+		if (lineIndex < lines.Size())
+		{
+			visibleLines[lineIndex] = visibleLines[lineIndex]..lines[lineIndex].Mid(charIndex, 1);
+			charIndex++;
+			if (charIndex > lines[lineIndex].CodePointCount() || lines[lineIndex] == "")
+			{
+				charIndex = 0;
+				lineIndex++;
+			}
+		}
+		else
+		{
+			Skip();
+		}
+	}
+}
+
+class PsxShowIntroTextJob : PsxIntroJob
+{
+	override void Start()
+	{
+		super.Start();
+		visibleLines.Copy(lines);
+	}
+	
+	override void OnTick()
+	{
+		super.OnTick();
+		if (ticks > waitTics) Skip();
+	}
+}
+
+class PsxIntroJob : SkippableScreenJob
+{
+	const TITLE_WIDTH = 274;
+	const TITLE_HEIGHT = 240;
+	const TEXT_WIDTH = 320;
+	const TEXT_HEIGHT = 240;
+	
+	const TITLE_CENTER_H = TITLE_WIDTH / 2;
+	const TEXT_CENTER_H = TEXT_WIDTH / 2;
+	
+	TextureID titlepic;
+	TextureID background;
+	Array<String> lines;
+	Array<String> visibleLines;
+	int fontColor;
+	int waitTics;
+	String music;
+	String title;
+	bool showTitle;
+	
+	ScreenJob Init(PsxIntroPage page, int flags = 0)
+	{
+		Super.Init(flags);
+		ReadPage(page);
+		return self;
+	}
+		
+	override void Draw(double smoothRatio)
+	{
+		super.Draw(smoothRatio);
+		if (showTitle)
+		{
+			screen.DrawTexture(titlepic,
+				true,
+				0,
+				0,
+				DTA_KeepRatio, true,
+				DTA_Fullscreen, true);
+		}
+		else
+		{
+			screen.DrawTexture(background,
+				true,
+				0,
+				0,
+				DTA_KeepRatio, true,
+				DTA_Fullscreen, true);
+			screen.DrawText(BigFont, 
+				fontColor, 
+				TITLE_CENTER_H  - (BigFont.StringWidth(title)/2),
+				30,
+				title,
+				DTA_VirtualWidth, TITLE_WIDTH,
+				DTA_VirtualHeight, TITLE_HEIGHT);
+		}
+		for (int i = 0; i < lines.Size(); i++)
+		{
+			screen.DrawText(SmallFont, 
+				fontColor, 
+				0,
+				55 + (SmallFont.GetHeight() * i),
+				visibleLines[i],
+				DTA_VirtualWidth, TEXT_WIDTH,
+				DTA_VirtualHeight, TEXT_HEIGHT);
+		}
+	}
+	
+	override void Start()
+	{
+		S_ChangeMusic(music, 0, true, true);
+		super.Start();
+	}
+
+	void Skip()
+	{
+		jobstate = skipped;
+		OnSkip();
+	}
+	
+	private void ReadPage(PsxIntroPage page)
+	{
+		background = TexMan.CheckForTexture(page.background);
+		titlepic = TexMan.CheckForTexture(page.titlepic);		
+		title = page.title;
+		fontColor = page.fontColor;
+		let text = StringTable.Localize(page.text);
+		text.Split(lines, "\n");
+		for (int i = 0; i < lines.Size(); i++)
+		{
+			visibleLines.Push("");
+		}
+		waitTics = TICRATE/2 * lines.Size();
+		music = page.music;
+	}
+}

@@ -1,0 +1,158 @@
+class CEConfig : StaticEventHandler
+{
+	string unlockCVar;
+	Array<string> unlockMenuTitles;
+	Array<string> unlockMenus;
+	bool hideBonusEpisode;
+	Array<string> skipStatsScreen;
+	Array<string> excludedMaps;
+	Map<TextureId,bool> noGibTextures;
+	Map<TextureId,bool> noBloodTextures;
+	bool isPwad;
+	int pixelAspectRatio;
+	
+	//pluggable implementations
+	class<MapNameDrawer> mnDrawer;
+	Array<ConfigurationPresetProvider> presetProviders;
+	class<CEStatisticsJobProvider> statisticsJobProvider;
+	class<CECastJobProvider> castJobProvider;
+	class<CEIntroJobProvider> introJobProvider;
+	class<CECutsceneJobProvider> cutsceneJobProvider;
+		
+	static clearscope CEConfig Get()
+	{
+		return CEConfig(Find("CEConfig"));
+	}
+	
+	override void OnRegister()
+	{
+		SetDefaults();
+		ReadLump();
+	}
+	
+	void SetDefaults()
+	{
+		let notex = TexMan.CheckForTexture("-");
+		noGibTextures.Insert(notex, true);
+		noBloodTextures.Insert(notex, true);
+		mnDrawer = "PsxMapNameDrawer";
+		presetProviders.Push(new("PsxPresetProvider"));
+		statisticsJobProvider = "PsxStatisticsJobProvider";
+		castJobProvider = "PsxCastJobProvider";
+		introJobProvider = "PsxIntroJobProvider";
+		cutsceneJobProvider = "PsxCutsceneJobProvider";
+	}
+	
+	void ReadLump()
+	{
+		let lump = -1;
+		while (-1 != (lump = Wads.FindLump("cedefs", lump + 1)))
+		{
+			let content = Wads.ReadLump(lump);
+			Array<String> lines;
+			content.Split(lines, "\n");
+			
+			let i = -1;
+			while (++i < lines.Size())
+			{
+				let line = StringUtils.Clean(lines[i].MakeLower());
+				if (!line.Length() || line.Left(2) == "//") continue;
+				
+				let equals = line.IndexOf("=");
+				if (equals == -1) continue;
+				
+				let key = line.Left(equals);
+				let value = line.Mid(equals+1);
+				if (key == "unlockcvar")
+				{
+					unlockCVar = value;
+				}
+				else if (key == "unlockmenutitles")
+				{
+					unlockMenuTitles.Clear();
+					value.Split(unlockMenuTitles, ",");
+				}
+				else if (key == "unlockmenus")
+				{
+					unlockMenus.Clear();
+					value.Split(unlockMenus, ",");
+				}
+				else if (key == "hidebonusepisode")
+				{
+					hideBonusEpisode = (value == "true");
+				}
+				else if (key == "skipstatsscreen")
+				{
+					value.Split(skipStatsScreen, ",");
+				}
+				else if (key == "excludedmaps")
+				{
+					value.Split(excludedMaps, ",");
+				}
+				else if (key == "nobloodtextures")
+				{
+					Array<string> texnames;
+					value.Split(texnames, ",");
+					foreach (texname : texnames)
+					{
+						let tex = TexMan.CheckForTexture(texname);
+						if (tex.IsValid()) noBloodTextures.Insert(tex, true);
+					}
+				}
+				else if (key == "nogibtextures")
+				{
+					Array<string> texnames;
+					value.Split(texnames, ",");
+					foreach (texname : texnames)
+					{
+						let tex = TexMan.CheckForTexture(texname);
+						if (tex.IsValid()) noGibTextures.Insert(tex, true);
+					}
+				}
+				else if (key == "ispwad")
+				{
+					isPwad = (value == "true");
+				}
+				else if (key == "mapnamedrawerclass")
+				{
+					mnDrawer = value;
+				}
+				else if (key == "addpresetprovider")
+				{
+					let pp = new(value);
+					presetProviders.Push(ConfigurationPresetProvider(pp));
+				}
+				else if (key == "statisticsjobprovider")
+				{
+					statisticsJobProvider = value;
+				}
+				else if (key == "castjobprovider")
+				{
+					castJobProvider = value;
+				}
+				else if (key == "introjobprovider")
+				{
+					introJobProvider = value;
+				}
+				else if (key == "cutscenejobprovider")
+				{
+					cutsceneJobProvider = value;
+				}
+				else if (key == "pixelaspectratio")
+				{
+					pixelAspectRatio = value.toInt();
+				}
+			}
+		}
+	}
+	
+	clearscope bool IsExcluded(string mapname)
+	{
+		return excludedMaps.Find(mapname.MakeLower()) != excludedMaps.Size();
+	}
+	
+	clearscope bool IsStatsScreenSkipped(string mapname)
+	{
+		return skipStatsScreen.Find(mapname.MakeLower()) != skipStatsScreen.Size();
+	}
+}

@@ -1,0 +1,447 @@
+class PsxInvulnerabilitySphere : PowerupGiver replaces InvulnerabilitySphere
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Invulnerability"
+		
+		+COUNTITEM
+		+INVENTORY.AUTOACTIVATE
+		+INVENTORY.ALWAYSPICKUP
+		+INVENTORY.BIGPOWERUP
+		Inventory.MaxAmount 0;
+		Powerup.Type "PsxPowerInvulnerable";
+		Powerup.Color "InverseMap";
+		Inventory.PickupMessage "$GOTINVUL";
+        
+	    +MOVEWITHSECTOR;
+		Tag "$CC_INVULNERABILITYSPHERE";
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            PINV ABCD 6 Bright;
+            Loop;
+        SmoothSpawn:
+            NVUL abcdefedcb 4 bright;
+	        loop;
+	}
+
+	virtual bool IsSmooth() { return smi_enabled; }
+
+	int lastTic;
+	override void Tick()
+    {
+        if (lastTic < tics && ce_actortics && !IsSmooth())
+            tics = int(Round(tics * PsxActor.SCALE_FRAME));
+        lastTic = tics;
+        super.Tick();
+    }
+}
+
+class PsxSoulsphere : Health replaces SoulSphere
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Soulsphere"
+		
+		+COUNTITEM;
+		+INVENTORY.AUTOACTIVATE;
+		+INVENTORY.ALWAYSPICKUP;
+		+INVENTORY.FANCYPICKUPSOUND;
+		Inventory.Amount 100;
+		Inventory.MaxAmount 200;
+		Inventory.PickupMessage "$GOTSUPER";
+		Inventory.PickupSound "misc/p_pkup";
+
+	    +MOVEWITHSECTOR;
+		Tag "$CC_SOULSPHERE";
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            SOUL ABCDCB 6 Bright;
+            Loop;
+        SmoothSpawn:
+            ZOUL abcdefgfedcb 4 bright;
+	        loop;
+	}
+
+	virtual bool IsSmooth() { return smi_enabled; }
+
+	int lastTic;
+	override void Tick()
+    {
+        if (lastTic < tics && ce_actortics && !IsSmooth())
+            tics = int(Round(tics * PsxActor.SCALE_FRAME));
+        lastTic = tics;
+        super.Tick();
+    }
+}
+
+class PsxMegasphere : CustomInventory replaces Megasphere
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Megasphere"
+		
+		+COUNTITEM
+		+INVENTORY.ALWAYSPICKUP
+		+INVENTORY.ISHEALTH
+		+INVENTORY.ISARMOR
+		Inventory.PickupMessage "$GOTMSPHERE";
+		Inventory.PickupSound "misc/p_pkup";
+
+	    +MOVEWITHSECTOR;
+		Tag "$CC_MEGASPHERE";
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(invoker.IsSmooth(), "SmoothSpawn");
+            MEGA ABCD 6 BRIGHT;
+            Loop;
+        SmoothSpawn:
+            SMEG abcdefgfedcb 4 bright;
+	        loop;
+        Pickup:
+            TNT1 A 0 A_GiveInventory("BlueArmorForMegasphere", 1);
+            TNT1 A 0 A_GiveInventory("MegasphereHealth", 1);
+            Stop;
+	}
+
+	virtual bool IsSmooth() { return smi_enabled; }
+
+	int lastTic;
+	override void Tick()
+    {
+        if (lastTic < tics && ce_actortics && !IsSmooth())
+            tics = int(Round(tics * PsxActor.SCALE_FRAME));
+        lastTic = tics;
+        super.Tick();
+    }
+}	
+
+class PsxBlurSphere : PowerupGiver replaces BlurSphere
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Invisibility"
+		
+		+COUNTITEM
+		+VISIBILITYPULSE
+		+ZDOOMTRANS
+		+INVENTORY.AUTOACTIVATE
+		+INVENTORY.ALWAYSPICKUP
+		+INVENTORY.BIGPOWERUP
+		Inventory.MaxAmount 0;
+		//Powerup.Type "PowerInvisibility";
+		RenderStyle "Translucent";
+		Inventory.PickupMessage "$GOTINVIS";
+        
+		-VISIBILITYPULSE;
+	    +MOVEWITHSECTOR;
+        Powerup.Type "PsxPowerInvisibility";
+		Tag "$CC_BLURSPHERE";
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            PINS ABCD 6 Bright;
+            Loop;
+        SmoothSpawn:
+            NVIS abcdefgfedcb 4 bright;
+	        loop;
+	}
+
+	virtual bool IsSmooth() { return smi_enabled; }
+
+	int lastTic;
+	override void Tick()
+    {
+        if (lastTic < tics && ce_actortics && !IsSmooth())
+            tics = int(Round(tics * PsxActor.SCALE_FRAME));
+        lastTic = tics;
+        super.Tick();
+    }
+}
+
+class PsxRadSuit : PowerupGiver replaces RadSuit
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Radiation suit"
+		
+		Height 46;
+		+INVENTORY.AUTOACTIVATE
+		+INVENTORY.ALWAYSPICKUP
+		Inventory.MaxAmount 0;
+		Inventory.PickupMessage "$GOTSUIT";
+		Powerup.Type "PowerIronFeet";
+        
+	    +MOVEWITHSECTOR;
+        Powerup.Color "00 ff 00", 0.25;
+		Tag "$CC_RADSUIT";
+	}
+
+	States
+	{
+        Spawn:
+            SUIT A -1 Bright;
+            Stop;
+	}
+}	
+
+class PsxInfrared : PowerupGiver replaces Infrared
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Lite Amplification goggles"
+		
+		+COUNTITEM
+		+INVENTORY.AUTOACTIVATE
+		+INVENTORY.ALWAYSPICKUP
+		Inventory.MaxAmount 0;
+		Powerup.Type "PsxPowerLightAmp";
+		Inventory.PickupMessage "$GOTVISOR";
+
+        +MOVEWITHSECTOR;
+		Tag "$CC_INFRARED";
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            PVIS A 6 Bright;
+            PVIS B 6;
+            Loop;
+        SmoothSpawn:
+            SVIS abcd 3 bright;
+            SVIS eeee 3;
+            loop;
+	}
+
+	virtual bool IsSmooth() { return smi_enabled; }
+
+	int lastTic;
+	override void Tick()
+    {
+        if (lastTic < tics && ce_actortics && !IsSmooth())
+            tics = int(Round(tics * PsxActor.SCALE_FRAME));
+        lastTic = tics;
+        super.Tick();
+    }
+}
+	
+class PsxAllmap : MapRevealer replaces AllMap
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Computer map"
+		
+		+COUNTITEM
+		+INVENTORY.FANCYPICKUPSOUND
+		+INVENTORY.ALWAYSPICKUP
+		Inventory.MaxAmount 0;
+		Inventory.PickupSound "misc/p_pkup";
+		Inventory.PickupMessage "$GOTMAP";
+
+        +MOVEWITHSECTOR;
+		Tag "$CC_ALLMAP";
+	}
+    
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            PMAP ABCDCB 6 Bright;
+            Loop;
+        SmoothSpawn:
+            CMAP abcdefgh 3 bright;
+	        loop;
+	}
+
+	virtual bool IsSmooth() { return smi_enabled; }
+
+	int lastTic;
+	override void Tick()
+    {
+        if (lastTic < tics && ce_actortics && !IsSmooth())
+            tics = int(Round(tics * PsxActor.SCALE_FRAME));
+        lastTic = tics;
+        super.Tick();
+    }
+}
+
+class PsxBerserk : CustomInventory replaces Berserk
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Berserk"
+		
+		+COUNTITEM
+		+INVENTORY.ALWAYSPICKUP
+		+INVENTORY.ISHEALTH
+		Inventory.PickupMessage "$GOTBERSERK";
+		Inventory.PickupSound "misc/p_pkup";
+
+        +MOVEWITHSECTOR;
+		Tag "$CC_BERSERK";
+	}
+
+	States
+	{
+        Spawn:
+            PSTR A -1 Bright;
+            Stop;
+        Pickup:
+            TNT1 A 0 A_GiveInventory("PsxPowerStrength");
+            TNT1 A 0 HealThing(100, 0);
+            TNT1 A 0 A_SelectWeapon("PsxFist");
+            Stop;
+	}
+}
+
+class PsxPowerInvisibility : PowerInvisibility replaces PowerInvisibility
+{
+	mixin VarsCache;
+	
+	override void InitEffect()
+	{
+		if (owner != null) owner.bNOSPRITESHADOW = true;
+		super.InitEffect();
+	}
+
+    override void DoEffect()
+    {
+        if (r_drawfuzz == 0)
+        {
+            Strength = 1;
+            Mode = "Additive";
+        }
+		else
+		{
+			Strength = Default.Strength;
+			Mode = "Fuzzy";
+		}
+        super.DoEffect();
+    }
+
+	override void EndEffect()
+	{
+		if (owner != null) owner.bNOSPRITESHADOW = false;
+		super.EndEffect();
+	}
+}
+
+class PsxPowerStrength : PowerStrength replaces PowerStrength
+{
+    Default
+    {
+        Powerup.Color "ff 00 00", 1.0;
+    }
+
+    override color GetBlend ()
+	{
+		//int cnt = 128 - (EffectTics>>3);
+
+        //inaccurate but has less abrupt fadeout
+        int cnt = 104 - (EffectTics>>3);
+        
+		if (cnt > 0)
+		{
+            //if (cnt >= 96)  cnt = 104;
+			return Color(BlendColor.a*cnt/256,
+				BlendColor.r, BlendColor.g, BlendColor.b);
+		}
+		return 0;
+	}
+}
+
+class PsxPowerLightAmp : PowerLightAmp replaces PowerLightAmp
+{
+	override void DoEffect ()
+	{
+		super.DoEffect();
+		let player = Owner.player;
+		if (player && !isBlinking())
+		{
+			bool invul = player.mo.FindInventory("PowerInvulnerable", true) && !cl_customizeinvulmap;
+			if (CVar.GetCVar("d64_gradients", player).GetBool() && !gl_enhanced_nightvision)
+			{
+				PPShader.SetUniform1f("Brightness", "infraredfactor", invul?1.0:1.66);
+			}
+			if (CVar.GetCVar("ce_psxbrightness", players[consoleplayer]).GetBool())
+			{
+				PPShader.SetUniform1i("PsxLight", "mode", 0);
+				PPShader.SetUniform1f("Brightness", "infraredfactor", invul?1.0:1.5);
+			}
+		}
+	}
+}
+
+class PsxPowerInvulnerable : PowerInvulnerable replaces PowerInvulnerable
+{
+	override void InitEffect()
+	{
+		super.InitEffect();
+	}
+	
+	override void DoEffect ()
+	{
+		super.DoEffect();
+		let player = Owner.player;
+		if (player && !isBlinking())
+		{
+			PPShader.SetUniform1f("Brightness", "strength", 1.0);
+			PPShader.SetUniform1i("PsxLight", "mode", 0);
+		}
+	}
+}

@@ -1,0 +1,28 @@
+Graphic "TALLYBKG", 560, 240
+{
+	Offset 143, 0
+    WorldPanning
+	Patch "PSXINTER", -104, 0 {flipx}
+	Patch "PSXINTER", 152, 0
+	Patch "PSXINTER", 408, 0 { flipx }
+}
+
+Graphic "CASTBG", 560, 240
+{
+	Offset 143, 0
+    WorldPanning
+	//XScale 0.85625
+	Patch "DEMONW", 0, 0
+	//Patch "CAST", 187, 21
+}
+
+Graphic "CASTBG2", 560, 240
+{
+	Offset 143, 0
+    WorldPanning
+	//XScale 0.85625
+	Patch "PSXINTER", -104, 0 {flipx}
+	Patch "PSXINTER", 152, 0
+	Patch "PSXINTER", 408, 0 { flipx }
+	//Patch "CAST", 187, 21
+}

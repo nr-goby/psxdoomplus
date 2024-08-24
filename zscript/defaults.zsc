@@ -1,0 +1,356 @@
+extend class CEEventHandler
+{
+	ui void ResetDefaultsConsoleProcess(ConsoleEvent e)
+	{
+		String act;
+		bool close;
+		if (e.name.Left(12) == 'ResetDefault')
+		{
+			Array<String> parts;
+			e.name.Split(parts, "::");
+			act = parts[0];
+			close = parts[1] == "1";
+		}
+		
+		if (act == 'ResetDefaults')
+		{
+			foreach (p : CEConfig.Get().presetProviders)
+			{
+				p.ResetSettings();
+			}
+			CEPassword.ResetCVars();
+			Console.printf(StringTable.Localize("$CERESET_DEFAULT"));
+		}
+		else if (act == 'ResetDefaultsHigh')
+		{
+			foreach (p : CEConfig.Get().presetProviders)
+			{
+				p.ResetSettings();
+				p.ApplyHighSettings();
+			}
+			CEPassword.ResetCVars();
+			Console.printf(StringTable.Localize("$CERESET_EXAGGERATED"));
+		}
+		else if (act == 'ResetDefaultsMid')
+		{
+			foreach (p : CEConfig.Get().presetProviders)
+			{
+				p.ResetSettings();
+				p.ApplyMidSettings();
+			}
+			CEPassword.ResetCVars();
+			Console.printf(StringTable.Localize("$CERESET_ENHANCED"));
+		}
+		else if (act == 'ResetDefaultsLow')
+		{
+			foreach (p : CEConfig.Get().presetProviders)
+			{
+				p.ResetSettings();
+				p.ApplyLowSettings();
+			}
+			CEPassword.ResetCVars();
+			Console.printf(StringTable.Localize("$CERESET_VANILLA"));
+		}
+		else if (act == 'ResetDefaultProgress')
+		{
+			ResetProgress();
+			Console.printf(StringTable.Localize("$CERESET_LEVELS"));
+		}
+		if (close)
+		{
+			let cm = Menu.GetCurrentMenu();
+			if (cm.mParentMenu) cm = cm.mParentMenu;
+			cm.Close();
+		}
+	}
+	
+	ui void SetHighSettings()
+	{
+		foreach (p : CEConfig.Get().presetProviders) p.ApplyHighSettings();
+	}
+	
+	ui void SetMidSettings()
+	{
+		foreach (p : CEConfig.Get().presetProviders) p.ApplyMidSettings();
+	}
+	
+	ui void SetLowSettings()
+	{ 
+		foreach (p : CEConfig.Get().presetProviders) p.ApplyLowSettings();
+	}
+	
+	private ui void ResetBaseDefaults()
+	{
+		foreach (p : CEConfig.Get().presetProviders) p.ResetSettings();
+		CEPassword.ResetCVars();
+	}
+	
+	ui void ResetProgress()
+	{
+		let cvarname = CEConfig.Get().unlockCVar;
+		for (int i = 0; i < 35; i++)
+		{
+			CVar levelState = CVar.FindCVar(String.Format("%s_%i",cvarname,i));
+			levelState.ResetToDefault();
+		}
+	}
+}
+
+class PsxPresetProvider : ConfigurationPresetProvider
+{
+	override void ApplyHighSettings()
+	{
+		CVar.FindCVar("hq_enabled").SetBool(true);
+		CVar.FindCVar("hq_torches").SetBool(true);
+		CVar.FindCVar("itt_enabled").SetBool(true);
+		CVar.FindCVar("sma_enabled").SetBool(true);
+		CVar.FindCVar("mus_trackname").SetBool(true);
+		CVar.FindCVar("mus_dynamic").SetBool(true);
+		CVar.FindCVar("hq_soul").SetBool(true);
+		CVar.FindCVar("hq_firesky").SetBool(true);
+		CVar.FindCVar("gltoggle").SetInt(1);
+		CVar.FindCVar("rtx_enabled").SetInt(1);
+		CVar.FindCVar("hud_berserk").SetInt(1);
+		CVar.FindCVar("ce_altssg").SetBool(true);
+		CVar.FindCVar("ce_skipcopyright").SetBool(true);
+	}
+	
+	override void ApplyMidSettings()
+	{
+		CVar.FindCVar("DI_DamageIndicators").SetBool(false);
+		CVar.FindCVar("vil_enabled").SetInt(0);
+		CVar.FindCVar("spd_enabled").SetInt(0);
+		CVar.FindCVar("isk_disabled").SetInt(1);
+		CVar.FindCVar("oip_enabled").SetBool(true);
+		CVar.FindCVar("kch_enabled").SetInt(0);
+		CVar.FindCVar("ois_enabled").SetBool(true);
+		CVar.FindCVar("smm_enabled").SetBool(false);
+
+		CVar.FindCVar("ce_pcspeed").SetBool(false);
+		CVar.FindCVar("ce_gibrules").SetBool(false);
+		CVar.FindCVar("ce_ssgtics").SetBool(false);
+		CVar.FindCVar("slw_enabled").SetInt(1);
+		
+		CVar.FindCVar("d64_gradients").SetBool(false);
+		CVar.FindCVar("d64_additiveblend").SetBool(false);
+		CVar.FindCVar("d64_enterfade").SetBool(false);
+		CVar.FindCVar("d64_exitfade").SetBool(false);
+		CVar.FindCVar("d64_wipeeffect").SetBool(false);
+	}
+	
+	override void ApplyLowSettings()
+	{
+		CVar.FindCVar("trc_enabled").SetInt(0);
+		CVar.FindCVar("trw_enabled").SetInt(0);
+		CVar.FindCVar("zp_enabled").SetInt(0);
+		CVar.FindCVar("hq_enabled").SetBool(false);
+		CVar.FindCVar("hq_torches").SetBool(false);
+		CVar.FindCVar("slw_enabled").SetInt(1);
+		CVar.FindCVar("kch_enabled").SetInt(0);
+		CVar.FindCVar("cx_fs_enabled").SetInt(0);
+		CVar.FindCVar("vil_enabled").SetInt(0);
+		CVar.FindCVar("spd_enabled").SetInt(0);
+		CVar.FindCVar("rtx_enabled").SetInt(0);
+		CVar.FindCVar("isk_disabled").SetInt(1);
+		CVar.FindCVar("smn_enabled").SetInt(0);
+		CVar.FindCVar("ios_enabled").SetInt(0);
+				
+		CVar.FindCVar("hq_firesky").SetBool(false);
+		CVar.FindCVar("alt_skybox").SetBool(false);
+		CVar.FindCVar("alt_skies").SetBool(false);
+		
+		CVar.FindCVar("smw_enabled").SetInt(0);
+		CVar.FindCVar("catoggle").SetInt(0);
+		CVar.FindCVar("smp_enabled").SetInt(0);
+		CVar.FindCVar("smm_enabled").SetInt(0);
+		CVar.FindCVar("smd_enabled").SetInt(0);
+		CVar.FindCVar("smi_enabled").SetInt(0);
+		CVar.FindCVar("retoggle").SetBool(false);
+				
+		CVar.FindCVar("cx_nashgore_bloodtype").SetInt(2);
+		CVar.FindCVar("cx_nashgore_spriteblood").SetBool(false);
+		CVar.FindCVar("cx_nashgore_bloodspurt").SetBool(false);
+		CVar.FindCVar("cx_nashgore_gibtype").SetInt(2);
+		CVar.FindCVar("cx_nashgore_corpseblood").SetBool(false);
+		CVar.FindCVar("cx_nashgore_footprints").SetBool(false);
+		CVar.FindCVar("cx_nashgore_deathflip").SetBool(false);
+		CVar.FindCVar("cx_nashgore_squish").SetBool(false);
+		CVar.FindCVar("cx_nashgore_icedeath").SetBool(false);
+		CVar.FindCVar("cx_nashgore_splat").SetBool(false);
+		CVar.FindCVar("mus_dynamic").SetBool(false);
+		CVar.FindCVar("DI_DamageIndicators").SetBool(false);
+		
+		CVar.FindCVar("amb_enabled").SetBool(false);
+		CVar.FindCVar("cx_fw_enabled").SetBool(false);
+		CVar.FindCVar("cx_mfs_enabled").SetBool(false);
+		
+		CVar.FindCVar("ce_bandedswlight").SetBool(true);
+		CVar.FindCVar("ce_aspect").SetBool(true);
+
+		CVar.FindCVar("ce_pcspeed").SetBool(false);
+		CVar.FindCVar("ce_gibrules").SetBool(false);
+		CVar.FindCVar("ce_ssgtics").SetBool(false);
+		CVar.FindCVar("ce_playertics").SetInt(0);
+		
+		CVar.FindCVar("d64_gradients").SetBool(false);
+		CVar.FindCVar("d64_additiveblend").SetBool(false);
+		CVar.FindCVar("d64_enterfade").SetBool(false);
+		CVar.FindCVar("d64_exitfade").SetBool(false);
+		CVar.FindCVar("d64_wipeeffect").SetBool(false);
+		CVar.FindCVar("oip_enabled").SetBool(true);
+		CVar.FindCVar("psw_enabled").SetBool(true);
+		
+		CVar.FindCVar("hud_mugshot_original").SetBool(true);
+		CVar.FindCVar("hud_weapons_original").SetBool(true);
+		CVar.FindCVar("hud_messagestyle").SetInt(3);
+		
+		CVar.FindCVar("oen_enabled").SetBool(true);
+		CVar.FindCVar("hpt_enabled").SetBool(true);
+		CVar.FindCVar("stl_enabled").SetBool(true);
+		CVar.FindCVar("ois_enabled").SetBool(true);
+		CVar.FindCVar("transsouls").SetFloat(1.0);
+		
+		CVar.FindCVar("mov_enabled").SetBool(true);
+		CVar.FindCVar("ce_psxbrightness").SetBool(true);
+		
+		CVar.FindCVar("gl_lights").SetBool(false);
+		CVar.FindCVar("screenblocks").SetInt(10);
+		CVar.FindCVar("cl_maxdecals").SetInt(0);
+		CVar.FindCVar("con_notifylines").SetInt(1);
+		CVar.FindCVar("r_actorspriteshadow").SetInt(0);
+		CVar.FindCVar("r_vanillatrans").SetInt(1);
+		CVar.FindCVar("cl_showsecretmessage").SetBool(false);
+		CVar.FindCVar("show_obituaries").SetBool(false);
+		CVar.FindCVar("freelook").SetBool(false);
+	}
+	
+	override void ResetSettings()
+	{
+		CVar.FindCVar("amb_enabled").ResetToDefault();
+		CVar.FindCVar("amb_volume_mul").ResetToDefault();
+		CVar.FindCVar("cx_fw_enabled").ResetToDefault();
+		CVar.FindCVar("cx_fw_volume_mul").ResetToDefault();
+		CVar.FindCVar("cx_fs_enabled").ResetToDefault();
+		CVar.FindCVar("cx_fs_volume_mul").ResetToDefault();
+		CVar.FindCVar("cx_fs_delay_mul").ResetToDefault();
+		CVar.FindCVar("hud_legacy").ResetToDefault();
+		CVar.FindCVar("hud_messagestyle").ResetToDefault();
+		CVar.FindCVar("hud_berserk").ResetToDefault();
+		CVar.FindCVar("hud_color").ResetToDefault();
+		CVar.FindCVar("hud_alpha").ResetToDefault();
+		CVar.FindCVar("hud_mugshot_original").ResetToDefault();
+		CVar.FindCVar("hud_weapons_original").ResetToDefault();
+		CVar.FindCVar("kch_enabled").ResetToDefault();
+		CVar.FindCVar("cx_mfs_enabled").ResetToDefault();
+		CVar.FindCVar("cx_fs_volume_mul").ResetToDefault();
+		CVar.FindCVar("resurrect_life").ResetToDefault();
+		CVar.FindCVar("resurrect_seconds").ResetToDefault();
+		CVar.FindCVar("oen_enabled").ResetToDefault();
+		CVar.FindCVar("oip_enabled").ResetToDefault();
+		CVar.FindCVar("hpt_enabled").ResetToDefault();
+		CVar.FindCVar("stl_enabled").ResetToDefault();
+		CVar.FindCVar("ois_enabled").ResetToDefault();
+		CVar.FindCVar("psw_enabled").ResetToDefault();
+		CVar.FindCVar("transsouls").ResetToDefault();
+		CVar.FindCVar("smn_enabled").ResetToDefault();
+		CVar.FindCVar("sma_enabled").ResetToDefault();
+		CVar.FindCVar("rep_enabled").ResetToDefault();
+		CVar.FindCVar("vil_enabled").ResetToDefault();
+		CVar.FindCVar("spd_enabled").ResetToDefault();
+		CVar.FindCVar("wol_enabled").ResetToDefault();
+		CVar.FindCVar("rtx_enabled").ResetToDefault();
+		CVar.FindCVar("rtw_enabled").ResetToDefault();
+		CVar.FindCVar("ios_enabled").ResetToDefault();
+		CVar.FindCVar("isk_disabled").ResetToDefault();
+		CVar.FindCVar("itt_enabled").ResetToDefault();
+		CVar.FindCVar("slw_enabled").ResetToDefault();
+		CVar.FindCVar("smw_enabled").ResetToDefault();
+		CVar.FindCVar("smp_enabled").ResetToDefault();
+		CVar.FindCVar("smm_enabled").ResetToDefault();
+		CVar.FindCVar("smd_enabled").ResetToDefault();
+		CVar.FindCVar("smi_enabled").ResetToDefault();
+		CVar.FindCVar("catoggle").ResetToDefault();
+		CVar.FindCVar("gltoggle").ResetToDefault();
+		CVar.FindCVar("retoggle").ResetToDefault();
+		CVar.FindCVar("restrength").ResetToDefault();
+		CVar.FindCVar("trc_enabled").ResetToDefault();
+		CVar.FindCVar("trw_enabled").ResetToDefault();
+		CVar.FindCVar("zp_enabled").ResetToDefault();
+		CVar.FindCVar("hq_enabled").ResetToDefault();
+		CVar.FindCVar("hq_torches").ResetToDefault();
+		CVar.FindCVar("mus_original").ResetToDefault();
+		CVar.FindCVar("mus_dynamic").ResetToDefault();
+		CVar.FindCVar("mus_trackname").ResetToDefault();
+		CVar.FindCVar("mus_minlength").ResetToDefault();
+		CVar.FindCVar("cop_enabled").ResetToDefault();
+		CVar.FindCVar("cx_nashgore_maxgore").ResetToDefault();
+		CVar.FindCVar("cx_nashgore_bloodtype").ResetToDefault();
+		CVar.FindCVar("cx_nashgore_bloodamount").ResetToDefault();
+		CVar.FindCVar("cx_nashgore_spriteblood").ResetToDefault();
+		CVar.FindCVar("cx_nashgore_bloodspurt").ResetToDefault();
+		CVar.FindCVar("cx_nashgore_gibtype").ResetToDefault();
+		CVar.FindCVar("cx_nashgore_gibamount").ResetToDefault();
+		CVar.FindCVar("cx_nashgore_corpseblood").ResetToDefault();
+		CVar.FindCVar("cx_nashgore_footprints").ResetToDefault();
+		CVar.FindCVar("cx_nashgore_deathflip").ResetToDefault();
+		CVar.FindCVar("cx_nashgore_squish").ResetToDefault();
+		CVar.FindCVar("cx_nashgore_icedeath").ResetToDefault();
+		CVar.FindCVar("cx_nashgore_splat").ResetToDefault();
+		CVar.FindCVar("DI_DamageIndicators").ResetToDefault();
+		CVar.FindCVar("DI_DIScale").ResetToDefault();
+		CVar.FindCVar("DI_DIAlpha").ResetToDefault();
+		CVar.FindCVar("d64_gradients").ResetToDefault();
+		CVar.FindCVar("d64_doublepasscolor").ResetToDefault();
+		CVar.FindCVar("d64_additiveblend").ResetToDefault();
+		CVar.FindCVar("ce_bandedswlight").ResetToDefault();
+		CVar.FindCVar("d64_enterfade").ResetToDefault();
+		CVar.FindCVar("d64_exitfade").ResetToDefault();
+		CVar.FindCVar("d64_wipeeffect").ResetToDefault();
+		CVar.FindCVar("alt_skybox").ResetToDefault();
+		CVar.FindCVar("alt_skies").ResetToDefault();
+		CVar.FindCVar("hq_firesky").ResetToDefault();
+		CVar.FindCVar("hq_soul").ResetToDefault();
+		CVar.FindCVar("ce_skipcopyright").ResetToDefault();
+		CVar.FindCVar("ce_pcspeed").ResetToDefault();
+		CVar.FindCVar("ce_actortics").ResetToDefault();
+		CVar.FindCVar("ce_weapontics").ResetToDefault();
+		CVar.FindCVar("ce_playertics").ResetToDefault();
+		CVar.FindCVar("ce_gibrules").ResetToDefault();
+		CVar.FindCVar("ce_actorthrust").ResetToDefault();
+		CVar.FindCVar("ce_ssgtics").ResetToDefault();
+		CVar.FindCVar("ce_brightness").ResetToDefault();
+		CVar.FindCVar("ce_psxbrightness").ResetToDefault();
+		CVar.FindCVar("ce_particlelimit").ResetToDefault();
+		CVar.FindCVar("ce_altssg").ResetToDefault();
+		CVar.FindCVar("ce_lostsoullimit").ResetToDefault();
+		CVar.FindCVar("ce_nightmarestyle").ResetToDefault();
+		CVar.FindCVar("ce_nightmarecolor").ResetToDefault();
+		CVar.FindCVar("ce_filter").ResetToDefault();
+		CVar.FindCVar("ce_aspect").ResetToDefault();
+		CVar.FindCVar("cx_ve_lowres_enabled").ResetToDefault();
+		CVar.FindCVar("mov_enabled").ResetToDefault();
+		CVar.FindCVar("gl_lights").ResetToDefault();
+		CVar.FindCVar("cl_showsecretmessage").ResetToDefault();
+		CVar.FindCVar("show_obituaries").ResetToDefault();
+		CVar.FindCVar("compat_limitpain").ResetToDefault();
+		CVar.FindCVar("compat_explode1").ResetToDefault();
+		CVar.FindCVar("screenblocks").ResetToDefault();
+		CVar.FindCVar("cl_maxdecals").ResetToDefault();
+		CVar.FindCVar("con_notifylines").ResetToDefault();
+		CVar.FindCVar("r_actorspriteshadow").ResetToDefault();
+		CVar.FindCVar("r_vanillatrans").ResetToDefault();
+		CVar.FindCVar("hud_aspectscale").ResetToDefault();
+		CVar.FindCVar("gl_texture_filter").ResetToDefault();
+		CVar.FindCVar("unl_episodes_original").ResetToDefault();
+		CVar.FindCVar("unl_skills_original").ResetToDefault();
+		CVar.FindCVar("freelook").ResetToDefault();
+	}
+}
+
+class ConfigurationPresetProvider
+{
+	virtual void ApplyHighSettings() { }
+	virtual void ApplyMidSettings() { }
+	virtual void ApplyLowSettings() { }
+	virtual void ResetSettings() { }
+}

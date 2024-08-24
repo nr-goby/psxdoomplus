@@ -1,0 +1,97 @@
+class PsxHealthBonus : Health replaces HealthBonus
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Health bonus"
+		
+		+COUNTITEM
+		+INVENTORY.ALWAYSPICKUP
+		//Inventory.Amount 1;
+		Inventory.MaxAmount 200;
+		Inventory.PickupMessage "$GOTHTHBONUS";
+
+        Inventory.Amount 2;
+	    +MOVEWITHSECTOR;
+		Tag "$CC_HEALTHBONUS";
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            BON1 ABCDCB 6;
+            Loop;
+        SmoothSpawn:
+            bonu abcdefgfedcb 3;
+	        loop;
+	}
+
+	virtual bool IsSmooth() { return smi_enabled; }
+
+	int lastTic;
+	override void Tick()
+    {
+        if (lastTic < tics && ce_actortics)
+            tics = int(Round(tics * PsxActor.SCALE_FRAME));
+        lastTic = tics;
+        super.Tick();
+    }
+}
+	
+class PsxStimpack : Health replaces Stimpack
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Stimpack"
+		
+		Inventory.Amount 10;
+		Inventory.PickupMessage "$GOTSTIM";
+        
+	    +MOVEWITHSECTOR;
+		Tag "$CC_STIMPACK";
+	}
+
+	States
+	{
+        Spawn:
+            STIM A -1;
+            Stop;
+	}
+}
+
+class PsxMedikit : Health replaces Medikit
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Medikit"
+		
+		Inventory.Amount 25;
+		Inventory.PickupMessage "$GOTMEDIKIT";
+		Health.LowMessage 25, "$GOTMEDINEED";
+        
+	    +MOVEWITHSECTOR;
+		Tag "$CC_MEDIKIT";
+	}
+
+	States
+	{
+        Spawn:
+            MEDI A -1;
+            Stop;
+	}
+}

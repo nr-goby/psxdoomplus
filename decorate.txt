@@ -1,0 +1,14 @@
+#include "decorate/ketchup.dec"
+
+#include "decorate/splashes.dec"
+
+#include "decorate/particles/base.dec"
+#include "decorate/particles/extra.dec"
+#include "decorate/particles/flares.dec"
+#include "decorate/particles/torches.dec"
+#include "decorate/particles/beautiful.dec"
+#include "decorate/particles/weaponprojectiles.dec"
+#include "decorate/particles/monsterprojectiles.dec"
+#include "decorate/particles/decorations.dec"
+#include "decorate/particles/hqmonstereffects.dec"
+#include "decorate/particles/hqflares.dec"

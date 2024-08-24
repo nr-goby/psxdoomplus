@@ -1,0 +1,6 @@
+#include "gldefs/shaders.gl"
+#include "gldefs/firesky.gl"
+#include "gldefs/lights.gl"
+#include "gldefs/skyboxes.gl"
+#include "gldefs/lighting.gl"
+#include "gldefs/particles.gl"

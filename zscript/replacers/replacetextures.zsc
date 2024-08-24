@@ -1,0 +1,83 @@
+class TextureReplacerPostProcessor : LevelPostProcessor
+{
+	void Apply(Name checksum, String mapname)
+	{
+		if (CEConfig.Get().isPwad) return;
+		mapname = mapname.MakeLower();
+		if (mapname == "map23") {
+			//tower of babel
+			ReplaceTextures(rtx_enabled, "GORE07","SP_DUDE6");
+		} else if (mapname == "lost01") {
+			//forsaken keep
+			ReplaceTextures(rtx_enabled,"SKIN04","SKSPINE1");
+			ReplaceTextures(rtx_enabled,"SW1NEW57","SW1SKIN");
+			ReplaceTextures(rtx_enabled,"SW1NEW34","WOODGARG");
+		} else if (mapname == "lost62") {
+			//warrens
+			ReplaceTextures(rtx_enabled, "SKIN04","SKSPINE1");
+			ReplaceTextures(rtx_enabled, "SW1NEW57","SW1SKIN");
+			ReplaceTextures(rtx_enabled, "SW1NEW34","WOODGARG");
+		} else if (mapname == "lost06") {
+			//dis
+			ReplaceTextures(rtx_enabled, "SKIN06","SKINTEK2");
+			ReplaceTextures(rtx_enabled, "SKIN02","SKINTEK2");
+			ReplaceTextures(rtx_enabled, "SKIN01","TEKWALL2");
+			ReplaceTextures(rtx_enabled, "SKIN03","TEKWALL2");
+		} else if (mapname == "lost03") {
+			//they will repent
+			ReplaceTextures(rtx_enabled, "ROCK20","SKULWAL3");
+		} else if (mapname == "lost05") {
+			//and hell followed
+			ReplaceTextures(rtx_enabled, "COMP08","SP_FACE1");
+		} else if (mapname == "lost61c") {
+			//icon of sin
+			ReplaceTextures(rtx_enabled, "SKIN05","DBRAIN1");
+			level.sides[33].SetTextureXOffset(Side.mid, 0);
+		} else if (mapname == "lost66") {
+			//the castle
+			ReplaceTextures(rtw_enabled, "BRONZE05","ZZWOLF9");
+			ReplaceTextures(rtw_enabled, "64DOOR01","ZDOORF1");
+			ReplaceTextures(rtw_enabled, "MARBLE04","ZZWOLF1");
+			ReplaceTextures(rtw_enabled, "MARBLE06","MARBLE03");
+			ReplaceTextures(rtw_enabled, "MARBLE09","SUPPORT2");
+			ReplaceTextures(rtw_enabled, "FACE01","ZZWOLF3");
+			ReplaceTextures(rtw_enabled, "ROK02","FLAT5_4");
+			ReplaceTextures(rtw_enabled, "ROK08","FLAT1");
+			ReplaceTextures(rtw_enabled, "MARB01","FLAT1");
+			ReplaceTextures(rtw_enabled, "ROCK20","ZZWOLF1");
+			ReplaceTextures(rtw_enabled, "64DOOR07","ZZWOLF5");
+			ReplaceTextures(rtw_enabled, "WOOD07","ZZWOLF5");
+			ReplaceTextures(rtw_enabled, "WOOD03","ZZWOLF5");
+			ReplaceTextures(rtw_enabled, "64DOOR08","ZZWOLF5");
+			ReplaceTextures(rtw_enabled, "WALL06","ZZWOLF5");
+			ReplaceTextures(rtw_enabled, "WALL13","ZZWOLF5");
+			ReplaceTextures(rtw_enabled, "BOOKS01","ZZWOLF5");
+			ReplaceTextures(rtw_enabled, "WALL05","ZZWOLF6");
+			ReplaceTextures(rtw_enabled, "MARBLE05","ZZWOLF10");		
+			ReplaceTextures(rtw_enabled, "DOOR06","ZELDOOR");
+			ReplaceTextures(rtw_enabled, "FACE02","ZZWOLF4");
+			ReplaceTextures(rtw_enabled, "FACE03","ZZWOLF4");
+			ReplaceTextures(rtw_enabled, "GORE07","SUPPORT2");
+		} else if (mapname == "lost67") {
+			ReplaceTextures(rtw_enabled, "MARBLE04","ZZWOLF1");
+			ReplaceTextures(rtw_enabled, "MARBLE06","ZZWOLF1");
+			ReplaceTextures(rtw_enabled, "STONE02","ZZWOLF11");
+			ReplaceTextures(rtw_enabled, "MARB01","FLOOR0_3");
+			ReplaceTextures(rtw_enabled, "64DOOR01","ZDOORF1");
+			ReplaceTextures(rtw_enabled, "64DOOR07","ZZWOLF1");
+			ReplaceTextures(rtw_enabled, "64DOOR08","ZZWOLF1");
+			ReplaceTextures(rtw_enabled, "METX03","FLOOR0_3");
+			ReplaceTextures(rtw_enabled, "METAL04","ZZWOLF12");
+			ReplaceTextures(rtw_enabled, "STONE03","ZZWOLF13");
+			ReplaceTextures(rtw_enabled, "FACE01","ZZWOLF2");
+			ReplaceTextures(rtw_enabled, "TILE08","FLOOR0_3");
+			ReplaceTextures(rtw_enabled, "MARBLE11","SUPPORT2");
+			ReplaceTextures(rtw_enabled, "SW1NEW31","SW2RUST");
+		}
+	}
+
+	void ReplaceTextures(bool cvar, String from, String to)
+	{
+		if (cvar) level.ReplaceTextures(from, to, 0);
+	}
+}

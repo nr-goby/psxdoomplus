@@ -1,0 +1,102 @@
+class GradientPostProcessor : LevelPostProcessor
+{
+	void Apply(Name checksum, String mapname)
+	{
+		let enabled = CVar.GetCVar("d64_gradients", players[consoleplayer]).GetBool();
+		if (!enabled || CEConfig.Get().IsExcluded(mapname)) return;
+				
+		Sector sector;
+		for (int i = 0; i < level.sectors.size(); i++)
+		{
+			sector = level.sectors[i];
+			
+			Color lc = sector.colormap.lightcolor;
+			Color adj;
+			Color plane;
+
+			lc = ColorUtils.AdjustColor(lc, sector.GetLightLevel());
+			lc = ColorUtils.AdjustHSV(lc, 1.0, 1.15, 0.65);
+			adj = ColorUtils.AdjustHSV(lc, 1.0, 1.75, 0.3);
+			plane = ColorUtils.AdjustHSV(lc, 1.0, 1.35, 0.65);
+			
+			Color walltop;
+			Color wallbottom;
+			Color floor;
+			Color ceiling;
+			Color sprites;
+			
+			let darkSky = TexMan.GetName(level.skytexture1) == "SKY05";
+			let ceiltex = TexMan.GetName(sector.GetTexture(Sector.ceiling));
+			if ((ceiltex == "F_SKY1" && !darkSky) || 
+				ceiltex == "FLOOR1_7" || ceiltex == "GRATE" || ceiltex == "TLITE6_4" || 
+				ceiltex == "GRNLITE1" || ceiltex == "LIGHT01" || ceiltex == "LIGHT02" || 
+				ceiltex == "LIGHT03" || ceiltex == "LIGHT04" || ceiltex == "LIGHT05" || 
+				ceiltex == "LIGHT06" || ceiltex == "TLITE6_5" || ceiltex == "TLITE6_6")
+			{
+				floor = plane;
+				ceiling = lc;
+				walltop = lc;
+				wallbottom = adj;
+				sprites = lc;
+			}
+			else
+			{
+				floor = lc;
+				ceiling = plane;
+				walltop = adj;
+				wallbottom = lc;
+				sprites = lc;
+			}
+			String floortex = TexMan.GetName(sector.GetTexture(Sector.floor));
+			if (floortex == "LAVA01" || floortex == "LAVA02" || floortex == "LAVA03" || floortex == "LAVA04" /*||
+				floortex == "CSLIME01" || floortex == "CSLIME02" || floortex == "CSLIME03" || floortex == "CSLIME04" ||
+				floortex == "BSLIME01" || floortex == "BSLIME02" || floortex == "BSLIME03" || floortex == "BSLIME04" ||
+				floortex == "SLIME01" || floortex == "SLIME02" || floortex == "SLIME03" || floortex == "WATER01" ||
+				floortex == "WATER02" || floortex == "WATER03" || floortex == "WATER04" || floortex == "BLOOD1" ||
+				floortex == "BLOOD2" || floortex == "BLOOD3"*/)
+			{
+				floor = Color(255, 255, 255, 255);
+			}
+		
+			let backend = CVar.GetCVar("vid_preferbackend", players[consoleplayer]);
+			let gles = backend && backend.GetInt() >= 2;
+			
+			if (gles) //hack for GLES users, since the custom shader is disabled
+			{
+				let weight = sector.getLightLevel();
+				let brightness = 2.0; //equates to default environmental brightness
+				
+				floor = ColorUtils.AdjustColor(floor, weight);
+				ceiling = ColorUtils.AdjustColor(ceiling, weight);
+				walltop = ColorUtils.AdjustColor(walltop, weight);
+				wallbottom = ColorUtils.AdjustColor(wallbottom, weight);
+				sprites = ColorUtils.AdjustColor(sprites, weight);
+			
+				floor = R_GetLightFactor(brightness, floor);
+				ceiling = R_GetLightFactor(brightness, ceiling);
+				walltop = R_GetLightFactor(brightness, walltop);
+				wallbottom = R_GetLightFactor(brightness, wallbottom);
+				sprites = R_GetLightFactor(brightness, sprites);
+			}
+			
+			sector.SetColor(Color(255, 255, 255, 255));
+			
+			//apply colors
+			sector.SetSpecialColor(Sector.floor, floor);
+			sector.SetSpecialColor(Sector.ceiling, ceiling);
+			sector.SetSpecialColor(Sector.walltop, walltop);
+			sector.SetSpecialColor(Sector.wallbottom, wallbottom);
+			sector.SetSpecialColor(Sector.sprites, sprites);
+		}
+	}
+	
+	private Color R_GetLightFactor(float brightness, Color color)
+	{
+		int h, s, v;
+		[h, s, v] = ColorUtils.RGBtoHSV(color.r, color.g, color.b);
+		v = min(int((float(v) * brightness)), 255);
+		int r, g, b;
+		[r, g, b] = ColorUtils.HSVtoRGB(h, s, v);
+		return Color(255, r, g, b);
+	}
+}

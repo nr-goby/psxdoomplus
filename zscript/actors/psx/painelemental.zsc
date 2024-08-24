@@ -1,0 +1,270 @@
+class PsxPainElemental : PsxActor replaces PainElemental
+{
+    Default
+    {
+		//$Title "Pain Elemental"
+		
+        Health 400;
+		Radius 31;
+		Height 56;
+		Mass 400;
+		Speed 8;
+		PainChance 128;
+		Monster;
+		+FLOAT 
+		+NOGRAVITY
+		SeeSound "pain/sight";
+		PainSound "pain/pain";
+		DeathSound "pain/death";
+		ActiveSound "pain/active";
+		Tag "$FN_PAIN";
+        
+        +PsxActor.WAITLOOK;
+        +PsxActor.SEETARGET;
+		PsxActor.NightmareMissileChanceFactor 1.0;
+		PsxActor.NightmarePainChanceFactor 0.6;
+		+DONTGIB
+    }
+
+    States
+	{
+        Spawn:
+            PAIN A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            PAIN A 10 A_Look;
+            Loop;
+        SmoothSpawn:
+            SPAI A 10 A_Look;
+            Loop;
+
+        See:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothSee");
+            PAIN AABBCC 4 { A_PCTics(3); A_Chase(); }
+            Loop;
+        SmoothSee:
+            SAIN ABCDEDCB 4 { A_PCTics(3); A_Chase(); }
+            loop;
+
+        Missile:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothMissile");
+            PAIN D 6 { A_PCTics(5); A_FaceTarget(); }
+            PAIN E 6 { A_PCTics(5); A_FaceTarget(); }
+            PAIN F 6 BRIGHT { A_PCTics(5); A_FaceTarget(); }
+            PAIN F 0 BRIGHT A_PainAttack;
+            Goto See;
+        SmoothMissile:
+            PATT AB 3 A_FaceTarget;
+            PATT C 4 { A_PCTics(3); A_FaceTarget(); }
+            PATT D 4 BRIGHT { A_PCTics(3); A_FaceTarget(); }
+            PATT E 4 BRIGHT { A_PCTics(3); A_FaceTarget(); }
+            PATT E 0 BRIGHT A_PainAttack;
+            Goto See;
+
+        Pain:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothPain");
+            PAIN G 6;
+            PAIN G 6 A_Pain;
+            Goto See;
+        SmoothPain:
+            PPPP a 4;
+            PPPP b 2;
+            PPPP b 2;
+            PPPP c 4 A_Pain;
+            goto See;
+
+        Death:
+			TNT1 A 0 a_jumpif(IsSmooth(), "SmoothDeath");
+            PAIN H 8 BRIGHT;
+            PAIN I 8 BRIGHT A_Scream;
+            PAIN J 8 BRIGHT;
+            PAIN K 8 BRIGHT A_ZPExplosion;
+            PAIN L 8 BRIGHT { A_PainDie(); A_GoreExplosion(); }
+            PAIN M 8 BRIGHT;
+            Stop;
+        SmoothDeath:
+            SPAI A 5 bright;
+            SPAI b 4 bright;
+            spai c 4 bright { A_Scream(); A_GoreExplosion(); }
+            spai def 4 bright;
+            spai g 4 bright A_ZPExplosion;
+            spai h 4 bright;
+            spai i 3 bright a_paindie;
+            spai jk 3 bright;
+            Stop;
+
+        Raise:
+			TNT1 A 0 a_jumpif(IsSmooth(), "SmoothRaise");
+		    PAIN MLKJIH 8;
+		    Goto See;
+        SmoothRaise:
+            SPAI KJI 3;
+            SPAI HGFEDCB 4;
+            SPAI A 5;
+            Goto See;
+	}
+
+    void A_ZPExplosion()
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+                A_SetScale(0.3);
+                for (int i=0; i<9; i++) A_SpawnItemEx("RandomExplosionSprite",0,0,16,FRandom(0,5),0,FRandom(-1,4),Random(1,360),SXF_TRANSFERSCALE);
+                for (int i=0; i<3; i++) A_SpawnItemEx("ExplosionSmoke",0,0,16,FRandom(0,3),0,FRandom(-1,3),Random(1,360),SXF_TRANSFERSCALE);
+                A_SetScale(1);
+            }
+            else
+            {
+                A_SpawnItemEx("DeathSpawner_PainElemental",0,0,13,0,0,0,0,SXF_NOCHECKPOSITION);
+            }
+        }
+    }
+}
+
+extend class PsxActor
+{
+	void A_PainAttack(class<Actor> spawntype = "LostSoul", double addangle = 0, int flags = 0, int limit = -1)
+	{
+		if (target)
+		{
+			A_FaceTarget();
+			A_PainShootSkull(spawntype, angle + addangle, flags, limit);
+		}
+	}
+	
+	void A_PainDie(class<Actor> spawntype = "LostSoul", int flags = 0, int limit = -1)
+	{
+		if (target && IsFriend(target))
+		{ // And I thought you were my friend!
+			bFriendly = false;
+		}
+		A_NoBlocking();
+		A_PainShootSkull(spawntype, angle + 90, flags, limit);
+		A_PainShootSkull(spawntype, angle + 180, flags, limit);
+		A_PainShootSkull(spawntype, angle + 270, flags, limit);
+	}
+	
+	void A_PainShootSkull(Class<Actor> spawntype, double ang, int flags = 0, int limit = -1)
+	{
+        if (DamageType == 'Massacre') return;
+
+        if (spawntype == null) spawntype = "LostSoul";
+		spawntype = Actor.GetReplacement(spawntype);
+
+        if (pos.z + height + 8 > ceilingz)
+        {
+            if (bFloat)
+            {
+                Vel.Z -= 2;
+                bInFloat = true;
+                bVFriction = true;
+            }
+            return;
+        }
+
+        if (limit < 0 && (Level.compatflags & COMPATF_LIMITPAIN))
+            limit = ce_lostsoullimit;
+
+        if (limit > 0)
+        {
+            int count = limit;
+            ThinkerIterator it = ThinkerIterator.Create(spawntype);
+            Thinker othink;
+
+            while ( (othink = it.Next ()) )
+            {
+                if (--count == 0)
+                    return;
+            }
+        }
+
+        double otherradius = GetDefaultByType(spawntype).radius;
+        double prestep = 4 + (radius + otherradius) * 1.5;
+
+        Vector2 move = AngleToVector(ang, prestep);
+        Vector3 spawnpos = pos + (0,0,8);
+        Vector3 destpos = spawnpos + move;
+
+        Actor other = Spawn(spawntype, spawnpos, ALLOW_REPLACE);
+
+        if (other != null)
+        {
+            double maxmove = other.radius - 1;
+
+            if (maxmove <= 0) maxmove = 16;
+
+            double xspeed = abs(move.X);
+            double yspeed = abs(move.Y);
+
+            int steps = 1;
+
+            if (xspeed > yspeed)
+            {
+                if (xspeed > maxmove)
+                {
+                    steps = int(1 + xspeed / maxmove);
+                }
+            }
+            else
+            {
+                if (yspeed > maxmove)
+                {
+                   steps = int(1 + yspeed / maxmove);
+                }
+            }
+
+            Vector2 stepmove = move / steps;
+            bool savedsolid = bSolid;
+            bool savednoteleport = other.bNoTeleport;
+                
+            bSolid = false;
+            other.bNoTeleport = true;
+            for (int i = 0; i < steps; i++)
+            {
+                Vector2 ptry = other.pos.xy + stepmove;
+                double oldangle = other.angle;
+                if (!other.TryMove(ptry, 0))
+                {
+                    other.ClearCounters();
+                    other.DamageMobj(self, self, TELEFRAG_DAMAGE, 'None');
+					//if (skill == 5) RadiusAttack(other, 128, 128, 'none', RADF_NOIMPACTDAMAGE);
+                    bSolid = savedsolid;
+                    other.bNoTeleport = savednoteleport;
+                    return;
+                }
+
+                if (other.pos.xy != ptry)
+                {
+                    double anglediff = deltaangle(oldangle, other.angle);
+                    if (anglediff != 0)
+                    {
+                        stepmove = RotateVector(stepmove, anglediff);
+                    }
+                }
+
+            }
+            bSolid = savedsolid;
+            other.bNoTeleport = savednoteleport;
+            other.CopyFriendliness (self, !(flags & PAF_NOTARGET));
+			
+			if (other is "PsxActor")
+			{
+			    let psx = PsxActor(other);
+				psx.BlendFlags = BlendFlags;
+				psx.ApplyBlends();
+			}
+			
+            if (!(flags & PAF_NOSKULLATTACK))
+            {
+                if (other is "PsxLostSoul") {
+                    let psx = PsxLostSoul(other);
+                    psx.A_SkullAttack();
+                }
+                else
+                {
+                    other.A_SkullAttack();
+                }
+            }
+        }
+	}
+}

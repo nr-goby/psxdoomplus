@@ -1,0 +1,77 @@
+extend class CEEventHandler
+{
+	bool alive;
+	bool ending;
+	int wipeStart;
+	
+	void WipePlayerEntered(PlayerEvent e)
+	{
+		Reset();
+	}
+		
+	void WipeWorldUnloaded(WorldEvent e)
+	{
+		Reset();
+	}
+
+	void WipeWorldTick()
+	{
+		if (players[consoleplayer].mo.health <= 0)
+		{
+			if (alive)
+			{
+				ShowEffect();
+				alive = false;
+			}
+			PPShader.SetUniform1f("DPWipe", "timer", (gametic - wipeStart) * 0.5);
+		}
+		else if (ending)
+		{
+			PPShader.SetUniform1f("DPWipe", "timer", (gametic - wipeStart) * 0.5);
+		}
+		else if (!alive)
+		{
+			PPShader.SetEnabled("DPWipe", false);
+			alive = true;
+		}
+		else if (!ending)
+		{
+			PPShader.SetEnabled("DPWipe", false);
+		}
+	}
+	
+	void WipeWorldLinePreActivated(WorldEvent e)
+	{
+		if ((e.ActivatedLine.special == 243 || e.ActivatedLine.special == 244) && d64_wipeeffect)
+		{
+			if (e.ActivatedLine.special == 243)
+			{
+				e.Thing.ACS_NamedExecute("Exitfade_normal");
+			}
+			else if (e.ActivatedLine.special == 244)
+			{
+				e.Thing.ACS_NamedExecute("Exitfade_secret");
+			}
+			ending = true;
+			ShowEffect();
+			PPShader.SetUniform1f("DPWipe", "timer", (gametic - wipeStart) * 0.5);
+			e.ActivatedLine.special = 19;
+		}
+	}
+	
+	private void ShowEffect()
+	{
+		if (d64_wipeeffect)
+		{
+			PPShader.SetEnabled("DPWipe", true);
+			wipeStart = gametic;
+		}
+	}
+	
+	private void Reset()
+	{
+		alive = true;
+		ending = false;
+		PPShader.SetEnabled("DPWipe", false);
+	}
+}

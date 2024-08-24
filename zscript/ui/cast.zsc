@@ -1,0 +1,417 @@
+class CastCutscenes ui
+{
+	static void EndGame(ScreenJobRunner runner)
+	{
+		TallyCutscenes.Statistics(runner);
+		CastCutscenes.Cast(runner);
+	}
+	
+	static void Cast(ScreenJobRunner runner)
+	{
+		Array<CastActor> actors;
+		ReadLump("castdefs", actors);
+		
+		let obj = new(CEConfig.Get().castJobProvider);
+		CECastJobProvider(obj).Append(runner, actors);
+	}
+	
+	static void ReadLump(String lumpname, out Array<CastActor> actors)
+	{
+		let lump = -1;
+		let content = "";
+		while (-1 != (lump = Wads.FindLump(lumpname, lump + 1)))
+		{
+			content = Wads.ReadLump(lump);
+		}
+		
+		Array<String> lines;
+		content.Split(lines, "\n");
+			
+		let i = -1;
+		while (++i < lines.Size())
+		{
+			let line = StringUtils.Clean(lines[i].MakeLower());
+			if (!line.Length() || line == "{" || line.Left(2) == "//") continue;
+			if (line == "cast")
+			{
+				Array<String> properties;
+				while ("}" != (line = StringUtils.Clean(lines[++i]))) properties.Push(line);
+				ReadCast(properties, actors);
+			}
+		}
+	}
+	
+	static void ReadCast(Array<String> properties, out Array<CastActor> actors)
+	{
+		let type = "";
+		let label = "";
+		let altClass = "";
+		let altCVar = "";
+		Map<int, string> meleesounds;
+		Map<int, string> missilesounds;
+		Array<String> conditions;
+		
+		foreach (prop : properties)
+		{
+			prop = prop.MakeLower();
+			let equal = prop.IndexOf("=");
+			if (equal == -1) continue;;
+			
+			let propName = prop.Left(equal);
+			let propValue = prop.Mid(equal+1);
+			
+			if (propName == "castclass")
+			{
+				type = propValue;
+			}
+			else if (propName == "castname")
+			{
+				label = propValue;
+			}
+			else if (propName == "attacksound")
+			{
+				Array<String> segs;
+				propValue.Split(segs, ",");
+				let stlabel = segs[0].MakeLower();
+				if (stlabel == "melee")
+				{
+					meleesounds.Insert(segs[1].ToInt(), segs[2]);
+				}
+				else if (stlabel == "missile")
+				{
+					missilesounds.Insert(segs[1].ToInt(), segs[2]);
+				}
+			}
+			else if (propName == "altclass")
+			{
+				altClass = propValue;
+			}
+			else if (propName == "altcvar")
+			{
+				altcvar = propValue;
+			}
+			else if (propName == "conditioncvar")
+			{
+				conditions.Push(propValue);
+			}
+		}
+		
+		if (altcvar && CVar.FindCVar(altcvar).GetBool())
+		{
+			type = altClass;
+		}
+		
+		let enabled = conditions.Size() <= 0;
+		foreach (condition : conditions)
+		{
+			if (CVar.FindCVar(condition).GetBool())
+			{
+				enabled = true;
+				break;
+			}
+		}
+		
+		if (!enabled) return;
+		
+		actors.Push(NewActor(type, label, missilesounds, meleesounds));
+	}
+	
+	static CastActor NewActor(class<Actor> type, string castname = "", Map<int,string> missilesounds = null, Map<int,string> meleesounds = null)
+	{
+		let def = GetDefaultByType(type);
+		let actor = new("CastActor");
+		actor.name = StringTable.Localize(castname);
+		actor.alpha = def.alpha;
+		actor.renderstyle = def.GetRenderStyle();
+		actor.seestate = def.FindState('see'); 
+		actor.deathstate = def.FindState('death'); 
+		Array<CastAttackSound> attacksounds;
+		let missilestate = def.FindState('missile');
+		if (missilestate)
+		{
+			actor.missilestate = missilestate;
+			let castsound = new("CastAttackSound");
+			castsound.caststate = missilestate;
+			castsound.sounds.Copy(missilesounds);
+			attacksounds.Push(castsound);
+		}
+		let meleestate = def.FindState('melee');
+		if (meleestate)
+		{
+			actor.meleestate = meleestate;
+			let castsound = new("CastAttackSound");
+			castsound.caststate = meleestate;
+			castsound.sounds.Copy(meleesounds);
+			attacksounds.Push(castsound);
+		}
+		actor.attacksounds.Copy(attacksounds);
+		actor.seesound = def.SeeSound;
+		actor.deathsound = def.DeathSound;
+		actor.player = PlayerPawn(def) != null;
+		return actor;
+	}
+}
+
+class CastActor
+{
+	string name;
+	double alpha;
+	int renderstyle;
+	state seestate;
+	state meleestate;
+	state missilestate;
+	state deathstate;
+	sound seesound;
+	Array<CastAttackSound> attacksounds;
+	sound deathsound;
+	bool player;
+}
+
+class CastAttackSound
+{
+	state caststate;
+	Map<int,string> sounds;
+}
+
+class CECastJobProvider ui
+{
+	virtual void Append(ScreenJobRunner runner, Array<CastActor> actors) { }
+}
+
+class PsxCastJobProvider : CECastJobProvider
+{
+	override void Append(ScreenJobRunner runner, Array<CastActor> actors)
+	{
+		let page = new("PsxCastPage");
+		let castbg = oip_enabled ? "$CASTBG" : "$CASTBG2";
+		page.background = StringTable.Localize(castbg);
+		page.music = CEMusicTracker.GetMusic("$CASTMUS");
+		page.screenWidth = 274;
+		page.screenHeight = 240;
+		
+		runner.append(new("PsxCastJob").Init(page, actors));
+	}
+}
+
+class PsxCastPage
+{
+	string background;
+	string music;
+	int screenWidth;
+	int screenHeight;
+}
+
+class PsxCastJob : SkippableScreenJob
+{
+	const SPRITE_POS_H = 128+10;
+	const SPRITE_POS_V = 180-20;
+	const TEXT_POS_Y = 208;
+	const TITLE_POS_Y = 20;
+	
+	const TEXT_WIDTH = 274;
+	const TEXT_HEIGHT = 240;
+	const TEXT_CENTER_H = TEXT_WIDTH / 2;
+		
+	int castnum;
+	Array<CastActor> castorder;
+	bool castdeath;
+	bool castattacking;
+	bool castonmelee;
+	int castrotation;
+	state caststate;
+	int casttics;
+	int castframes;
+	int lastframe;
+	String music;
+	TextureID background;
+	int screenWidth;
+	int screenHeight;
+
+	ScreenJob Init(PsxCastPage page, Array<CastActor> castorder)
+	{
+		Super.Init(fadein|transition_crossfade);
+		ReadPage(page);
+		self.castorder.Copy(castorder);
+		caststate = castorder[castnum].seestate;
+		return self;
+	}
+	
+	override void Start()
+	{
+		S_StartSound(castorder[castnum].seesound, CHAN_VOICE, CHANF_MAYBE_LOCAL|CHANF_UI, 1, ATTN_NONE);
+		S_ChangeMusic(music, 0, true);
+		super.Start();
+	}
+	
+	override void OnTick()
+	{
+		super.OnTick();
+			
+		if (casttics == ((caststate.tics >= 0) ? caststate.tics : 30))
+		{
+			casttics = 0;
+			castframes++;
+			
+			caststate = caststate.NextState;
+			while (caststate != null && caststate.tics == 0)
+			{
+				caststate = caststate.NextState;
+			}
+			
+			if (caststate == null)
+			{
+				if (castdeath)
+				{
+					castnum = (castnum == castorder.Size() - 1) ? 0 : castnum + 1;
+					castrotation = 0;
+					castdeath = false;
+					S_StartSound(castorder[castnum].seesound, CHAN_VOICE, CHANF_MAYBE_LOCAL|CHANF_UI, 1, ATTN_NONE);
+				}
+				castframes = 0;
+				castattacking = false;
+				caststate = castorder[castnum].seestate;
+			}
+		}
+		else
+		{
+			if (castframes == 12 && !castdeath && !castattacking)
+			{
+				if (!castorder[castnum].player)
+				{
+					caststate = castonmelee ? castorder[castnum].meleestate : castorder[castnum].missilestate;
+					castonmelee = !castonmelee;
+					if (!caststate) caststate = castonmelee ? castorder[castnum].meleestate : castorder[castnum].missilestate;
+				}
+				else
+				{
+					caststate = castorder[castnum].missilestate;
+				}
+				castattacking = true;
+				casttics = 0;
+			}
+			else if (castframes == 24 || (castattacking && caststate == castorder[castnum].seestate))
+			{
+				caststate = castorder[castnum].seestate;
+				castattacking = false;
+				casttics = 0;
+				castframes = 0;
+			}
+			else
+			{
+				if (castattacking && lastframe != castframes)
+				{
+					sound snd;
+					foreach (attacksound : castorder[castnum].attacksounds) //can't use state as a map key
+					{
+						if (caststate.InStateSequence(attacksound.caststate))
+						{
+							snd = attacksound.sounds.Get(castframes - 12);
+							break;
+						}
+					}
+					if (snd) S_StartSound(snd, CHAN_VOICE, CHANF_MAYBE_LOCAL|CHANF_UI, 1, ATTN_NONE);
+					lastframe = castframes;
+				}
+				casttics++;
+			}
+		}	
+	}
+	
+	override bool OnEvent(InputEvent evt)
+	{
+		if (evt.type == InputEvent.Type_KeyDown && !System.specialKeyEvent(evt))
+		{
+			int lk1, lk2, rk1, rk2, uk1, uk2, dk1, dk2;
+			[lk1, lk2] = Bindings.GetKeysForCommand("+moveleft");
+			[rk1, rk2] = Bindings.GetKeysForCommand("+moveright");
+			[uk1, uk2] = Bindings.GetKeysForCommand("+forward");
+			[dk1, dk2] = Bindings.GetKeysForCommand("+back");
+
+			if ((lk1 && lk1 == evt.KeyScan) || (lk2 && lk2 == evt.KeyScan))
+			{
+				castRotation = (castRotation == 7) ? 0 : castRotation + 1;
+			}
+			else if ((rk1 && rk1 == evt.KeyScan) || (rk2 && rk2 == evt.KeyScan))
+			{
+				castRotation = (castRotation == 0) ? 7 : castRotation - 1;
+			}
+			else if ((uk1 && uk1 == evt.KeyScan) || (uk2 && uk2 == evt.KeyScan) || (dk1 && dk1 == evt.KeyScan) || (dk2 && dk2 == evt.KeyScan))
+			{
+			}
+			else if (!castdeath)
+			{
+				S_StartSound("weapons/shotgf", CHAN_VOICE, CHANF_MAYBE_LOCAL|CHANF_UI, 1, ATTN_NONE);
+				caststate = castorder[castnum].deathstate;
+				casttics = 0;
+				castframes = 0;
+				castdeath = true;
+				S_StartSound(castorder[castnum].deathsound, CHAN_VOICE, CHANF_MAYBE_LOCAL|CHANF_UI, 1, ATTN_NONE);
+			}
+		}
+		return true;
+	}
+	
+	override void Draw(double smoothRatio)
+	{
+		super.Draw(smoothRatio);
+		
+		screen.DrawTexture(background,
+			true,
+			0,
+			0,
+			DTA_VirtualWidth, screenWidth,
+			DTA_VirtualHeight, screenHeight);
+		
+		int trans = castorder[castnum].player ? players[consoleplayer].mo.translation : 0;
+		int skin = castorder[castnum].player ? players[consoleplayer].GetSkin() : 0;
+		TextureID castsprite;
+		bool flipped;
+		[castsprite, flipped] = caststate.GetSpriteTexture(castrotation*2, skin);
+		
+		let offs = TexMan.GetScaledOffset(castsprite);
+		let size = TexMan.GetScaledSize(castsprite);
+		int hoff = int(flipped ? -offs.x + size.x : offs.x);
+		
+		screen.DrawTexture(castsprite,
+			true,
+			SPRITE_POS_H,
+			SPRITE_POS_V,
+			DTA_VirtualWidth, TEXT_WIDTH,
+			DTA_VirtualHeight, int(TEXT_HEIGHT*0.85625),
+			DTA_DestHeightF, size.y,
+			DTA_DestWidthF, size.x,
+			DTA_FlipX, flipped,
+			DTA_LeftOffset, hoff,
+			DTA_Alpha, castorder[castnum].alpha,
+			DTA_LegacyRenderStyle, castorder[castnum].renderstyle,
+			DTA_TranslationIndex, trans);
+		
+		screen.DrawText(BigFont, 
+			Font.CR_UNTRANSLATED, 
+			TEXT_CENTER_H  - (BigFont.StringWidth(castorder[castnum].name)/2),
+			TEXT_POS_Y,
+			castorder[castnum].name,
+			DTA_VirtualWidth, TEXT_WIDTH,
+			DTA_VirtualHeight, TEXT_HEIGHT);
+		
+		let title = StringTable.Localize("$CASTTITLE");
+		screen.DrawText(BigFont, 
+			Font.CR_UNTRANSLATED, 
+			TEXT_CENTER_H  - (BigFont.StringWidth(title)/2),
+			TITLE_POS_Y,
+			title,
+			DTA_VirtualWidth, TEXT_WIDTH,
+			DTA_VirtualHeight, TEXT_HEIGHT);
+		
+	}
+	
+	void ReadPage(PsxCastPage page)
+	{
+		background = TexMan.CheckForTexture(page.background);
+		music = page.music;
+		int w, h;
+		[w, h] = TexMan.GetSize(background);
+		screenWidth = page.screenWidth ? page.screenWidth : w;
+		screenHeight = page.screenHeight ? page.screenHeight : h;
+	}
+}

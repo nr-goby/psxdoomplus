@@ -1,0 +1,74 @@
+extend class CEEventHandler
+{
+	void BlinkLocksWorldLinePreActivated(WorldEvent e)
+	{
+		let hud = CEBaseStatusBar(StatusBar);
+		if (!hud) return;
+		
+		let player = e.Thing;
+		let door = e.ActivatedLine;
+		
+		if (player && player is "PlayerPawn" && 
+			(door.locknumber >= 0 || door.special == 13 || door.special == 83 || door.special == 85 || door.special == 202))
+		{			
+			int lock;
+			if (door.special == 13)
+			{
+				lock = door.args[3];
+			}
+			else if (door.special == 83 || door.special == 85 || door.special == 202)
+			{
+				lock = door.args[4];
+			}
+			else if (door.locknumber >= 0)
+			{
+				lock = door.locknumber;
+			}
+			
+			if (player.CheckKeys(lock, true, true)) return;
+			
+			switch (lock)
+			{
+				case 1:
+				case 4:
+				case 129:
+				case 132:
+					hud.BlinkRed();
+					break;
+				case 2:
+				case 5:
+				case 130:
+				case 133:
+					hud.BlinkBlue();
+					break;
+				case 3:
+				case 6:
+				case 131:
+				case 134:
+					hud.BlinkYellow();
+					break;
+			}
+		}
+	}
+	
+	void BlinkLocksWorldTick()
+	{
+		let hud = CEBaseStatusBar(StatusBar);
+		if (!hud || hud.loadedLocks) return;
+		
+		bool blueSkull;
+		bool redSkull;
+		bool yellowSkull;
+		
+		let it = ThinkerIterator.Create("Key", Thinker.STAT_DEFAULT);
+		Actor mo;
+		while(mo = Actor(it.Next()))
+		{
+			if (mo.Species == "BlueSkull" || mo is "BlueSkull") blueSkull = true;
+			if (mo.Species == "RedSkull" || mo is "RedSkull") redSkull = true;
+			if (mo.Species == "YellowSkull" || mo is "YellowSkull") yellowSkull = true;
+		}
+		
+		hud.InitLockTypes(!blueSkull, !redSkull, !yellowSkull);
+	}
+}

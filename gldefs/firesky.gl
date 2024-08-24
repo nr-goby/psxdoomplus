@@ -1,0 +1,23 @@
+material Texture FIRE_S
+{
+    Shader "shaders/flame.fp"
+	define HIGH_COLOR = "0xFF, 0x00, 0x00"
+	define LOW_COLOR = "0xFF, 0x60, 0x00"
+	Texture distortiontexture "graphics/firesky/distort.png"
+	Texture noisetexture "graphics/firesky/noise.png"
+    define STRETCH
+}
+
+material texture SKY09
+{
+    shader "shaders/Psx.fp"
+    define SKIP_LIGHT_PSX
+	define FIRESKY
+}
+
+material texture FIRESK00
+{
+    shader "shaders/Psx.fp"
+    define SKIP_LIGHT_PSX
+	define FIRESKY
+}

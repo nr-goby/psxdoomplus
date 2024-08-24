@@ -1,0 +1,208 @@
+class PsxDoomKey : Key replaces DoomKey
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		Radius 20;
+		Height 16;
+		+NOTDMATCH
+        
+	    +MOVEWITHSECTOR;
+	}
+
+    virtual bool IsSmooth() { return smi_enabled; }
+
+	int lastTic;
+	override void Tick()
+    {
+        if (lastTic < tics && ce_actortics && !IsSmooth())
+            tics = int(Round(tics * PsxActor.SCALE_FRAME));
+        lastTic = tics;
+        super.Tick();
+    }
+}
+
+class PsxBlueCard : PsxDoomKey replaces BlueCard
+{
+	Default
+	{
+		//$Title "Blue keycard"
+		
+		Inventory.Pickupmessage "$GOTBLUECARD";
+		//Inventory.Icon "STKEYS0";
+        Species "BlueCard";
+
+        Inventory.Icon "STKEYBCD";
+		Tag "$CC_BLUECARD";
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            BKEY A 10;
+            BKEY B 10 bright;
+            loop;
+        SmoothSpawn:
+            BLCK ab 4;
+            BLCK cd 4 bright;
+            BLCK ef 4;
+            BLCK gh 4 Bright;
+            Loop;
+	}
+}
+
+class PsxYellowCard : PsxDoomKey replaces YellowCard
+{
+	Default
+	{
+		//$Title "Yellow keycard"
+		
+		Inventory.Pickupmessage "$GOTYELWCARD";
+		//Inventory.Icon "STKEYS1";
+        Species "YellowCard";
+
+        Inventory.Icon "STKEYYCD";
+		Tag "$CC_YELLOWCARD";
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            YKEY A 10;
+            YKEY B 10 bright;
+            loop;
+        SmoothSpawn:
+            YLCK ab 4;
+            YLCK cd 4 bright;
+            YLCK ef 4;
+            YLCK gh 4 Bright;
+            Loop;
+	}
+}
+
+class PsxRedCard : PsxDoomKey replaces RedCard
+{
+	Default
+	{
+		//$Title "Red keycard"
+		
+		Inventory.Pickupmessage "$GOTREDCARD";
+		//Inventory.Icon "STKEYS2";
+        Species "RedCard";
+
+        Inventory.Icon "STKEYRCD";
+		Tag "$CC_REDCARD";
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            RKEY A 10;
+            RKEY B 10 bright;
+            loop;
+        SmoothSpawn:
+            RDCK ab 4;
+            RDCK cd 4 bright;
+            RDCK ef 4;
+            RDCK gh 4 Bright;
+            Loop;
+	}
+}
+
+class PsxBlueSkull : PsxDoomKey replaces BlueSkull
+{
+	Default
+	{
+		//$Title "Blue skullkey"
+		
+		Inventory.Pickupmessage "$GOTBLUESKUL";
+		//Inventory.Icon "STKEYS3";
+        Species "BlueSkull";
+
+        Inventory.Icon "STKEYBSK";
+		Tag "$CC_BLUESKULL";
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            BSKU A 10;
+            BSKU B 10 bright;
+            loop;
+        SmoothSpawn:
+            BSKU A 6;
+            SBSK A 6;
+            BSKU B 6 bright;
+            SBSK A 6;
+            Loop;
+	}
+}
+
+class PsxYellowSkull : PsxDoomKey replaces YellowSkull
+{
+	Default
+	{
+		//$Title "Yellow skullkey"
+		
+		Inventory.Pickupmessage "$GOTYELWSKUL";
+		//Inventory.Icon "STKEYS4";
+        Species "YellowSkull";
+
+        Inventory.Icon "STKEYYSK";
+		Tag "$CC_YELLOWSKULL";
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            YSKU A 10;
+            YSKU B 10 bright;
+            loop;
+        SmoothSpawn:
+            YSKU A 6;
+            SYSK A 6;
+            YSKU B 6 bright;
+            SYSK A 6;
+            Loop;
+	}
+}
+
+class PsxRedSkull : PsxDoomKey replaces RedSkull
+{
+	Default
+	{
+		//$Title "Red skullkey"
+		
+		Inventory.Pickupmessage "$GOTREDSKUL";
+		//Inventory.Icon "STKEYS5";
+        Species "RedSkull";
+        
+        Inventory.Icon "STKEYRSK";
+		Tag "$CC_REDSKULL";
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            RSKU A 10;
+            RSKU B 10 bright;
+            loop;
+        SmoothSpawn:
+            RSKU A 6;
+            SRSK A 6;
+            RSKU B 6 bright;
+            SRSK A 6;
+            Loop;
+	}
+}
+

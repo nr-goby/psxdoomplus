@@ -1,0 +1,212 @@
+//decals
+
+generator PsxBulletTracer			BulletChip
+
+generator PsxBulletPuff				BulletChip
+generator PsxChainsawPuff			BulletChip
+generator PsxRocket					Scorch
+generator PsxPlasmaBall				PlasmaScorch
+generator PsxBFGBall				BFGLightning
+
+generator PsxDoomImpBall			DoomImpScorch
+generator PsxNightmareDoomImpBall	DoomImpScorch
+generator PsxCacodemonBall			CacoScorch
+generator PsxBaronBall				BaronScorch
+generator PsxArachnotronPlasma		ArachnotronScorch
+generator PsxFatShot				Scorch
+generator PsxRevenantTracer			RevenantScorch
+generator PsxSpiderMastermind		BulletChip
+
+//nashgore
+
+Fader Bye
+{
+	DecayStart 30.0
+	DecayTime 10.0
+}
+
+Stretcher Stretchy
+{
+	GoalY 1.5
+	StretchStart 0.001
+	StretchTime 15.0
+}
+
+Slider Slidey
+{
+	DistY -20
+	SlideStart 0.001
+	SlideTime 15.0
+}
+
+Combiner Yucky
+{
+	Stretchy
+	Slidey
+	//Bye
+}
+
+//===========================================================================
+//
+//
+//
+//===========================================================================
+
+Fader NoBlood
+{
+	DecayStart 0
+	DecayTime 0
+}
+
+//===========================================================================
+//
+//
+//
+//===========================================================================
+
+Decal BloodDrip
+{
+	Pic "graphics/nashgore/decals/bdrip.png"
+	Shade "BloodDefault"
+	X-Scale 1.0
+	Y-Scale 0.02
+	RandomFlipX
+	Animator Yucky
+	//opaqueblood
+}
+
+Decal NBloodSplat1
+{
+	Pic "graphics/nashgore/decals/nbsplat1.png"
+	Shade "BloodDefault"
+	X-Scale 1.0
+	Y-Scale 1.0
+	RandomFlipX
+	RandomFlipY
+	//Animator Bye
+	LowerDecal "BloodDrip"
+	//opaqueblood
+}
+
+Decal NBloodSplat2
+{
+	Pic "graphics/nashgore/decals/nbsplat2.png"
+	Shade "BloodDefault"
+	X-Scale 1.0
+	Y-Scale 1.0
+	RandomFlipX
+	RandomFlipY
+	//Animator Bye
+	LowerDecal "BloodDrip"
+	//opaqueblood
+}
+
+Decal NBloodSplat3
+{
+	Pic "graphics/nashgore/decals/nbsplat3.png"
+	Shade "BloodDefault"
+	X-Scale 1.0
+	Y-Scale 1.0
+	RandomFlipX
+	RandomFlipY
+	//Animator Bye
+	LowerDecal "BloodDrip"
+	//opaqueblood
+}
+
+Decal NBloodSplat4
+{
+	Pic "graphics/nashgore/decals/nbsplat4.png"
+	Shade "BloodDefault"
+	X-Scale 1.0
+	Y-Scale 1.0
+	RandomFlipX
+	RandomFlipY
+	//Animator Bye
+	LowerDecal "BloodDrip"
+	//opaqueblood
+}
+
+Decal BloodSplatNoDrip1
+{
+	Pic "graphics/nashgore/decals/nbsplat1.png"
+	Shade "BloodDefault"
+	X-Scale 1.0
+	Y-Scale 1.0
+	RandomFlipX
+	RandomFlipY
+	//opaqueblood
+}
+
+Decal BloodSplatNoDrip2
+{
+	Pic "graphics/nashgore/decals/nbsplat2.png"
+	Shade "BloodDefault"
+	X-Scale 1.0
+	Y-Scale 1.0
+	RandomFlipX
+	RandomFlipY
+	//opaqueblood
+}
+
+Decal BloodSplatNoDrip3
+{
+	Pic "graphics/nashgore/decals/nbsplat3.png"
+	Shade "BloodDefault"
+	X-Scale 1.0
+	Y-Scale 1.0
+	RandomFlipX
+	RandomFlipY
+	//opaqueblood
+}
+
+Decal BloodSplatNoDrip4
+{
+	Pic "graphics/nashgore/decals/nbsplat4.png"
+	Shade "BloodDefault"
+	X-Scale 1.0
+	Y-Scale 1.0
+	RandomFlipX
+	RandomFlipY
+	//opaqueblood
+}
+
+Decal NoBlood
+{
+	Pic "TNT1A0"
+	Animator NoBlood
+}
+
+//===========================================================================
+//
+//
+//
+//===========================================================================
+
+DecalGroup BloodSplat
+{
+	NBloodSplat1 1
+	NBloodSplat2 1
+	NBloodSplat3 1
+	NBloodSplat4 1
+	BloodSplatNoDrip1 1
+	BloodSplatNoDrip2 1
+	BloodSplatNoDrip3 1
+	BloodSplatNoDrip4 1
+	NoBlood 2
+	NoBlood 2
+	NoBlood 2
+	NoBlood 2
+}
+
+DecalGroup BloodSmear
+{
+	NBloodSplat1 1
+	NBloodSplat2 1
+	NBloodSplat3 1
+	NBloodSplat4 1
+	BloodSplatNoDrip1 1
+	BloodSplatNoDrip2 1
+	BloodSplatNoDrip3 1
+	BloodSplatNoDrip4 1
+}

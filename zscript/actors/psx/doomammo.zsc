@@ -1,0 +1,227 @@
+class PsxClip : Clip replaces Clip
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Ammo clip"
+		
+		Inventory.PickupMessage "$GOTCLIP";
+		Inventory.Amount 10;
+		Inventory.MaxAmount 200;
+		Ammo.BackpackAmount 10;
+		Ammo.BackpackMaxAmount 400;
+		//Inventory.Icon "CLIPA0";
+		Tag "$AMMO_CLIP";
+
+        +MOVEWITHSECTOR;
+        Inventory.Icon "_CLPA0";
+	}
+	States
+	{
+        Spawn:
+            CLIP A -1;
+            Stop;
+	}
+}
+
+class PsxClipBox : PsxClip replaces ClipBox
+{
+	Default
+	{
+		//$Title "Box of Ammo"
+		
+		Inventory.PickupMessage "$GOTCLIPBOX";
+		Inventory.Amount 50;
+	}
+
+	States
+	{
+        Spawn:
+            AMMO A -1;
+            Stop;
+	}
+}
+
+class PsxRocketAmmo : RocketAmmo replaces RocketAmmo
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Rocket"
+		
+		Inventory.PickupMessage "$GOTROCKET";
+		Inventory.Amount 1;
+		Inventory.MaxAmount 50;
+		Ammo.BackpackAmount 1;
+		Ammo.BackpackMaxAmount 100;
+		//Inventory.Icon "ROCKA0";
+		Tag "$AMMO_ROCKETS";
+
+        +MOVEWITHSECTOR;
+        Inventory.Icon "_RCKA0";
+	}
+
+	States
+	{
+        Spawn:
+            ROCK A -1;
+            Stop;
+	}
+}
+
+class PsxRocketBox : PsxRocketAmmo replaces RocketBox
+{
+	Default
+	{
+		//$Title "Box of Rockets"
+		
+		Inventory.PickupMessage "$GOTROCKBOX";
+		Inventory.Amount 5;
+	}
+
+	States
+	{
+        Spawn:
+            BROK A -1;
+            Stop;
+	}
+}
+
+class PsxCell : Cell replaces Cell
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Cell charge"
+		
+		Inventory.PickupMessage "$GOTCELL";
+		Inventory.Amount 20;
+		Inventory.MaxAmount 300;
+		Ammo.BackpackAmount 20;
+		Ammo.BackpackMaxAmount 600;
+		//Inventory.Icon "CELLA0";
+		Tag "$AMMO_CELLS";
+
+        +MOVEWITHSECTOR;
+	    Inventory.Icon "_CELA0";
+	}
+
+	States
+	{
+        Spawn:
+            CELL A -1;
+            Stop;
+	}
+}
+
+class PsxCellPack : PsxCell replaces CellPack
+{
+	Default
+	{
+		//$Title "Cell charge pack"
+		
+		Inventory.PickupMessage "$GOTCELLBOX";
+		Inventory.Amount 100;
+	}
+
+	States
+	{
+        Spawn:
+            CELP A -1;
+            Stop;
+	}
+}
+
+class PsxShell : Shell replaces Shell
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Shotgun Shells"
+		
+		Inventory.PickupMessage "$GOTSHELLS";
+		Inventory.Amount 4;
+		Inventory.MaxAmount 50;
+		Ammo.BackpackAmount 4;
+		Ammo.BackpackMaxAmount 100;
+		//Inventory.Icon "SHELA0";
+		Tag "$AMMO_SHELLS";
+
+        +MOVEWITHSECTOR;
+        Inventory.Icon "_SHLA0";
+	}
+
+	States
+	{
+        Spawn:
+            SHEL A -1;
+            Stop;
+	}
+	
+	override String PickupMessage ()
+	{
+		int amt = int(Amount * (G_SkillPropertyFloat(SKILLP_AmmoFactor) * sv_ammofactor));
+		return String.format(StringTable.Localize(super.PickupMessage()), amt);
+	}
+}
+
+class PsxShellBox : PsxShell replaces ShellBox
+{
+	Default
+	{
+		//$Title "Box of Shells"
+		
+		Inventory.PickupMessage "$GOTSHELLBOX";
+		Inventory.Amount 20;
+	}
+
+	States
+	{
+        Spawn:
+            SBOX A -1;
+            Stop;
+	}
+}
+
+class PsxBackpack : BackpackItem replaces Backpack
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Backpack"
+		
+		//Height 26;
+		Inventory.PickupMessage "$GOTBACKPACK";
+
+		Height 20;
+        +MOVEWITHSECTOR;
+		Tag "$CC_BACKPACK";
+	}
+
+	States
+	{
+        Spawn:
+            BPAK A -1;
+            Stop;
+	}
+}

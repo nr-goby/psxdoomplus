@@ -1,0 +1,791 @@
+Sprite "FIR2A0", 36, 32
+{
+	XScale 1.200
+	Offset 19, 25
+	Patch "FIREA0", 0, 2
+	{
+		FlipX
+	}
+}
+
+Sprite "FIR2B0", 39, 48
+{
+	YScale 1.200
+	Offset 20, 34
+	Patch "FIREB0", 0, 2
+	{
+		FlipX
+	}
+}
+
+Sprite "FIR2C0", 42, 71
+{
+	YScale 1.600
+	Offset 20, 47
+	Patch "FIREC0", 0, 2
+	{
+		FlipX
+	}
+}
+
+Sprite "FIR2D0", 45, 80
+{
+	XScale 0.800
+	YScale 1.500
+	Offset 22, 52
+	Patch "FIRED0", 0, 2
+	{
+		FlipX
+	}
+}
+
+Sprite "FIR2E0", 43, 76
+{
+	XScale 0.800
+	YScale 1.400
+	Offset 21, 52
+	Patch "FIREE0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "FIR2F0", 42, 71
+{
+	XScale 0.800
+	YScale 1.400
+	Offset 21, 52
+	Patch "FIREF0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "FIR2G0", 28, 48
+{
+	XScale 0.700
+	YScale 1.200
+	Offset 14, 38
+	Patch "FIREG0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "FIR2H0", 16, 17
+{
+	Offset 8, 14
+	Patch "FIREH0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "FMANX0", 24, 24
+{
+	XScale 0.380
+	YScale 0.380
+	Offset 12, 13
+	Patch "FMAN1001", 0, 0
+	Patch "FMAN1002", 12, 0
+	Patch "FMAN1003", 12, 12
+	Patch "FMAN1004", 0, 12
+}
+
+Graphic "1BAL0001", 7, 7
+{
+	Patch "BAL1A0", 0, 0
+}
+
+Graphic "1BAL0002", 7, 7
+{
+	Patch "BAL1A0", -8, 0
+}
+
+Graphic "1BAL0003", 7, 7
+{
+	Patch "BAL1A0", -8, -8
+}
+
+Graphic "1BAL0004", 7, 7
+{
+	Patch "BAL1A0", 0, -8
+}
+
+Sprite "1BALA0", 14, 14
+{
+	Offset 7, 7
+	Patch "1BAL0001", 0, 0
+	Patch "1BAL0002", 7, 0
+	Patch "1BAL0003", 7, 7
+	Patch "1BAL0004", 0, 7
+}
+
+Graphic "1BAL1001", 6, 6
+{
+	Patch "BAL1A0", 0, 0
+}
+
+Graphic "1BAL1002", 6, 6
+{
+	Patch "BAL1A0", -9, 0
+}
+
+Graphic "1BAL1003", 6, 6
+{
+	Patch "BAL1A0", -9, -9
+}
+
+Graphic "1BAL1004", 6, 6
+{
+	Patch "BAL1A0", 0, -9
+}
+
+Sprite "1BALB0", 12, 12
+{
+	Offset 6, 6
+	Patch "1BAL1001", 0, 0
+	Patch "1BAL1002", 6, 0
+	Patch "1BAL1004", 0, 6
+	Patch "1BAL1003", 6, 6
+}
+
+Graphic "1BAL2001", 4, 4
+{
+	Patch "BAL1A0", -1, -1
+}
+
+Graphic "1BAL2002", 4, 4
+{
+	Patch "BAL1A0", -10, -1
+}
+
+Graphic "1BAL2003", 4, 4
+{
+	Patch "BAL1A0", -10, -10
+}
+
+Graphic "1BAL2004", 4, 4
+{
+	Patch "BAL1A0", -1, -10
+}
+
+Sprite "1BALC0", 8, 8
+{
+	Offset 4, 4
+	Patch "1BAL2001", 0, 0
+	Patch "1BAL2002", 4, 0
+	Patch "1BAL2004", 0, 4
+	Patch "1BAL2003", 4, 4
+}
+
+Graphic "1BAL3001", 4, 4
+{
+	Patch "BAL1A0", 0, 0
+}
+
+Graphic "1BAL3002", 4, 4
+{
+	Patch "BAL1A0", -11, 0
+}
+
+Graphic "1BAL3003", 4, 4
+{
+	Patch "BAL1A0", -11, -11
+}
+
+Graphic "1BAL3004", 4, 4
+{
+	Patch "BAL1A0", 0, -11
+}
+
+Sprite "1BALD0", 8, 8
+{
+	Offset 4, 4
+	Patch "1BAL3001", 0, 0
+	Patch "1BAL3002", 4, 0
+	Patch "1BAL3004", 0, 4
+	Patch "1BAL3003", 4, 4
+}
+
+Sprite "1BALX0", 14, 14
+{
+	XScale 0.180
+	YScale 0.180
+	Offset 7, 7
+	Patch "1BAL0001", 0, 0
+	Patch "1BAL0002", 7, 0
+	Patch "1BAL0003", 7, 7
+	Patch "1BAL0004", 0, 7
+}
+
+
+Sprite "BAL7F0", 19, 16
+{
+	Offset 10, 8
+	Patch "BAL7A1A5", 0, 0
+}
+
+Sprite "BAL7G0", 20, 16
+{
+	Offset 10, 8
+	Patch "BAL7B1B5", 0, 0
+}
+
+Sprite "BAL7X0", 19, 16
+{
+	XScale 0.230
+	YScale 0.210
+	Offset 9, 8
+	Patch "BAL7A1A5", 0, 0
+}
+
+Graphic "7BAL0001", 7, 7
+{
+	Patch "BAL7B1B5", 0, 0
+}
+
+Graphic "7BAL0002", 7, 7
+{
+	Patch "BAL7B1B5", -12, 0
+}
+
+Graphic "7BAL0003", 7, 7
+{
+	Patch "BAL7B1B5", -13, -9
+}
+
+Graphic "7BAL0004", 7, 7
+{
+	Patch "BAL7B1B5", 0, -9
+}
+
+Sprite "7BALA0", 14, 14
+{
+	Offset 7, 7
+	Patch "7BAL0001", 0, 0
+	Patch "7BAL0002", 7, 0
+	Patch "7BAL0003", 7, 7
+	Patch "7BAL0004", 0, 7
+}
+
+Graphic "7BAL1001", 6, 6
+{
+	Patch "BAL7B1B5", 0, 0
+}
+
+Graphic "7BAL1002", 6, 6
+{
+	Patch "BAL7B1B5", -13, 0
+}
+
+Graphic "7BAL1003", 6, 6
+{
+	Patch "BAL7B1B5", -14, -9
+}
+
+Graphic "7BAL1004", 6, 6
+{
+	Patch "BAL7B1B5", 0, -10
+}
+
+Sprite "7BALB0", 12, 12
+{
+	Offset 6, 6
+	Patch "7BAL1001", 0, 0
+	Patch "7BAL1002", 6, 0
+	Patch "7BAL1004", 0, 6
+	Patch "7BAL1003", 6, 6
+}
+
+Graphic "7BAL2001", 4, 4
+{
+	Patch "BAL7B1B5", 0, -1
+}
+
+Graphic "7BAL2002", 4, 4
+{
+	Patch "BAL7B1B5", -15, -1
+}
+
+Graphic "7BAL2003", 4, 4
+{
+	Patch "BAL7B1B5", -16, -10
+}
+
+Graphic "7BAL2004", 4, 4
+{
+	Patch "BAL7B1B5", -1, -12
+}
+
+Sprite "7BALC0", 8, 8
+{
+	Offset 4, 4
+	Patch "7BAL2001", 0, 0
+	Patch "7BAL2002", 4, 0
+	Patch "7BAL2004", 0, 4
+	Patch "7BAL2003", 4, 4
+}
+
+Graphic "7BAL3001", 3, 3
+{
+	Patch "BAL7B1B5", 0, -1
+}
+
+Graphic "7BAL3002", 3, 3
+{
+	Patch "BAL7B1B5", -16, -1
+}
+
+Graphic "7BAL3003", 3, 3
+{
+	Patch "BAL7B1B5", -16, -12
+}
+
+Graphic "7BAL3004", 3, 3
+{
+	Patch "BAL7B1B5", -1, -12
+}
+
+Sprite "7BALD0", 6, 6
+{
+	Offset 4, 4
+	Patch "7BAL3001", 0, 0
+	Patch "7BAL3002", 3, 0
+	Patch "7BAL3004", 0, 3
+	Patch "7BAL3003", 3, 3
+}
+
+Graphic "7BAL4001", 7, 7
+{
+	Patch "BAL7A1A5", 0, -1
+}
+
+Graphic "7BAL4002", 7, 7
+{
+	Patch "BAL7A1A5", -10, 0
+}
+
+Graphic "7BAL4003", 7, 7
+{
+	Patch "BAL7A1A5", -12, -8
+}
+
+Graphic "7BAL4004", 7, 7
+{
+	Patch "BAL7A1A5", 0, -9
+}
+
+Sprite "7BALE0", 14, 14
+{
+	Offset 7, 7
+	Patch "7BAL4001", 0, 0
+	Patch "7BAL4002", 7, 0
+	Patch "7BAL4003", 7, 7
+	Patch "7BAL4004", 0, 7
+}
+
+Graphic "7BAL5001", 6, 6
+{
+	Patch "BAL7A1A5", 0, -1
+}
+
+Graphic "7BAL5002", 6, 6
+{
+	Patch "BAL7A1A5", -12, 0
+}
+
+Graphic "7BAL5003", 6, 6
+{
+	Patch "BAL7A1A5", -13, -9
+}
+
+Graphic "7BAL5004", 6, 6
+{
+	Patch "BAL7A1A5", -1, -10
+}
+
+Sprite "7BALF0", 12, 12
+{
+	Offset 6, 6
+	Patch "7BAL5001", 0, 0
+	Patch "7BAL5002", 6, 0
+	Patch "7BAL5004", 0, 6
+	Patch "7BAL5003", 6, 6
+}
+
+Graphic "7BAL6001", 4, 4
+{
+	Patch "BAL7A1A5", 0, -1
+}
+
+Graphic "7BAL6002", 4, 4
+{
+	Patch "BAL7A1A5", -14, -1
+}
+
+Graphic "7BAL6003", 4, 4
+{
+	Patch "BAL7A1A5", -15, -10
+}
+
+Graphic "7BAL6004", 4, 4
+{
+	Patch "BAL7A1A5", -2, -12
+}
+
+Sprite "7BALG0", 8, 8
+{
+	Offset 4, 4
+	Patch "7BAL6001", 0, 0
+	Patch "7BAL6002", 4, 0
+	Patch "7BAL6004", 0, 4
+	Patch "7BAL6003", 4, 4
+}
+
+Graphic "7BAL7001", 3, 3
+{
+	Patch "BAL7A1A5", -1, -1
+}
+
+Graphic "7BAL7002", 3, 3
+{
+	Patch "BAL7A1A5", -15, -2
+}
+
+Graphic "7BAL7003", 3, 3
+{
+	Patch "BAL7A1A5", -16, -11
+}
+
+Graphic "7BAL7004", 3, 3
+{
+	Patch "BAL7A1A5", -2, -12
+}
+
+Sprite "7BALH0", 6, 6
+{
+	Offset 3, 3
+	Patch "7BAL7001", 0, 0
+	Patch "7BAL7002", 3, 0
+	Patch "7BAL7004", 0, 3
+	Patch "7BAL7003", 3, 3
+}
+
+
+Graphic "FMAN0001", 14, 14
+{
+	Patch "MANFA1", -1, -5
+}
+
+Graphic "FMAN0002", 14, 14
+{
+	Patch "MANFA1", -19, -5
+}
+
+Graphic "FMAN0003", 14, 14
+{
+	Patch "MANFA1", -19, -19
+}
+
+Graphic "FMAN0004", 14, 14
+{
+	Patch "MANFA1", -1, -19
+}
+
+Sprite "FMANA0", 29, 28
+{
+	Offset 15, 15
+	Patch "FMAN0001", 0, 0
+	Patch "FMAN0002", 14, 0
+	Patch "FMAN0003", 15, 14
+	Patch "FMAN0004", 1, 14
+}
+
+Graphic "FMAN1001", 12, 12
+{
+	Patch "MANFA1", -3, -6
+}
+
+Graphic "FMAN1002", 12, 12
+{
+	Patch "MANFA1", -21, -6
+}
+
+Graphic "FMAN1003", 12, 12
+{
+	Patch "MANFA1", -21, -20
+}
+
+Graphic "FMAN1004", 12, 12
+{
+	Patch "MANFA1", -1, -21
+}
+
+Sprite "FMANB0", 24, 24
+{
+	Offset 12, 13
+	Patch "FMAN1001", 0, 0
+	Patch "FMAN1002", 12, 0
+	Patch "FMAN1003", 12, 12
+	Patch "FMAN1004", 0, 12
+}
+
+Graphic "FMAN2001", 10, 10
+{
+	Patch "MANFA1", -4, -6
+}
+
+Graphic "FMAN2002", 10, 10
+{
+	Patch "MANFA1", -23, -6
+}
+
+Graphic "FMAN2003", 10, 10
+{
+	Patch "MANFA1", -22, -22
+}
+
+Graphic "FMAN2004", 10, 10
+{
+	Patch "MANFA1", -3, -23
+}
+
+Sprite "FMANC0", 20, 20
+{
+	Offset 10, 11
+	Patch "FMAN2001", 0, 0
+	Patch "FMAN2002", 10, 0
+	Patch "FMAN2003", 10, 10
+	Patch "FMAN2004", 0, 10
+}
+
+Graphic "FMAN3001", 8, 8
+{
+	Patch "MANFA1", -4, -7
+}
+
+Graphic "FMAN3002", 8, 8
+{
+	Patch "MANFA1", -23, -6
+}
+
+Graphic "FMAN3003", 8, 8
+{
+	Patch "MANFA1", -24, -24
+}
+
+Graphic "FMAN3004", 8, 8
+{
+	Patch "MANFA1", -4, -25
+}
+
+Sprite "FMAND0", 16, 16
+{
+	Offset 8, 9
+	Patch "FMAN3001", 0, 0
+	Patch "FMAN3002", 8, 0
+	Patch "FMAN3003", 8, 8
+	Patch "FMAN3004", 0, 8
+}
+
+Graphic "FMAN4001", 6, 6
+{
+	Patch "MANFA1", -4, -8
+}
+
+Graphic "FMAN4002", 6, 6
+{
+	Patch "MANFA1", -25, -6
+}
+
+Graphic "FMAN4003", 6, 6
+{
+	Patch "MANFA1", -26, -25
+}
+
+Graphic "FMAN4004", 6, 6
+{
+	Patch "MANFA1", -2, -26
+}
+
+Sprite "FMANE0", 12, 12
+{
+	Offset 6, 7
+	Patch "FMAN4001", 0, 0
+	Patch "FMAN4002", 6, 0
+	Patch "FMAN4003", 6, 6
+	Patch "FMAN4004", 0, 6
+}
+
+Graphic "FMAN5001", 14, 14
+{
+	Patch "MANFB1", -1, -7
+}
+
+Graphic "FMAN5002", 14, 14
+{
+	Patch "MANFB1", -19, -7
+}
+
+Graphic "FMAN5003", 14, 14
+{
+	Patch "MANFB1", -20, -19
+}
+
+Graphic "FMAN5004", 14, 14
+{
+	Patch "MANFB1", -1, -19
+}
+
+Sprite "FMANF0", 29, 28
+{
+	Offset 15, 15
+	Patch "FMAN5001", 0, 0
+	Patch "FMAN5002", 14, 0
+	Patch "FMAN5003", 15, 14
+	Patch "FMAN5004", 1, 14
+}
+
+Graphic "FMAN6001", 12, 12
+{
+	Patch "MANFB1", -1, -7
+}
+
+Graphic "FMAN6002", 12, 12
+{
+	Patch "MANFB1", -21, -7
+}
+
+Graphic "FMAN6003", 12, 12
+{
+	Patch "MANFB1", -22, -21
+}
+
+Graphic "FMAN6004", 12, 12
+{
+	Patch "MANFB1", 0, -21
+}
+
+Sprite "FMANG0", 24, 24
+{
+	Offset 12, 13
+	Patch "FMAN6001", 0, 0
+	Patch "FMAN6002", 12, 0
+	Patch "FMAN6003", 12, 12
+	Patch "FMAN6004", 0, 12
+}
+
+Graphic "FMAN7001", 10, 10
+{
+	Patch "MANFB1", -2, -8
+}
+
+Graphic "FMAN7002", 10, 10
+{
+	Patch "MANFB1", -22, -7
+}
+
+Graphic "FMAN7003", 10, 10
+{
+	Patch "MANFB1", -24, -22
+}
+
+Graphic "FMAN7004", 10, 10
+{
+	Patch "MANFB1", -3, -23
+}
+
+Sprite "FMANH0", 20, 20
+{
+	Offset 10, 11
+	Patch "FMAN7001", 0, 0
+	Patch "FMAN7002", 10, 0
+	Patch "FMAN7003", 10, 10
+	Patch "FMAN7004", 0, 10
+}
+
+Graphic "FMAN8001", 8, 8
+{
+	Patch "MANFB1", -2, -8
+}
+
+Graphic "FMAN8002", 8, 8
+{
+	Patch "MANFB1", -24, -8
+}
+
+Graphic "FMAN8003", 8, 8
+{
+	Patch "MANFB1", -24, -24
+}
+
+Graphic "FMAN8004", 8, 8
+{
+	Patch "MANFB1", -1, -23
+}
+
+Sprite "FMANI0", 16, 16
+{
+	Offset 8, 9
+	Patch "FMAN8001", 0, 0
+	Patch "FMAN8002", 8, 0
+	Patch "FMAN8003", 8, 8
+	Patch "FMAN8004", 0, 8
+}
+
+Graphic "FMAN9001", 6, 6
+{
+	Patch "MANFB1", -4, -8
+}
+
+Graphic "FMAN9002", 6, 6
+{
+	Patch "MANFB1", -25, -8
+}
+
+Graphic "FMAN9003", 6, 6
+{
+	Patch "MANFB1", -26, -25
+}
+
+Graphic "FMAN9004", 6, 6
+{
+	Patch "MANFB1", -2, -26
+}
+
+Sprite "FMANJ0", 12, 12
+{
+	Offset 6, 7
+	Patch "FMAN9001", 0, 0
+	Patch "FMAN9002", 6, 0
+	Patch "FMAN9003", 6, 6
+	Patch "FMAN9004", 0, 6
+}
+
+Sprite "BAL2X0", 16, 16
+{
+	XScale 0.270
+	YScale 0.270
+	Offset 8, 8
+	Patch "BAL2A0", 0, 0
+}
+
+Sprite "BALXA0", 15, 15
+{
+	XScale 0.200
+	YScale 0.200
+	Offset 8, 8
+	Patch "BAL1A0", 0, 0
+}
+
+Sprite "BALXB0", 15, 15
+{
+	XScale 0.200
+	YScale 0.200
+	Offset 8, 8
+	Patch "BAL1A0", 0, 0
+	{
+		Translation "231:231=177:177", "212:222=176:179", "233:233=181:181", "173:173=175:175", "174:174=176:176"
+	}
+}

@@ -1,0 +1,419 @@
+class DamageScalingPowerup : Powerup
+{
+  double damageFactorNew;
+  double protectionFactor;
+
+  property damageFactorNew : damageFactorNew;
+  property protectionFactor : protectionFactor;
+
+  Default
+  {
+    DamageScalingPowerup.damageFactorNew 1.0;
+    DamageScalingPowerup.protectionFactor 1.0;
+    +INVENTORY.PERSISTENTPOWER;
+  }
+ 
+  // infinite duration
+  override void Tick() {}
+
+  override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		if (!passive && damage > 0)
+		{
+      Console.Printf("Old Damage Dealt: %i", damage);
+			newdamage = max(1, ApplyDamageFactors(GetClass(), damageType, damage, damage * damageFactorNew));
+      Console.Printf("New Damage Dealt: %i", newdamage);
+			if (Owner != null && newdamage > damage) Owner.A_StartSound(ActiveSound, CHAN_AUTO, CHANF_DEFAULT, 1.0, ATTN_NONE);
+		}
+
+    if (passive && damage > 0)
+		{
+      Console.Printf("Old Damage Received: %i", damage);
+			newdamage = max(1, ApplyDamageFactors(GetClass(), damageType, damage, damage * protectionFactor));
+      Console.Printf("New Damage Received:: %i", newdamage);
+			if (Owner != null && newdamage > damage) Owner.A_StartSound(ActiveSound, CHAN_AUTO, CHANF_DEFAULT, 1.0, ATTN_NONE);
+		}
+	}
+}
+
+class DoubleDamagePowerup : DamageScalingPowerup
+{
+  Default
+  {
+    DamageScalingPowerup.damageFactorNew 2.0;
+  }
+}
+
+class IncreaseMaxHealth : Powerup
+{
+  int healthIncrease;
+
+  property healthIncrease : healthIncrease;
+
+  Default
+  {
+    IncreaseMaxHealth.healthIncrease 10;
+    INVENTORY.Amount 1;
+    INVENTORY.MaxAmount 5;
+    +INVENTORY.PERSISTENTPOWER;
+    +INVENTORY.AUTOACTIVATE;
+    +INVENTORY.ALWAYSPICKUP;
+  }
+
+  override void Tick() {}
+
+  override void InitEffect()
+  {
+    Super.InitEffect();
+
+		if (Owner == null)
+			return;
+    
+    healthIncrease += 100;
+
+    Console.Printf("Old Max Health: %i", Owner.player.Mo.MaxHealth);
+    // Owner.player.Health += healthIncrease;
+    Owner.player.Mo.MaxHealth += healthIncrease;
+    // Owner.player.Mo.MugShotMaxHealth += healthIncrease;
+
+    Console.Printf("New Max Health: %i", Owner.player.Mo.MaxHealth);
+  }
+}
+
+class IncreaseMaxHealthInv : Inventory
+{
+  int healthIncrease;
+
+  property healthIncrease : healthIncrease;
+
+  Default
+  {
+    IncreaseMaxHealthInv.healthIncrease 10;
+    Inventory.maxamount 5;
+    +INVENTORY.PERSISTENTPOWER;
+  }
+
+  override void AttachToOwner(Actor toucher)
+  {
+    super.AttachToOwner(toucher);
+
+    Console.Printf("Picked up Max Health Increase");
+    int initialHealth = 100;
+    healthIncrease *= amount;
+    int totalHealth = initialHealth + healthIncrease;
+
+    Console.Printf("Old Max Health: %i", toucher.player.Mo.MaxHealth);
+    toucher.player.Mo.MaxHealth = totalHealth;
+    Console.Printf("New Max Health: %i", toucher.player.Mo.MaxHealth);
+  }
+
+}
+
+class IncreaseMaxDamageInv : Inventory
+{
+  double damageIncrease;
+  double totalDamageIncrease;
+
+  property damageIncrease : damageIncrease;
+
+  Default
+  {
+    IncreaseMaxDamageInv.damageIncrease 0.05;
+    Inventory.maxamount 5;
+    +INVENTORY.PERSISTENTPOWER;
+  }
+
+  override void AttachToOwner(Actor toucher)
+  {
+    super.AttachToOwner(toucher);
+
+    Console.Printf("Picked up Max Damage Increase");
+
+    int initialDamage = 1;
+    damageIncrease *= amount;
+    totalDamageIncrease = initialDamage + damageIncrease;
+
+    
+    Console.Printf("New Max Damage Modifier: %.2f", totalDamageIncrease);
+  }
+
+  override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		if (!passive && damage > 0)
+		{
+      // Console.Printf("Old Damage Dealt: %i", damage);
+			newdamage = max(1, ApplyDamageFactors(GetClass(), damageType, damage, damage * totalDamageIncrease));
+      // Console.Printf("New Damage Dealt: %i", newdamage);
+			if (Owner != null && newdamage > damage) Owner.A_StartSound(ActiveSound, CHAN_AUTO, CHANF_DEFAULT, 1.0, ATTN_NONE);
+		}
+	}
+
+}
+
+class DecreaseDamageReceivedInv : Inventory
+{
+  double damageDecrease;
+  double totalDamageDecrease;
+
+  property damageDecrease : damageDecrease;
+
+  Default
+  {
+    DecreaseDamageReceivedInv.damageDecrease 0.05;
+    Inventory.maxamount 5;
+    +INVENTORY.PERSISTENTPOWER;
+  }
+
+  override void AttachToOwner(Actor toucher)
+  {
+    super.AttachToOwner(toucher);
+
+    Console.Printf("Picked up Damage Received Decrease");
+
+    int initialDamage = 1;
+    damageDecrease *= amount;
+    totalDamageDecrease = initialDamage - damageDecrease;
+
+    
+    Console.Printf("New Damage Received Modifier: %.2f", totalDamageDecrease);
+  }
+
+  override void ModifyDamage(int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+	{
+		if (passive && damage > 0)
+		{
+      // Console.Printf("Old Damage Dealt: %i", damage);
+			newdamage = max(1, ApplyDamageFactors(GetClass(), damageType, damage, damage * totalDamageDecrease));
+      // Console.Printf("New Damage Dealt: %i", newdamage);
+			if (Owner != null && newdamage > damage) Owner.A_StartSound(ActiveSound, CHAN_AUTO, CHANF_DEFAULT, 1.0, ATTN_NONE);
+		}
+	}
+
+}
+
+class IncreaseBulletAmmoInv : Inventory
+{
+  int bulletIncrease;
+
+  property bulletIncrease : bulletIncrease;
+
+  Default
+  {
+    IncreaseBulletAmmoInv.bulletIncrease 50;
+    Inventory.maxamount 2;
+    +INVENTORY.PERSISTENTPOWER;
+  }
+
+  override void AttachToOwner(Actor toucher)
+  {
+    super.AttachToOwner(toucher);
+    let plr = toucher.player.Mo;
+    Clip clip = Clip(plr.FindInventory("Clip"));
+
+    if (clip)
+    {
+      Console.Printf("Old Max Bullet Amount: %i", clip.MaxAmount);
+      Console.Printf("Old Max Bullet Amount (backpack): %i", clip.BackpackMaxAmount);
+      let initialMaxAmount = clip.MaxAmount;
+      if(initialMaxAmount == clip.BackpackMaxAmount)
+      {
+        clip.MaxAmount = initialMaxAmount + (bulletIncrease * 2);
+        clip.BackpackMaxAmount = clip.MaxAmount;
+      }
+      else
+      {
+        clip.MaxAmount = initialMaxAmount + bulletIncrease;
+        clip.BackpackMaxAmount = (initialMaxAmount * 2) + (bulletIncrease * 2);
+      }
+
+      Console.Printf("New Max Bullet Amount: %i", clip.MaxAmount);
+      Console.Printf("New Max Bullet Amount (backpack): %i", clip.BackpackMaxAmount);
+    }
+    else
+    {
+      Console.Printf("No Bullets in Inventory!");
+      return;
+    }
+  }
+
+}
+
+class IncreaseShellAmmoInv : Inventory
+{
+  int shellIncrease;
+
+  property shellIncrease : shellIncrease;
+
+  Default
+  {
+    IncreaseShellAmmoInv.shellIncrease 10;
+    Inventory.maxamount 2;
+    +INVENTORY.PERSISTENTPOWER;
+  }
+
+  override void AttachToOwner(Actor toucher)
+  {
+    super.AttachToOwner(toucher);
+    let plr = toucher.player.Mo;
+    Shell shell = Shell(plr.FindInventory("Shell"));
+
+    if (!shell)
+    {
+      Console.Printf("No Shells in Inventory!");
+      plr.GiveInventory("Shell", 1);
+      shell = Shell(plr.FindInventory("Shell"));
+    } 
+
+    if (shell)
+    {
+      Console.Printf("Old Max Shell Amount: %i", shell.MaxAmount);
+      Console.Printf("Old Max Shell Amount (backpack): %i", shell.BackpackMaxAmount);
+      let initialMaxAmount = shell.MaxAmount;
+      if(initialMaxAmount == shell.BackpackMaxAmount)
+      {
+        shell.MaxAmount = initialMaxAmount + (shellIncrease * 2);
+        shell.BackpackMaxAmount = shell.MaxAmount;
+      }
+      else
+      {
+        shell.MaxAmount = initialMaxAmount + shellIncrease;
+        shell.BackpackMaxAmount = (initialMaxAmount * 2) + (shellIncrease * 2);
+      }
+
+      Console.Printf("New Max Shell Amount: %i", shell.MaxAmount);
+      Console.Printf("New Max Shell Amount (backpack): %i", shell.BackpackMaxAmount);
+    }
+  }
+
+}
+
+class IncreaseRocketAmmoInv : Inventory
+{
+  int rocketIncrease;
+
+  property rocketIncrease : rocketIncrease;
+
+  Default
+  {
+    IncreaseRocketAmmoInv.rocketIncrease 10;
+    Inventory.maxamount 2;
+    +INVENTORY.PERSISTENTPOWER;
+  }
+
+  override void AttachToOwner(Actor toucher)
+  {
+    super.AttachToOwner(toucher);
+    let plr = toucher.player.Mo;
+    RocketAmmo rocket = RocketAmmo(plr.FindInventory("RocketAmmo"));
+
+    if (!rocket)
+    {
+      Console.Printf("No Rockets in Inventory!");
+      plr.GiveInventory("RocketAmmo", 1);
+      rocket = RocketAmmo(plr.FindInventory("RocketAmmo"));
+    } 
+
+    if (rocket)
+    {
+      Console.Printf("Old Max Rocket Amount: %i", rocket.MaxAmount);
+      Console.Printf("Old Max Rocket Amount (backpack): %i", rocket.BackpackMaxAmount);
+      let initialMaxAmount = rocket.MaxAmount;
+      if (initialMaxAmount == rocket.BackpackMaxAmount) 
+      {
+        rocket.MaxAmount = initialMaxAmount + (rocketIncrease * 2);
+        rocket.BackpackMaxAmount = rocket.MaxAmount;
+      } 
+      else
+      {
+        rocket.MaxAmount = initialMaxAmount + rocketIncrease;
+        rocket.BackpackMaxAmount = (initialMaxAmount * 2) + (rocketIncrease * 2);
+      }
+
+      Console.Printf("New Max Rocket Amount: %i", rocket.MaxAmount);
+      Console.Printf("New Max Rocket Amount (backpack): %i", rocket.BackpackMaxAmount);
+    }
+  }
+
+}
+
+class IncreaseCellAmmoInv : Inventory
+{
+  int cellIncrease;
+
+  property cellIncrease : cellIncrease;
+
+  Default
+  {
+    IncreaseCellAmmoInv.cellIncrease 50;
+    Inventory.maxamount 2;
+    +INVENTORY.PERSISTENTPOWER;
+  }
+
+  override void AttachToOwner(Actor toucher)
+  {
+    super.AttachToOwner(toucher);
+    let plr = toucher.player.Mo;
+    Cell cell = Cell(plr.FindInventory("Cell"));
+
+    if (!cell)
+    {
+      Console.Printf("No Cells in Inventory!");
+      plr.GiveInventory("Cell", 1);
+      cell = Cell(plr.FindInventory("Cell"));
+    } 
+
+    if (cell)
+    {
+      Console.Printf("Old Max Cell Amount: %i", cell.MaxAmount);
+      Console.Printf("Old Max Cell Amount (backpack): %i", cell.BackpackMaxAmount);
+      let initialMaxAmount = cell.MaxAmount;
+      if (initialMaxAmount == cell.BackpackMaxAmount) 
+      {
+        cell.MaxAmount = initialMaxAmount + (cellIncrease * 2);
+        cell.BackpackMaxAmount = cell.MaxAmount;
+      } 
+      else
+      {
+        cell.MaxAmount = initialMaxAmount + cellIncrease;
+        cell.BackpackMaxAmount = (initialMaxAmount * 2) + (cellIncrease * 2);
+      }
+
+      Console.Printf("New Max Cell Amount: %i", cell.MaxAmount);
+      Console.Printf("New Max Cell Amount (backpack): %i", cell.BackpackMaxAmount);
+    }
+  }
+
+}
+
+// Reduces self damage from rockets
+class ReduceSelfExplosionDamage : Inventory
+{
+  double rocketDamageDecrease;
+
+  property rocketDamageDecrease : rocketDamageDecrease;
+
+  Default
+  {
+    ReduceSelfExplosionDamage.rocketDamageDecrease 0.25;
+    Inventory.maxamount 1;
+    +INVENTORY.PERSISTENTPOWER;
+  }
+
+  override void AbsorbDamage (int damage, Name damageType, out int newdamage, Actor inflictor, Actor source, int flags)
+  {
+    if(!flags == DMG_EXPLOSION) return;
+
+    let rocketReplacer = Actor.GetReplacement("Rocket");
+    if(inflictor is "Rocket" || inflictor is rocketReplacer)
+    {
+      let playerReplacer = Actor.GetReplacement("DoomPlayer");
+      if(source is "DoomPlayer" || source is playerReplacer)
+      {
+        // Console.Printf("Rocket self damage?");
+        // Console.Printf("Old Damage Dealt: %i", damage);
+        newdamage = damage - (damage * rocketDamageDecrease);
+        // Console.Printf("New Damage Dealt: %i", newdamage);
+      }
+    }
+  }
+}

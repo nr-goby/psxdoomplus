@@ -1,0 +1,275 @@
+class PsxBFG9000 : PsxDoomWeapon replaces BFG9000
+{
+    Default
+    {
+		//$Title "BFG9000"
+		
+        Height 20;
+		Weapon.SelectionOrder 2800;
+		Weapon.AmmoUse 40;
+		Weapon.AmmoGive 40;
+		Weapon.AmmoType "Cell";
+		+WEAPON.NOAUTOFIRE;
+		Inventory.PickupMessage "$GOTBFG9000";
+		Tag "$TAG_BFG9000";
+
+	    Weapon.SlotNumber 7;
+        Inventory.Icon "_BFGA0";
+        PsxDoomWeapon.VanillaSprite "BFGG";
+        PsxDoomWeapon.SmoothSprite "SBFG";
+        PsxDoomWeapon.BlackSprite "SBFG";
+        PsxDoomWeapon.ClassicSprite "8FGG";
+        PsxDoomWeapon.WeaponLight "WEAPLIGHT2";
+		PsxDoomWeapon.WeaponLightDuration 8;
+    }
+
+    States
+	{
+        SwapSprites:
+            BFGG A 0; SBFG A 0; 8FGG A 0;
+            Stop;
+
+        Ready:
+            TNT1 A 1 { A_SwapSprites(); A_WeaponReady(WRF_ALLOWUSER1); }
+            Loop;
+
+        Deselect:
+            TNT1 A 1 { A_SwapSprites(); A_FastLower(); }
+            Loop;
+        
+        Select:
+            TNT1 A 1 { A_SwapSprites(); A_FastRaise(); }
+            Loop;
+
+        Fire:
+            BFGG A 20 A_BFGsound;
+            BFGG B 10 A_GunFlash;
+            BFGG B 10 A_FireBFG;
+            BFGG B 20 A_ReFire;
+            Goto Ready;
+		ClassicFire:
+			8FGG A 20 A_BFGsound;
+            8FGG B 10 A_GunFlash;
+            8FGG B 10 A_FireBFG;
+            8FGG B 20 A_ReFire;
+            Goto Ready;
+        SmoothFire:
+            SSBF A 20 A_BFGSound;
+            SSBF A 2 A_GunFlash;
+            BFGN A 8;
+            SBFG D 1 A_FireBFG;
+            SBFG D 1 A_RecoilPitch(8, 2);
+            SBFG EDC 2;
+            SBFG BA 1;
+            SSBF A 20 A_ReFire;
+            goto Ready;
+        SmoothSlowFire:
+            SSBF A 23 A_BFGSound;
+            SSBF A 2 A_GunFlash;
+            BFGN A 8;
+            SBFG D 1 A_FireBFG;
+            SBFG D 1 A_RecoilPitch(8, 2);
+            SBFG ED 3;
+            SBFG C 2;
+            SBFG BA 1;
+            SSBF A 23 A_ReFire;
+            goto Ready;
+
+        Flash:
+            BFGF A 10 Bright A_Light1;
+            BFGF B 6 Bright A_Light2;
+            Goto LightDone;
+		ClassicFlash:
+			8FGF A 10 Bright A_Light1;
+            8FGF B 6 Bright A_Light2;
+            Goto LightDone;
+        SmoothFlash:
+            BFGW A 1 bright;
+            BFGX HGFE 1 bright A_Light2;
+            BFGX DCBA 1 bright A_Light2;
+            TNT1 A 0 A_Light0;
+            Goto LightDone;
+
+        Spawn:
+            BFUG A -1;
+            Stop;
+
+        OldFire:
+            BFGG A 10 A_BFGsound;
+            BFGG BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB 1 A_FireOldBFG;
+            BFGG B 0 A_Light0;
+            BFGG B 20 A_ReFire;
+            Goto Ready;
+	}
+}
+
+class PsxBFGBall : PsxProjectile replaces BFGBall
+{
+    Default
+    {
+        Radius 13;
+		Height 8;
+		Speed 25;
+		Damage 100;
+		Projectile;
+		//+RANDOMIZE
+		+ZDOOMTRANS
+		RenderStyle "Add";
+		Alpha 0.75;
+		DeathSound "weapons/bfgx";
+		Obituary "$OB_MPBFG_BOOM";
+
+        +FORCEXYBILLBOARD;
+        PsxActor.AmbientSound "weapons/bfgloop";
+    }
+
+    States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(zp_enabled && hq_enabled, "HQSpawn");
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothSpawn");
+            BFS1 AB 4 Bright A_ZPTrail;
+            Loop;
+        SmoothSpawn:
+            FUCK abcd 2 bright A_ZPTrail;
+            Loop;
+        HQSpawn:
+			TNT1 A 0 { bZDOOMTRANS = false; }
+        	BFGM ABCDEF 2 BRIGHT A_ZPTrail;
+            Loop;
+
+        Death:
+            TNT1 A 0 A_StopAmbientSound;
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothDeath");
+            BFE1 A 8 Bright A_ZPExplosion;
+            BFE1 B 8 Bright;
+            BFE1 C 8 Bright { A_BFGSpray(); A_HQExplosion(); }
+            BFE1 DEF 8 Bright;
+            Stop;
+        SmoothDeath:
+            BFGB A 2 bright A_ZPExplosion;
+            BFGB BCDE 2 Bright;
+            BFGB F 1 Bright A_HQExplosion;
+            BFGB F 3 Bright A_BFGSpray;
+            BFGB GJIKL 3 Bright;
+            Stop;
+    }
+	
+	override void PostBeginPlay()
+	{
+		bEXTREMEDEATH = ce_gibrules;
+		super.PostBeginPlay();
+	}
+
+    void A_ZPTrail()
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+                A_SpawnItemEx("BFGBallTrailSpawner",0,0,0,Vel.X,Vel.Y,Vel.Z,Angle,SXF_ABSOLUTEPOSITION|SXF_ABSOLUTEMOMENTUM|SXF_ABSOLUTEANGLE|SXF_TRANSFERPOINTERS);
+            }
+            else
+            {
+                A_SpawnItem("BFGTrail");
+            }
+        }
+    }
+
+    void A_ZPExplosion()
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+                for(int i=0;i<2;i++) A_SpawnItem("BFGBallExpBoltSpawner");
+                for(int i=0;i<16;i++) A_SpawnItemEx("ExplosionSparkGreen",0,0,0,FRandom(5,8),0,FRandom(-5,8),Random(1,360));
+                for(int i=0;i<44;i++) A_SpawnProjectile("BFGExplosionSpark",5,0,Random(1,360),CMF_AIMDIRECTION|CMF_BADPITCH,Random(-45,90));
+                for(int i=0;i<4;i++) A_SpawnItemEx("BFGExplosionSprite",0,0,0,FRandom(0,6),0,FRandom(-3,3),Random(1,360));
+                Radius_Quake (5, 10, 0, 24, 0);
+                A_SetScale(1.66);
+                for(int i=0;i<5;i++) A_SpawnItemEx("BFGExplosionShockWave",0,0,0,FRandom(0,0.5),0,FRandom(-0.5,0.5));
+                for(int i=0;i<2;i++) A_SpawnItemEx("BFGExplosionSmoke",0,0,0,FRandom(0,0.5),0,FRandom(-0.5,0.5),Random(1,360)) ;
+                A_SetTranslucent(0);
+            }
+            else
+            {
+                for(int i=0;i<26;i++) A_SpawnItemEx("BFGParticle", 0,0,0, (Random(-5,5)), (Random(-5,5)), (Random(-5,5)), 0, SXF_ABSOLUTEMOMENTUM|SXF_NOCHECKPOSITION);
+                for(int i=0;i<26;i++) A_SpawnItemEx("BFGParticle", 0,0,0, (Random(-5,5)), (Random(-5,5)), (Random(-5,5)), 0, SXF_ABSOLUTEMOMENTUM|SXF_NOCHECKPOSITION);
+                for(int i=0;i<26;i++) A_SpawnItemEx("BFGParticle", 0,0,0, (Random(-5,5)), (Random(-5,5)), (Random(-5,5)), 0, SXF_ABSOLUTEMOMENTUM|SXF_NOCHECKPOSITION);
+                for(int i=0;i<26;i++) A_SpawnItemEx("BFGParticle", 0,0,0, (Random(-5,5)), (Random(-5,5)), (Random(-5,5)), 0, SXF_ABSOLUTEMOMENTUM|SXF_NOCHECKPOSITION);
+                A_SpawnItemEx("GreenExplosionFlare", 0, 0, 6, 0, 0, 0, 0, 0, 0);
+            }
+        }
+    }
+
+    void A_HQExplosion()
+    {
+        if (zp_enabled && hq_enabled)
+        {
+            for(int i=0;i<4;i++) A_SpawnItemEx("BFGExplosionSprite",0,0,0,FRandom(0,6),0,FRandom(-3,3),Random(1,360));
+        }
+    }
+}
+
+class PsxBFGExtra : PsxProjectile replaces BFGExtra
+{
+	Default
+	{
+		+NOBLOCKMAP
+		+NOGRAVITY
+		+ZDOOMTRANS
+		RenderStyle "Add";
+		Alpha 0.75;
+		DamageType "BFGSplash";
+	}
+	
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(zp_enabled && hq_enabled, "HQSpawn");
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothSpawn");
+            BFE2 A 8 Bright A_ZPExplosion;
+            BFE2 BCD 8 Bright;
+            Stop;
+        SmoothSpawn:
+            BFEX a 2 bright A_ZPExplosion;
+            BFEX bcdefghijklmno 2 bright;
+            stop;
+        HQSpawn:
+            TNT1 A 0 A_ZPExplosion;
+            TNT1 A 4 Light("BFGBALL_X1");
+            TNT1 A 4 Light("BFGBALL_X4");
+            TNT1 A 4 Light("BFGBALL_X5");
+            stop;
+	}
+
+    void A_ZPExplosion()
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+                A_SetScale(0.075);
+                A_SetTranslation("ZPBFG");
+                A_SpawnProjectile ("GreenFlare3", 0, 0, random (0, 360), CMF_AIMDIRECTION|CMF_BADPITCH, random (0, 360));
+                A_SpawnItem("BFGBallImpactShockWave");
+                A_SpawnItem("GreenPlasmaSmoke");
+                if (Random(0,3) != 0)
+                {
+                    for(int i=0;i<2;i++) A_SpawnItem("GreenBolt");
+                }
+                else
+                {
+                    for(int i=0;i<6;i++) A_SpawnItemEx("ShockSpark",0,0,0,FRandom(0,5),0,Random(-1,5),Random(1,360),128,128);
+                }
+            }
+            else
+            {
+                A_SpawnDebris("GreenPlasmaSpark");
+                A_SpawnItem("GreenPlasmaSmoke");
+                A_SpawnItem("GreenExplosionFlareSmallFaded");
+            }
+        }
+    }
+}

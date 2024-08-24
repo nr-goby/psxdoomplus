@@ -1,0 +1,274 @@
+class ZMusicPlayer
+{
+	uint startTime;
+	uint trackTime;
+	uint computerTrackTime;
+	int lastTime;
+	String currentMusic;
+	int fadeState;
+	float fadedVolume;
+	
+	enum EMusicType
+	{
+		MUSIC_CONSOLE,
+		MUSIC_COMPUTER
+	}
+	
+	enum EFadeState
+	{
+		FADE_NONE,
+		FADE_OUT
+	}
+	
+	void PlaySelectedMusic()
+	{
+		int mt = CVar.GetCVar("mus_original", players[consoleplayer]).GetInt();
+		PlayMusicType(mt);
+	}
+	
+	void PlaySwappedMusic()
+	{
+		int mt = CVar.GetCVar("mus_original", players[consoleplayer]).GetInt() == 0 ? MUSIC_COMPUTER : MUSIC_CONSOLE;
+		PlayMusicType(mt);
+		CVar.GetCVar("mus_original", players[consoleplayer]).SetInt(mt);
+	}
+	
+	void ForcePlayMusic(String music)
+	{
+		trackTime = 0.0;
+		PlayMusic(music);
+	}
+	
+	private void PlayMusicType(int musicType)
+	{
+		if (computerTrackTime <= 0) return;
+		string music = level.music;
+		if (musicType == MUSIC_COMPUTER)
+		{
+			music = CEMusicTracker.GetAltMusic(music);
+			trackTime = computerTrackTime;
+		}
+		else
+		{
+			trackTime = 0;
+		}
+		PlayMusic(music);
+	}
+	
+	private void PlayMusic(String music)
+	{
+		S_ChangeMusic(music, 0, true, true);
+		SetMusicVolume(1.0);
+		currentMusic = musplaying.name;
+		ResetCounters();
+	}
+	
+	static void PrintTrackName()
+	{
+		if (!CVar.GetCVar("mus_trackname", players[consoleplayer]).GetBool()) return;
+		
+		String track = musplaying.name;
+		let prefix = track.Left(2);
+		if (prefix == "D_") track = track.Mid(2);
+		
+		String mn = Stringtable.Localize("$MS_"..track);
+		if (mn == "MS_"..track) return;
+		let message = String.Format("\cfNP: \c-\"%s\"", mn);
+		
+		String an = Stringtable.Localize("$AU_"..track);
+		if (an != "AU_"..track) message.AppendFormat("\nby %s", an);
+		
+		Console.Printf(message);
+	}
+	
+	private int GetLength(String music)
+	{
+		let prefix = music.Left(2);
+		if (prefix == "D_") music = music.Mid(2);
+		int minLength = CVar.GetCVar("mus_minlength", players[consoleplayer]).GetInt();
+		float length = Stringtable.Localize("$TM_"..music).ToInt() * 1.0;
+		return (length <= 0) ? 0 : (int)(ceil(minLength / length) * length * 1000);
+	}
+	
+	void ResetCounters()
+	{
+		fadeState = FADE_NONE;
+		fadedVolume = 1.0;
+		SetStartTime(int(MSTimeF()));
+	}
+	
+	void SetStartTime(uint time)
+	{
+		startTime = time;
+		EventHandler.SendNetworkEvent("SaveStartTime", time);
+	}
+		
+	void Tick()
+	{
+		if (trackTime > 0 && CVar.GetCVar("mus_dynamic", players[consoleplayer]).GetInt() == 1)
+		{
+			switch (fadeState)
+			{
+				case FADE_OUT:
+					fadedVolume = fadedVolume - 0.004;
+					SetMusicVolume(fadedVolume);
+					if (fadedVolume <= 0.0)
+					{
+						PlayMusicType(MUSIC_CONSOLE);
+						PrintTrackName();
+						CVar.GetCVar("mus_original", players[consoleplayer]).SetInt(0);
+					}
+				break;
+				case FADE_NONE:
+				default:
+					//Console.Printf(""..MSTimeF() - startTime.." / "..trackTime);
+					if (MSTimeF() - startTime > tracktime)
+					{
+						fadeState = FADE_OUT;
+					}
+				break;
+			}
+		}
+	}
+	
+	static ZMusicPlayer Get()
+	{
+		return new("ZMusicPlayer").Init();
+	}
+	
+	ZMusicPlayer Init()
+	{
+		let alt = CEMusicTracker.GetAltMusic(level.music);
+		computerTrackTime = GetLength(StringTable.Localize(alt));
+		fadedVolume = 1.0;
+		return self;
+	}
+}
+
+class CEMusicTracker : StaticEventHandler
+{
+	uint startTime;
+	
+	override void NetworkProcess(ConsoleEvent e)
+	{
+		if (e.name == "SaveStartTime")
+		{
+			startTime = e.args[0];
+		}
+	}
+	
+	clearscope static String GetMusic(string trackname)
+	{
+		let alt = GetAltMusic(trackname);
+		if (StringTable.Localize(alt) == alt.Mid(1)) alt = trackname;
+		return (mus_original && !mus_dynamic) ? alt : trackname;
+	}
+	
+	clearscope static String GetAltMusic(string trackname)
+	{
+		trackname.Replace("$","$O");
+		return trackname;
+	}
+}
+
+extend class CEEventHandler
+{
+	ZMusicPlayer changer;
+	bool allowed;
+
+	ui void MusicUITick()
+	{
+		if (allowed) changer.Tick();
+	}
+		
+	void MusicOnRegister()
+	{
+		allowed = !config.IsExcluded(level.mapname);
+		if (changer == null)
+		{
+			changer = ZMusicPlayer.Get();
+			if (allowed)
+			{
+				if (CVar.GetCVar("mus_dynamic", players[consoleplayer]).GetInt() == 1)
+					CVar.GetCVar("mus_original", players[consoleplayer]).SetInt(ZMusicPlayer.MUSIC_COMPUTER);
+				changer.PlaySelectedMusic();
+			}
+		}
+		else if (CVar.GetCVar("mus_dynamic", players[consoleplayer]).GetInt() == 1)
+		{
+			if (musplaying.name != changer.currentMusic)
+			{
+				changer.ResetCounters();
+			}
+			else
+			{
+				CEMusicTracker tracker = CEMusicTracker(CEMusicTracker.Find("CEMusicTracker"));
+				changer.SetStartTime(tracker.startTime);
+				changer.fadedVolume = 1.0;
+				changer.fadeState = ZMusicPlayer.FADE_NONE;
+			}
+		}
+	}
+	
+	void MusicWorldUnloaded(WorldEvent e)
+	{
+		changer.ResetCounters();
+		changer.trackTime = 0;
+	}
+	
+	void MusicWorldTick()
+	{
+		if (level.maptime == 1 && !config.IsExcluded(level.mapname) && changer)
+			changer.PrintTrackName();
+	}
+	
+	/*
+	override void WorldLoaded(WorldEvent e)
+	{
+		super.WorldLoaded(e);
+		int lumps = Wads.GetNumLumps();
+		Console.Printf("[enu default]");
+		for (int i = 0; i < lumps; i++)
+		{
+			int ns = Wads.GetLumpNamespace(i);
+			if (ns == Wads.ns_music)
+			{
+				string mus = Wads.GetLumpName(i);
+				mus.Replace("D_","");
+				Console.Printf("TM_"..mus.." = \""..int(Ceil(S_GetLength(mus))).."\";");
+			}
+		}
+	}
+	*/
+	
+	void MusicNetworkProcess(ConsoleEvent e)
+	{
+		HandleEvent(e.Name);
+	}
+
+	ui void MusicInterfaceProcess(ConsoleEvent e)
+	{
+		HandleEvent(e.Name);
+	}
+	
+	clearscope void HandleEvent(string eventName)
+	{
+		Array<string> command;
+		eventName.Split (command, ":");
+		if (command[0] == "PlayMusEx")
+		{
+			changer.ForcePlayMusic(command[1]);
+			changer.PrintTrackName();
+		}
+		else if (allowed && eventName == 'ForceSwapMusic')
+		{
+			changer.PlaySwappedMusic();
+			changer.PrintTrackName();
+		}
+		else if (allowed && eventName == 'ForcePlayMusic')
+		{	
+			changer.PlaySelectedMusic();
+			changer.PrintTrackName();
+		}
+	}
+}

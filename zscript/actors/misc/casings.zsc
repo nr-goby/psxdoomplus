@@ -1,0 +1,130 @@
+class PsxCasing : Actor
+{
+	CEConfig config;
+    int elapsed;
+	bool checkedFloor;
+	bool sleep;
+	
+    int TotalTime;
+
+    property TotalTime : TotalTime;
+	
+    Default
+    {
+        Scale 0.17;
+        Radius 3;
+        BounceFactor 0.5;
+        WallBounceFactor 0.4;
+        BounceCount 5;
+        BounceType "Hexen";
+        Projectile;
+        -NOGRAVITY;
+        -NOBLOCKMAP;
+        +NOTELEPORT;
+        +NOTRIGGER;
+        +THRUACTORS;
+        +DROPOFF;
+        +FLOORCLIP;
+        +NEVERRESPAWN;
+        -BOUNCEONACTORS;
+
+        PsxCasing.TotalTime (45 * TICRATE);
+        +NOTONAUTOMAP;
+    }
+
+    void A_CasingImpact()
+    {
+        A_StartSound(DeathSound);
+		tics++;
+		sleep = true;
+    }
+
+    override void Tick()
+    {
+		if (!config) config = CEConfig.Get();
+        if (elapsed > TotalTime) A_FadeOut(0.1);
+        elapsed++;
+		
+		if (Pos.Z <= FloorZ && !checkedFloor)
+		{
+			checkedFloor = true;
+			if (GetFloorTerrain().isLiquid || config.noGibTextures.CheckKey(floorpic))
+			{
+				Destroy();
+			}
+		}
+		if (!sleep) super.Tick();
+    }
+}
+
+class PsxBulletCasing : PsxCasing
+{
+    Default
+    {
+        Mass 4;
+        BounceSound "casings/bullet/bounce";
+        DeathSound "casings/bullet/die";
+    }
+
+    States
+	{
+        Spawn:
+            BCAS ABCDEFGH 1;
+            Loop;
+        
+        Death:
+            TNT1 A 0 A_Jump(255, "Death1", "Death2", "Death3", "Death4");
+            Goto Death1;
+        Death1:
+            BCAS I 1 A_CasingImpact;
+            Stop;
+        Death2:
+            BCAS J 1 A_CasingImpact;
+            Stop;
+        Death3:
+            BCAS K 1 A_CasingImpact;
+            Stop;
+        Death4:
+            BCAS L 1 A_CasingImpact;
+            Stop;
+	}
+}
+
+class PsxShellCasing : PsxCasing
+{
+    Default
+    {
+        Mass 2;
+        BounceSound "casings/shell/bounce";
+        DeathSound "casings/shell/die";
+    }
+
+    states
+	{
+        Spawn:
+            SCAS ABCDEFGH 2;
+            Loop;
+
+        Death:
+            TNT1 A 0 A_Jump(255, "Death1", "Death2", "Death3", "Death4", "Death6");
+            Goto Death1;
+        Death1:
+            SHDY A 1 A_CasingImpact;
+            Stop;
+        Death2:
+            SHDY B 1 A_CasingImpact;
+            Stop;
+        Death3:
+            SHDY C 1 A_CasingImpact;
+            Stop;
+        Death4:
+            SHDY D 1 A_CasingImpact;
+            Stop;
+        Death5:
+            SHDY E 1 A_CasingImpact;
+            Stop;
+        Death6:
+            SHDY F 1 A_CasingImpact;
+            Stop;
+	}
+}

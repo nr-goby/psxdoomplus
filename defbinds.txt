@@ -1,0 +1,4 @@
+c DoResurrect
+j ToggleTallyScreen
+m ForceSwapMusic
+//f +user1

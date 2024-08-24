@@ -1,0 +1,50 @@
+Actor PlasmaTrail : VisualSpecialEffect
+{
+  RenderStyle Add
+  Scale 0.15
+  Alpha 0.6
+  States
+  {
+  Spawn:
+    DPLC A 1 Bright A_FadeOut(0.02)
+    loop
+  }
+}
+
+Actor BFGTrail : VisualSpecialEffect
+{
+  RenderStyle Add
+  Scale 0.15
+  Alpha 0.5
+  States
+  {
+  Spawn:
+    BFBC A 1 Bright A_FadeOut(0.02)
+    loop
+  }
+}
+
+Actor BFGParticle
+{
+  +NOGRAVITY
+  +NOTELEPORT
+  +ForceXYBillboard
+  +CLIENTSIDEONLY
+  +Doombounce
+  +missile
+  +THRUACTORS
+  +dontsplash
+  Bouncecount 3
+  Radius 3
+  Height 6
+  Speed 6
+  RenderStyle Add
+  Alpha 0.9
+  Scale 0.12
+  States
+  {
+  Spawn:
+    BFPA A 1 bright A_FadeOut(0.01)
+    loop
+  }
+}

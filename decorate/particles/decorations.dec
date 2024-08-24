@@ -1,0 +1,37 @@
+Actor EvilEyeStuffSpawner : SHTorchSpawner
+{
+	//+FLOATBOB
+	+NOBLOCKMAP
+	//-NOGRAVITY
+    +NoClip
+    +MoveWithSector
+	-FORCEXYBILLBOARD
+	height 72
+	RenderStyle "Add"
+	Alpha 1.0
+	Scale 1.0
+	States
+	{
+	Spawn:
+    	ZEYE AAABBBCCCBBB 1 bright A_SpawnItem("EvilEyeEye")
+    	loop
+	}
+}
+
+Actor EvilEyeEye: VisualSpecialEffect
+{
+	+NoClip
+    +MoveWithSector
+	+FORCEXYBILLBOARD
+   +NOTONAUTOMAP
+	RenderStyle "normal"
+	Alpha 1.0
+	Scale 0.35
+	States
+	{
+	Spawn:
+		NULL A 0
+    	ZEYM A 1 bright
+    	stop
+	}
+}

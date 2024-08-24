@@ -1,0 +1,688 @@
+class AltResources
+{
+	ui static TextureId GetBackground(LevelInfo level)
+	{
+		let tex = "";
+		switch (level.cluster)
+		{
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+				tex = "INTEW_E4";
+				break;
+			case 5:
+			case 6:
+			case 7:
+				tex = "INTEWPIC";
+				break;
+			case 8:
+				tex = "NRVINTEW";
+				break;
+			case 9:
+				tex = "SIGINTEW";
+				break;
+			case 10:
+			default:
+				tex = "INTERPIC";
+				break;
+		}
+		return TexMan.CheckForTexture(tex);
+	}
+	
+	ui static string GetInterMusic(LevelInfo level)
+	{
+		let it = ServiceIterator.Find("CEAltInterMusicService");
+		let music = "";
+		Service svc;
+		while (svc = it.Next()) music = svc.GetStringUI(level.mapname);
+		return music;
+	}
+}
+
+class PsxCutsceneStatusScreen : DoomStatusScreen
+{
+	int eLHeight;
+	int lh;
+	String password;
+	TextureID altBackground;
+
+	override void initShowNextLoc()
+	{
+		if (wbs.nextname == "")
+		{
+			jobstate = finished;
+			return;
+		}
+		Super.initShowNextLoc();
+	}
+	
+	override void drawShowNextLoc(void)
+	{
+		if (altBackground)
+		{
+			DrawAltBackground();
+		}
+		else
+		{
+			bg.drawBackground(CurState, true, snl_pointeron);
+		}
+		if (ois_enabled)
+		{
+			drawStats();
+		}
+		else
+		{
+			drawEL();
+		}
+	}
+	
+	override void StartMusic()
+	{
+		if (CEConfig.Get().IsStatsScreenSkipped(wbs.Current)) return;
+		if (!mus_dynamic && mus_original)
+		{
+			string interMusic = AltResources.GetInterMusic(level.info);
+			S_ChangeMusic(interMusic, 0, true, true);
+		}
+		else
+		{
+			level.SetInterMusic(wbs.next);
+		}
+	}
+	
+	override void Drawer()
+	{
+		if (CEConfig.Get().IsStatsScreenSkipped(wbs.Current))
+		{
+			jobstate = finished;
+			return;
+		}
+		super.Drawer();
+	}
+	
+	override void Start (wbstartstruct wbstartstruct)
+	{
+		super.Start(wbstartstruct);
+		cwidth = 274;
+		cheight = 240;
+		scalemode = FSMode_None;
+		scalefactorx = 1;
+		scalefactory = 1;
+		wrapwidth = cwidth;
+		
+		if (!sma_enabled)
+		{
+			authortexts[0] = "";
+			authortexts[1] = "";
+		}
+		if (!CEConfig.Get().isPwad)
+		{
+			bg.LoadBackground(!oip_enabled);
+		}
+		if (hpt_enabled)
+		{
+			wbs.parTime = 0;
+			wbs.suckTime = 0;
+		}
+		if (psw_enabled)
+		{
+			bool success;
+			String password;
+			[success, password] = CEPassword.Encode(players[consoleplayer], wbs.next);
+			if (success)
+			{
+				CVar.FindCVar("levelselect_password").SetString(password);
+				self.password = password;
+			}
+		}
+		lh = psw_enabled ? 24 : 28;
+		
+		if (wbs.parTime)
+		{
+			lh -= 4;
+		}
+		else if (ois_enabled)
+		{
+			lh -= 3;
+		}
+		if (!oip_enabled && !CEConfig.Get().isPwad) altBackground = AltResources.GetBackground(level.info);
+	}
+	
+	enum NewValues
+	{
+		TITLEY = 8,
+		SP_STATSX = 60,
+		SP_STATSY = 55,
+		SP_TIMEY = 55,
+		NG_STATSY = 65,
+		SP_PASSWORDY = 198,
+	}
+	
+	override void drawStats (void)
+	{
+		if (altBackground) DrawAltBackground();
+		// line height
+		//int lh = IntermissionFont.GetHeight() * 3 / 2;
+		
+		drawLF();
+		
+	
+		// For visual consistency, only use the patches here if all are present.
+		bool useGfx = TexMan.OkForLocalization(Kills, "$TXT_IMKILLS")
+			&& TexMan.OkForLocalization(Items, "$TXT_IMITEMS")
+			&& TexMan.OkForLocalization(P_secret, "$TXT_IMSECRETS")
+			&& TexMan.OkForLocalization(Timepic, "$TXT_IMTIME")
+			&& (!wbs.partime || TexMan.OkForLocalization(Par, "$TXT_IMPAR"));
+
+		// The font color may only be used when the entire screen is printed as text.
+		// Otherwise the text based parts should not be translated to match the other graphics patches.
+		let tcolor = useGfx? Font.CR_UNTRANSLATED : content.mColor;
+
+		Font printFont;
+		Font textFont = generic_ui? NewSmallFont : content.mFont;
+		int statsx = SP_STATSX;
+
+		
+		bool sucky = cnt_time >= wbs.sucktime * 60 * 60 && wbs.sucktime > 0 && Sucks.IsValid();
+		int separator = sucky ? 0 : 7;
+		
+		if (useGfx)
+		{
+			printFont = IntermissionFont;
+			DrawTexture (Kills, statsx+7, SP_STATSY);
+			DrawTexture (Items, statsx+3, SP_STATSY+lh);
+			DrawTexture (P_secret, statsx-24, SP_STATSY+lh+lh);
+			DrawTexture (Timepic, statsx-12, SP_TIMEY+lh+lh+lh);
+			if (wbs.partime) DrawTexture (Par, statsx+17, SP_TIMEY+lh+lh+lh+lh);
+		}
+		else
+		{
+			// Check if everything fits on the screen.
+			String percentage = wi_percents? " 0000%" : " 0000/0000";
+			int perc_width = textFont.StringWidth(percentage);
+			int k_width = textFont.StringWidth("$TXT_IMKILLS");
+			int i_width = textFont.StringWidth("$TXT_IMITEMS");
+			int s_width = textFont.StringWidth("$TXT_IMSECRETS");
+			int allwidth = max(k_width, i_width, s_width) + perc_width;
+			if ((SP_STATSX*2 + allwidth) > 274)	// The content does not fit so adjust the position a bit.
+			{
+				statsx = max(0, (274 - allwidth) / 2);
+			}
+
+			printFont = generic_ui? IntermissionFont : content.mFont;
+			DrawText (textFont, tcolor, statsx+7, SP_STATSY+separator, "$TXT_IMKILLS");
+			separator += lh;
+			DrawText (textFont, tcolor, statsx+3, SP_STATSY+separator, "$TXT_IMITEMS");
+			separator += lh;
+			DrawText (textFont, tcolor, statsx-24, SP_STATSY+separator, "$TXT_IMSECRETS");
+			separator += lh;
+			DrawText (textFont, tcolor, statsx+12, SP_TIMEY+separator, "$TXT_IMTIME");
+			
+			eLHeight = separator;
+			
+			if (CurState == StatusScreen.StatCount)
+			{
+				if (wbs.partime)
+				{
+					separator += lh;
+					DrawText (textFont, tcolor, statsx+17, SP_TIMEY+separator, "$TXT_IMPAR");
+				}
+				if (wi_showtotaltime)
+				{
+					separator += lh;
+					DrawText (textFont, tcolor, statsx-4, SP_TIMEY+separator, "$SCORE_TOTAL");
+				}
+			}
+			else
+			{
+				drawEL();
+			}
+		}
+		separator = sucky ? 0 : 7;
+		drawPercent (printFont, 274 - statsx-13, SP_STATSY+separator, cnt_kills[0], wbs.maxkills, true, tcolor);
+		separator += lh;
+		drawPercent (printFont, 274 - statsx-13, SP_STATSY+separator, cnt_items[0], wbs.maxitems, true, tcolor);
+		separator += lh;
+		drawPercent (printFont, 274 - statsx-13, SP_STATSY+separator, cnt_secret[0], wbs.maxsecret, true, tcolor);
+		separator += lh;
+		drawTimeFont (printFont, 274 - statsx-13, SP_TIMEY+separator, cnt_time, tcolor);
+
+		if (CurState == StatusScreen.StatCount)
+		{
+			if (wbs.partime)
+			{
+				separator += lh;
+				drawTimeFont (printFont, 274 - statsx-13, SP_TIMEY+separator, cnt_par, tcolor);
+			}
+			if (wi_showtotaltime)
+			{
+				separator += lh;
+				drawTimeFont (printFont, 274 - statsx-13, SP_TIMEY+separator, cnt_total_time, tcolor);
+			}
+		}
+		
+		// This really sucks - not just by its message - and should have been removed long ago!
+		// To avoid problems here, the "sucks" text only gets printed if the lump is present, this even applies to the text replacement.
+		
+		if (sucky && CurState == StatusScreen.StatCount)
+		{ // "sucks"
+			separator += lh;
+			int x = statsx+47;
+			int y = SP_TIMEY+separator;
+			if (useGfx && TexMan.OkForLocalization(Sucks, "$TXT_IMSUCKS"))
+			{
+				let size = TexMan.GetScaledSize(Sucks);
+				DrawTexture (Sucks, x - size.X, y - size.Y - 2);
+			}
+			else
+			{
+				drawText (textFont, tColor, x, y,	"$TXT_IMSUCKS");
+			}
+		}
+		
+		if (password) DrawPassword();
+	}
+	
+	override int drawLF ()
+	{
+		bool ispatch = wbs.LName0.isValid();
+		int oldy = TITLEY * scaleFactorY;
+		int h;
+		
+		if (!ispatch)
+		{
+			let asc = mapname.mFont.GetMaxAscender(lnametexts[1]);
+			if (asc > TITLEY - 2)
+			{
+				oldy = (asc+2) * scaleFactorY;
+			}
+		}
+		
+		int y = DrawName(oldy, wbs.LName0, lnametexts[0]);
+
+		// If the displayed info is made of patches we need some additional offsetting here.
+		if (ispatch) 
+		{
+			int disp = 0;
+			// The offset getting applied here must at least be as tall as the largest ascender in the following text to avoid overlaps.
+			if (authortexts[0].length() == 0)
+			{
+				int h1 = BigFont.GetHeight() - BigFont.GetDisplacement();
+				int h2 = (y - oldy) / scaleFactorY / 4;
+				disp = min(h1, h2);
+				
+				if (!TexMan.OkForLocalization(finishedPatch, "$WI_FINISHED"))
+				{
+					disp += finishedp.mFont.GetMaxAscender("$WI_FINISHED");
+				}
+			}
+			else
+			{
+					disp += author.mFont.GetMaxAscender(authortexts[0]);
+			}
+			y += disp * scaleFactorY;
+		}
+		
+		y = DrawAuthor(y, authortexts[0]);
+		
+		// draw "Finished!"
+
+		int statsy = multiplayer? NG_STATSY : SP_STATSY * scaleFactorY;
+		if (y < (statsy - finishedp.mFont.GetHeight()*3/4) * scaleFactorY)
+		{
+			// don't draw 'finished' if the level name is too tall
+			y = DrawPatchOrText(y, finishedp, finishedPatch, "$WI_FINISHED");
+		}
+		return y;
+	}
+
+	override void drawEL ()
+	{
+		int oldy = scaleFactorY * TITLEY;
+		if (ois_enabled)
+		{
+			oldY += scaleFactorY * (eLHeight + SP_TIMEY + lh);
+			if (!psw_enabled) oldY += 14;
+		}
+		
+		bool ispatch = TexMan.OkForLocalization(enteringPatch, "$WI_ENTERING");
+		if (!ispatch)
+		{
+			let asc = entering.mFont.GetMaxAscender("$WI_ENTERING");
+			if (asc > TITLEY - 2)
+			{
+				oldy = (asc+2) * scaleFactorY;
+			}
+		}
+
+		int y = DrawPatchOrText(oldy, entering, enteringPatch, "$WI_ENTERING");
+		
+		// If the displayed info is made of patches we need some additional offsetting here.
+		
+		if (ispatch)
+		{
+			int h1 = BigFont.GetHeight() - BigFont.GetDisplacement();
+			let size = TexMan.GetScaledSize(enteringPatch);
+			int h2 = int(size.Y);
+			let disp = min(h1, h2) / 4;
+			// The offset getting applied here must at least be as tall as the largest ascender in the following text to avoid overlaps.
+			if (!wbs.LName1.isValid())
+			{
+				disp += mapname.mFont.GetMaxAscender(lnametexts[1]);
+			}
+			y += disp * scaleFactorY;
+		}
+
+		y = DrawName(y, wbs.LName1, lnametexts[1]);
+
+		if (wbs.LName1.isValid() && authortexts[1].length() > 0) 
+		{
+			// Consdider the ascender height of the following text.
+			y += author.mFont.GetMaxAscender(authortexts[1]) * scaleFactorY;
+		}
+		
+		if (!psw_enabled || !ois_enabled) DrawAuthor(y, authortexts[1]);
+	}
+	
+	void DrawPassword()
+	{
+		int y = SP_PASSWORDY;
+		let textFont = entering.mFont;
+		let tColor = entering.mColor;
+		String label = StringTable.Localize("$CEMNU_PASSWORD");
+		int x = (cwidth - textFont.StringWidth(label) * scaleFactorX) / 2;
+		DrawText(textFont, tColor, x, y, label);
+		y += textFont.GetHeight() * scaleFactorY;
+		x = (cwidth - textFont.StringWidth(password) * scaleFactorX) / 2;
+		DrawText(textFont, tColor, x, y, password);
+	}
+	
+	void DrawAltBackground()
+	{
+		screen.DrawTexture(altBackground, true, 0, 0, 
+			DTA_FullscreenEx, FSMode_ScaleToFit43);
+	}
+}
+
+class PsxCutsceneCoopStatusScreen : CoopStatusScreen
+{
+	TextureId altBackground;
+	
+	override void initShowNextLoc()
+	{
+		if (wbs.nextname == "")
+		{
+			jobstate = finished;
+			return;
+		}
+		Super.initShowNextLoc();
+	}
+
+	override void StartMusic()
+	{
+		if (CEConfig.Get().IsStatsScreenSkipped(wbs.Current)) return;
+		if (!mus_dynamic && mus_original)
+		{
+			string interMusic = AltResources.GetInterMusic(level.info);
+			S_ChangeMusic(interMusic, 0, true, true);
+		}
+		else
+		{
+			level.SetInterMusic(wbs.next);
+		}
+	}
+	
+	override void Drawer()
+	{
+		if (CEConfig.Get().IsStatsScreenSkipped(wbs.Current))
+		{
+			jobstate = finished;
+			return;
+		}
+		super.Drawer();
+	}
+	
+	override void Start (wbstartstruct wbstartstruct)
+	{
+		super.Start(wbstartstruct);
+		cwidth = 274;
+		cheight = 240;
+		scalemode = FSMode_None;
+		scalefactorx = 1;
+		scalefactory = 1;
+		wrapwidth = cwidth;
+		if (!sma_enabled)
+		{
+			authortexts[0] = "";
+			authortexts[1] = "";
+		}
+		if (!CEConfig.Get().isPwad)
+		{
+			bg.LoadBackground(!oip_enabled);
+		}
+		if (hpt_enabled)
+		{
+			wbs.parTime = 0;
+			wbs.suckTime = 0;
+		}
+		if (!oip_enabled && !CEConfig.Get().isPwad) altBackground = AltResources.GetBackground(level.info);
+	}
+
+	override int drawLF ()
+	{
+		bool ispatch = wbs.LName0.isValid();
+		int oldy = TITLEY * scaleFactorY;
+		int h;
+		
+		if (!ispatch)
+		{
+			let asc = mapname.mFont.GetMaxAscender(lnametexts[1]);
+			if (asc > TITLEY - 2)
+			{
+				oldy = (asc+2) * scaleFactorY;
+			}
+		}
+		
+		int y = DrawName(oldy, wbs.LName0, lnametexts[0]);
+
+		// If the displayed info is made of patches we need some additional offsetting here.
+		if (ispatch) 
+		{
+			int disp = 0;
+			// The offset getting applied here must at least be as tall as the largest ascender in the following text to avoid overlaps.
+			if (authortexts[0].length() == 0)
+			{
+				int h1 = BigFont.GetHeight() - BigFont.GetDisplacement();
+				int h2 = (y - oldy) / scaleFactorY / 4;
+				disp = min(h1, h2);
+				
+				if (!TexMan.OkForLocalization(finishedPatch, "$WI_FINISHED"))
+				{
+					disp += finishedp.mFont.GetMaxAscender("$WI_FINISHED");
+				}
+			}
+			else
+			{
+					disp += author.mFont.GetMaxAscender(authortexts[0]);
+			}
+			y += disp * scaleFactorY;
+		}
+		
+		y = DrawAuthor(y, authortexts[0]);
+		
+		// draw "Finished!"
+
+		int statsy = multiplayer? NG_STATSY : SP_STATSY * scaleFactorY;
+		if (y < (statsy - finishedp.mFont.GetHeight()*3/4) * scaleFactorY)
+		{
+			// don't draw 'finished' if the level name is too tall
+			y = DrawPatchOrText(y, finishedp, finishedPatch, "$WI_FINISHED");
+		}
+		return (int)(y * CleanYFac * 1.25);
+	}
+	
+	override void drawShowNextLoc(void)
+	{
+		if (altBackground)
+		{
+			DrawAltBackground();
+		}
+		else
+		{
+			bg.drawBackground(CurState, true, snl_pointeron);
+		}
+		drawEL();
+	}
+	
+	override void drawStats(void)
+	{
+		if (altBackground) DrawAltBackground();
+		super.drawStats();
+	}
+	
+	void DrawAltBackground()
+	{
+		screen.DrawTexture(altBackground, true, 0, 0, 
+			DTA_FullscreenEx, FSMode_ScaleToFit43);
+	}
+}
+
+class PsxCutsceneDeathmatchStatusScreen : DeathmatchStatusScreen
+{
+	TextureId altBackground;
+	
+	override void initShowNextLoc()
+	{
+		if (wbs.nextname == "")
+		{
+			jobstate = finished;
+			return;
+		}
+		Super.initShowNextLoc();
+	}
+
+	override void StartMusic()
+	{
+		if (CEConfig.Get().IsStatsScreenSkipped(wbs.Current)) return;
+		if (!mus_dynamic && mus_original)
+		{
+			string interMusic = AltResources.GetInterMusic(level.info);
+			S_ChangeMusic(interMusic, 0, true, true);
+		}
+		else
+		{
+			level.SetInterMusic(wbs.next);
+		}
+	}
+	
+	override void Drawer()
+	{
+		if (CEConfig.Get().IsStatsScreenSkipped(wbs.Current))
+		{
+			jobstate = finished;
+			return;
+		}
+		super.Drawer();
+	}
+		
+	override void Start (wbstartstruct wbstartstruct)
+	{
+		super.Start(wbstartstruct);
+		cwidth = 274;
+		cheight = 240;
+		scalemode = FSMode_None;
+		scalefactorx = 1;
+		scalefactory = 1;
+		wrapwidth = cwidth;
+		if (!sma_enabled)
+		{
+			authortexts[0] = "";
+			authortexts[1] = "";
+		}
+		if (hpt_enabled)
+		{
+			wbs.parTime = 0;
+			wbs.suckTime = 0;
+		}
+		if (!oip_enabled && !CEConfig.Get().isPwad) altBackground = AltResources.GetBackground(level.info);
+	}
+	
+	override int drawLF ()
+	{
+		bool ispatch = wbs.LName0.isValid();
+		int oldy = TITLEY * scaleFactorY;
+		int h;
+		
+		if (!ispatch)
+		{
+			let asc = mapname.mFont.GetMaxAscender(lnametexts[1]);
+			if (asc > TITLEY - 2)
+			{
+				oldy = (asc+2) * scaleFactorY;
+			}
+		}
+		
+		int y = DrawName(oldy, wbs.LName0, lnametexts[0]);
+
+		// If the displayed info is made of patches we need some additional offsetting here.
+		if (ispatch) 
+		{
+			int disp = 0;
+			// The offset getting applied here must at least be as tall as the largest ascender in the following text to avoid overlaps.
+			if (authortexts[0].length() == 0)
+			{
+				int h1 = BigFont.GetHeight() - BigFont.GetDisplacement();
+				int h2 = (y - oldy) / scaleFactorY / 4;
+				disp = min(h1, h2);
+				
+				if (!TexMan.OkForLocalization(finishedPatch, "$WI_FINISHED"))
+				{
+					disp += finishedp.mFont.GetMaxAscender("$WI_FINISHED");
+				}
+			}
+			else
+			{
+					disp += author.mFont.GetMaxAscender(authortexts[0]);
+			}
+			y += disp * scaleFactorY;
+		}
+		
+		y = DrawAuthor(y, authortexts[0]);
+		
+		// draw "Finished!"
+
+		int statsy = multiplayer? NG_STATSY : SP_STATSY * scaleFactorY;
+		if (y < (statsy - finishedp.mFont.GetHeight()*3/4) * scaleFactorY)
+		{
+			// don't draw 'finished' if the level name is too tall
+			y = DrawPatchOrText(y, finishedp, finishedPatch, "$WI_FINISHED");
+		}
+		return (int)(y * CleanYFac * 1.25);
+	}
+	
+	override void drawShowNextLoc(void)
+	{
+		if (altBackground)
+		{
+			DrawAltBackground();
+		}
+		else
+		{
+			bg.drawBackground(CurState, true, snl_pointeron);
+		}
+		drawEL();
+	}
+	
+	override void drawStats(void)
+	{
+		if (altBackground) DrawAltBackground();
+		super.drawStats();
+	}
+	
+	void DrawAltBackground()
+	{
+		screen.DrawTexture(altBackground, true, 0, 0, 
+			DTA_FullscreenEx, FSMode_ScaleToFit43);
+	}
+}

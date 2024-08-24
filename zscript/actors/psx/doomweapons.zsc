@@ -1,0 +1,441 @@
+class PsxDoomWeapon : DoomWeapon
+{
+    const SPREAD_XY = 5.6030275;
+	const FBF_PSXFORMULA = 512;
+	
+	const RESW = 292.0;
+	const RESH = 240.0;
+	const WEAPON_SCALE_X = 320.0/RESW * 1.1;
+	const WEAPON_SCALE_Y = 240.0/RESH * 1.1;
+	
+	Actor lightOwner;
+	int lightTics;
+
+    string VanillaSprite;
+    string SmoothSprite;
+    string BlackSprite;
+	string ClassicSprite;
+    string WeaponLight;
+	int WeaponLightDuration;
+    int WeaponFlags;
+
+	int previousWeaponType;
+	
+    property VanillaSprite : VanillaSprite;
+    property SmoothSprite : SmoothSprite;
+    property BlackSprite : BlackSprite;
+    property ClassicSprite : ClassicSprite;
+    property WeaponLight : WeaponLight;
+    property WeaponLightDuration : WeaponLightDuration;
+
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	
+    Default
+    {
+		//$Category "Weapons"
+		//$Color 14
+	
+        Weapon.Kickback 100;
+
+        +MOVEWITHSECTOR;
+        PsxDoomWeapon.VanillaSprite "TNT1";
+        PsxDoomWeapon.SmoothSprite "TNT1";
+        PsxDoomWeapon.BlackSprite "TNT1";
+		PsxDoomWeapon.ClassicSprite "TNT1";
+        PsxDoomWeapon.WeaponLight "";
+		PsxDoomWeapon.WeaponLightDuration 5;
+    }
+	
+	States
+    {
+        SwapFistSprites:
+            PUNG A 0; PKFS A 0; BKFS A 0; 0UNG A 0;
+            Stop;
+
+        Select:
+        Deselect:
+        Fire:
+        Ready:
+            TNT1 A 1;
+            Stop;
+
+        User1:
+            TNT1 A 0 a_jumpif(!IsSmooth(), "ClassicMelee");
+            TNT1 A 0 a_jumpif(ce_weapontics, "User1Slow");
+            TNT1 A 0 A_SwapFistSprites;
+            "####" LBCD 1;
+            "####" E 1 A_Punch;
+            "####" FGHI 2;
+            "####" JKL 1;
+            TNT1 A 0 { return ResolveState("Ready"); }
+            Stop;
+        User1Slow:
+            TNT1 A 0 A_SwapFistSprites;
+            "####" LBCDE 1;
+            "####" E 1 A_Punch;
+            "####" FGHI 2;
+            "####" JKL 2;
+            TNT1 A 0 { return ResolveState("Ready"); }
+            Stop;
+        ClassicMelee:
+            TNT1 A 0 A_SwapFistSprites;
+            "####" B 4;
+            "####" C 4 A_Punch;
+            "####" D 4;
+            "####" C 4;
+            TNT1 A 0 { return ResolveState("Ready"); }
+            Stop;
+    }
+
+    action bool IsSmooth()
+    {
+		return !invoker.previousWeaponType && smw_enabled;
+    }
+
+    double GetSpeedScale()
+	{
+		switch(ce_playertics)
+		{
+			case 2:
+				return PsxActor.SCALE_TICRATE_SLOWEST;
+			case 1:
+				return PsxActor.SCALE_TICRATE_SLOW;
+			case 0:
+			default:
+				return PsxActor.SCALE_TICRATE;
+		}
+        return 1;
+	}
+	
+	override void Tick()
+	{
+		super.Tick();
+		if (lightOwner)
+		{
+			if (lightTics <= 0)
+			{
+				lightOwner.A_RemoveLight("WeaponLight");
+				lightOwner = null;
+			}
+			lightTics--;
+		}
+	}
+
+    override void PostBeginPlay()
+    {
+        BobSpeed *= GetSpeedScale();
+		if (user_translucent) bTRANSLUCENT = true;
+		if (user_additive) bADDITIVE = true;
+		if (user_subtractive) bSUBTRACTIVE = true;
+		ApplyBlends();
+        super.PostBeginPlay();
+    }
+
+    override State GetAtkState(bool hold)
+    {
+        State s = null;
+        if (previousWeaponType)
+		{
+			if (hold) s = FindState('ClassicHold');
+            if (s == null) s = FindState('ClassicFire');
+		}
+        else if (IsSmooth())
+        {
+            if (ce_weapontics)
+            {
+                if (hold) s = FindState('SmoothSlowHold');
+                if (hold && s == null) s = FindState('SmoothHold');
+                if (s == null) s = FindState('SmoothSlowFire');
+                if (s == null) s = FindState('SmoothFire');
+            }
+            else
+            {
+                if (hold) s = FindState('SmoothHold');
+                if (s == null) s = FindState('SmoothFire');
+            }
+        }
+        if (s == null) s = super.GetAtkState(hold);
+        return s;
+    }
+
+    action void A_GunFlash(statelabel flashlabel = null, int flags = 0)
+    {
+        let player = player;
+
+		if (null == player || player.ReadyWeapon == null)
+		{
+			return;
+		}
+		if (!(flags & GFF_NOEXTCHANGE))
+		{
+			player.mo.PlayAttacking2 ();
+		}
+
+		Weapon weapon = player.ReadyWeapon;
+		state flashstate = null;
+
+		if (flashlabel == null)
+		{
+            if (invoker.previousWeaponType)
+			{
+				if (weapon.bAltFire) flashstate = weapon.FindState('ClassicAltFlash');
+			    if (flashstate == null) flashstate = weapon.FindState('ClassicFlash');
+			}
+            else if (IsSmooth())
+            {
+                if (weapon.bAltFire) flashstate = weapon.FindState('SmoothAltFlash');
+			    if (flashstate == null) flashstate = weapon.FindState('SmoothFlash');
+            }
+			if (flashstate == null && weapon.bAltFire) flashstate = weapon.FindState('AltFlash');
+			if (flashstate == null) flashstate = weapon.FindState('Flash');
+		}
+		else
+		{
+			flashstate = weapon.FindState(flashlabel);
+		}
+        if (invoker.WeaponLight != "")
+		{
+			A_AttachLightDef("WeaponLight", invoker.WeaponLight);
+			invoker.lightTics = invoker.WeaponLightDuration;
+			invoker.lightOwner = self;
+		}
+		player.SetPsprite(PSP_FLASH, flashstate);
+    }
+
+    action void A_FastLower(int lowerspeed = 6)
+    {
+        if (!slw_enabled) lowerspeed *= 2;
+        A_Lower(lowerspeed);
+    }
+
+    action void A_FastRaise(int raisespeed = 6)
+    {
+        if (!slw_enabled) raisespeed *= 2;
+        A_Raise(raisespeed);
+    }
+
+    action void A_RecoilPitch(int steps = 4, double recoil = 3.749084)
+    {
+        if (!retoggle) return;
+        let player = player;
+        if (player && player.mo && !(player.mo is "PsxDoomPlayer")) return;
+        PsxDoomPlayer(player.mo).SetRecoilPitch(steps, recoil * restrength);
+    }
+
+    action void A_PsxBullets(double spread_xy = SPREAD_XY, double spread_z = 0, int numbullets = 1, int damageperbullet = 4, class<Actor> pufftype = "BulletPuff", int flags = FBF_USEAMMO|FBF_PSXFORMULA, double range = 0, class<Actor> missile = null, double Spawnheight = 32, double Spawnofs_xy = 0)
+    {
+		if (spread_z == 0 && GetCVar("vertspread") && !sv_novertspread)
+		{
+			spread_z = Random2[cabullet]() * (3.549 / 256);
+		}
+        A_TracerBullets(spread_xy, spread_z, numbullets, damageperbullet, pufftype, flags, range, missile, SpawnHeight, Spawnofs_xy);
+    }
+
+	action void A_TracerBullets(double spread_xy, double spread_z, int numbullets, int damageperbullet, class<Actor> pufftype = "BulletPuff", int flags = FBF_USEAMMO, double range = 0, class<Actor> missile = null, double Spawnheight = 32, double Spawnofs_xy = 0)
+    {
+		let player = player;
+		if (!player) return;
+		
+        if (trw_enabled)
+        {
+            puffType = "DummyPuff";
+            missile = "PsxBulletTracer";
+            SpawnHeight = 0;
+        }
+
+		let pawn = PlayerPawn(self);
+		let weapon = player.ReadyWeapon;
+
+		int i;
+		double bangle;
+		double bslope = 0.;
+		int laflags = (flags & FBF_NORANDOMPUFFZ)? LAF_NORANDOMPUFFZ : 0;
+		FTranslatedLineTarget t;
+
+		if ((flags & FBF_USEAMMO) && weapon &&  stateinfo != null && stateinfo.mStateType == STATE_Psprite)
+		{
+			if (!weapon.DepleteAmmo(weapon.bAltFire, true))
+				return;	// out of ammo
+		}
+		
+		if (range == 0)	range = PLAYERMISSILERANGE;
+
+		if (!(flags & FBF_NOFLASH)) pawn.PlayAttacking2 ();
+
+		if (!(flags & FBF_NOPITCH)) bslope = BulletSlope();
+		bangle = Angle;
+
+		if (pufftype == NULL) pufftype = 'BulletPuff';
+
+		if (weapon != NULL)
+		{
+			A_StartSound(weapon.AttackSound, CHAN_WEAPON);
+		}
+		
+		if ((numbullets == 1 && !player.refire) || numbullets == 0)
+		{
+			int damage = damageperbullet;
+
+			if (!(flags & FBF_NORANDOM))
+			{
+				if (flags & FBF_PSXFORMULA)
+				{
+					damage *= random[cabullet](1, 4); //(P_Random() & 3) + 1 << 2;
+				}
+				else
+				{
+					damage *= random[cabullet](1, 3); //5 * (P_Random() % 3 + 1);
+				}
+			}
+
+			let puff = LineAttack(bangle, range, bslope, damage, 'Hitscan', pufftype, laflags, t);
+			Actor aimed = t.linetarget;
+			
+			if (missile != null)
+			{
+				bool temp = false;
+				double ang = Angle - 90;
+				Vector2 ofs = AngleToVector(ang, Spawnofs_xy);
+				Actor proj = SpawnPlayerMissile(missile, bangle, ofs.X, ofs.Y, Spawnheight);
+				if (proj)
+				{
+					if (!puff)
+					{
+						temp = true;
+						puff = LineAttack(bangle, range, bslope, 0, 'Hitscan', pufftype, laflags | LAF_NOINTERACT, t);
+					}
+					AimBulletMissile(proj, puff, flags, temp, false);
+					if (t.unlinked)
+					{
+						proj.Angle = bangle;
+						proj.Pitch = bslope;
+						proj.Vel3DFromAngle(proj.Speed, proj.Angle, proj.Pitch);
+					}
+					let tracerProj = PsxTracer(proj);
+					if (tracerProj) tracerproj.pufftarget = aimed;
+				}
+			}
+		}
+		else 
+		{
+			if (numbullets < 0)
+				numbullets = 1;
+			for (i = 0; i < numbullets; i++)
+			{
+				double pangle = bangle;
+				double slope = bslope;
+
+				if (flags & FBF_EXPLICITANGLE)
+				{
+					pangle += spread_xy;
+					slope += spread_z;
+				}
+				else
+				{
+					pangle += spread_xy * Random2[cabullet]() / 255.;
+					slope += spread_z * Random2[cabullet]() / 255.;
+				}
+
+				int damage = damageperbullet;
+
+				if (!(flags & FBF_NORANDOM))
+				{
+					if (flags & FBF_PSXFORMULA)
+					{
+						damage *= random[cabullet](1, 4); //(P_Random() & 3) + 1 << 2;
+					}
+					else
+					{
+						damage *= random[cabullet](1, 3); //5 * (P_Random() % 3 + 1);
+					}
+				}
+
+				let puff = LineAttack(pangle, range, slope, damage, 'Hitscan', pufftype, laflags, t);
+				Actor aimed = t.linetarget;
+				
+				if (missile != null)
+				{
+					bool temp = false;
+					double ang = Angle - 90;
+					Vector2 ofs = AngleToVector(ang, Spawnofs_xy);
+					Actor proj = SpawnPlayerMissile(missile, bangle, ofs.X, ofs.Y, Spawnheight);
+					if (proj)
+					{
+						if (!puff)
+						{
+							temp = true;
+							puff = LineAttack(bangle, range, bslope, 0, 'Hitscan', pufftype, laflags | LAF_NOINTERACT, t);
+						}
+						AimBulletMissile(proj, puff, flags, temp, false);
+						if (t.unlinked)
+						{
+							proj.Angle = bangle;
+							proj.Pitch = bslope;
+							proj.Vel3DFromAngle(proj.Speed, proj.Angle, proj.Pitch);
+						}
+						let tracerProj = PsxTracer(proj);
+						if (tracerProj) tracerproj.pufftarget = aimed;
+					}
+				}
+			}
+		}
+    }
+
+    action void A_Punch()
+    {
+        String puff = "PSXFistPuff";
+        int dmg = random[Punch](1, 8) * 3;
+        if (FindInventory("PowerStrength", true))
+        {
+            puff = "PSXMegaFistPuff";
+            dmg *= 10;
+        }
+        A_CustomPunch(dmg, true, 0, puff, 70, 0, 0, null, "*fist", "weapons/fistwhoosh");
+    }
+
+    action void A_SwapWeaponSprites(String vanilla, String smooth, String black, String classic)
+    {
+        String sprite = vanilla;
+        let psp = player.FindPSprite(PSP_WEAPON);
+		if (hud_weapons_original)
+		{
+			sprite = classic;
+		}
+        else if (IsSmooth())
+        {
+            sprite = gltoggle ? black : smooth;
+        }
+        psp.Sprite = GetSpriteIndex(sprite);
+		
+		if (invoker.previousWeaponType)
+		{
+			invoker.WeaponScaleX = WEAPON_SCALE_X;
+			invoker.WeaponScaleY = WEAPON_SCALE_Y;
+			invoker.YAdjust = 17;
+		}
+		else
+		{
+			invoker.WeaponScaleX = invoker.default.WeaponScaleX;
+			invoker.WeaponScaleY = invoker.default.WeaponScaleY;
+			invoker.YAdjust = invoker.default.YAdjust;
+		}
+    }
+
+    action void A_SwapSprites()
+    {
+        A_SwapWeaponSprites(invoker.VanillaSprite, invoker.SmoothSprite, invoker.BlackSprite, invoker.ClassicSprite);
+    }
+	
+	action void A_SwapFistSprites()
+    {
+        A_SwapWeaponSprites("PUNG", "PKFS", "BKFS", "0UNG");
+    }
+	
+	override void DoEffect()
+	{
+		previousWeaponType = hud_weapons_original;
+		super.DoEffect();
+	}
+}

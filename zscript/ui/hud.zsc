@@ -1,0 +1,610 @@
+class CEBaseStatusBar : BaseStatusBar
+{
+	play bool LoadedLocks;
+	virtual play void InitLockTypes(bool blueCard, bool redCard, bool yellowCard) {}
+	virtual play void BlinkBlue() {}
+	virtual play void BlinkRed() {}
+	virtual play void BlinkYellow() {}
+}
+
+class PsxStatusBar : CEBaseStatusBar
+{
+	HUDFont mHUDFont;
+	HUDFont mIndexFont;
+	HUDFont mAmountFont;
+	HUDFont mMessageFont;
+	InventoryBarState diparms;
+	int hudType;
+	Vector2 scale;
+	int previousScreenblocks;
+	
+	bool ShowRed;
+	bool ShowBlue;
+	bool ShowYellow;
+	play int StartRed;
+	play int StartBlue;
+	play int StartYellow;
+	play bool BlueCard;
+	play bool RedCard;
+	play bool YellowCard;
+	
+	Array<string> message;
+	Array<int> messagetic;
+	int messageTop;
+	int messageTopGoal;
+	int currentState;
+	
+	const MSGTICS = 5*TICRATE;
+	const NOTIFYFADETIME = 1*TICRATE;
+	const VSCALE = 274.0/320.0;
+	const MSG_VSCALE = 292.0/320.0;
+	const BLINK_TIME = 10;
+	
+	override void Draw (int state, double TicFrac)
+	{
+		hudType = Cvar.GetCVar("hud_legacy", players[consoleplayer]).GetInt();
+		currentState = state;
+		Super.Draw(state, TicFrac);
+		if (state == HUD_StatusBar)
+		{
+			if (hud_weapons_original)
+			{
+				BeginStatusBar(true);
+				if (screenblocks == 10 && previousScreenblocks != screenblocks)
+					UpdateScreenGeometry();
+			}
+			else
+			{
+				BeginStatusBar();
+			}
+			DrawMainBar (TicFrac);
+		}
+		else if (state == HUD_Fullscreen)
+		{
+			BeginHUD(1, false);
+			DrawFullScreenStuff ();
+		}
+		PrintMessage(state);
+		previousScreenblocks = screenblocks;
+	}
+
+	override void Init()
+	{
+		Super.Init();
+		
+		message.Clear();
+		messagetic.Clear();
+				
+		scale = (1, VSCALE);
+		SetSize(31, 256, 200);
+		Font fnt = "DBIGFONT";
+		mHUDFont = HUDFont.Create(fnt, fnt.GetCharWidth("0"), true, 1, 1);
+		
+		fnt = "SMALLFONT";
+		mMessageFont = HUDFont.Create(fnt, 0, false, 1, 1);
+		
+		fnt = "INDEXFONT_DOOM";
+		mIndexFont = HUDFont.Create(fnt, fnt.GetCharWidth("0"), true);
+		mAmountFont = HUDFont.Create("INDEXFONT");
+		diparms = InventoryBarState.Create();
+		previousScreenblocks = -1;
+	}
+	
+	protected void DrawMainBar (double TicFrac)
+	{
+		DrawImage("STATBAR", (-9 - 0.8, 168 + 0.6), DI_ITEM_OFFSETS, 1, (-1,-1),(1.027,(296.0/320.0)));
+		Inventory a1 = GetCurrentAmmo();
+		if (a1 != null) DrawString(mHUDFont, FormatNumber(GetCurrentAmmo().Amount, 3), (36.8, 172.3), DI_TEXT_ALIGN_RIGHT|DI_NOSHADOW,Font.CR_UNTRANSLATED,1,-1,4,(1.027,(296.0/320.0)));
+		DrawString(mHUDFont, FormatNumber(CPlayer.health, 3), (80.8, 172.3), DI_TEXT_ALIGN_RIGHT|DI_NOSHADOW,Font.CR_UNTRANSLATED,1,-1,4,(1.027,(296.0/320.0)));
+		DrawString(mHUDFont, FormatNumber(GetArmorAmount(), 3), (180.4, 172.3), DI_TEXT_ALIGN_RIGHT|DI_NOSHADOW,Font.CR_UNTRANSLATED,1,-1,4,(1.027,(296.0/320.0)));
+
+		bool locks[6];
+		for(int i = 0; i < 6; i++) locks[i] = CPlayer.mo.CheckKeys(i + 1, false, true);
+		if (locks[0] || (ShowRed && RedCard))
+		{
+			DrawImage("STKEYRCD", (99.4, 172.3), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+		}
+		if (locks[1] || (ShowBlue && BlueCard))
+		{
+			DrawImage("STKEYBCD", (99.4, 179.8), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+		}
+		if (locks[2] || (ShowYellow && YellowCard))
+		{
+			DrawImage("STKEYYCD", (99.4, 187.2), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+		}
+		if (locks[3] || (ShowRed && !RedCard))
+		{
+			DrawImage("STKEYRSK", (101.4, 172.3), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+		}
+		if (locks[4] || (ShowBlue && !BlueCard))
+		{
+			DrawImage("STKEYBSK", (101.4, 179.8), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+		}
+		if (locks[5] || (ShowYellow && !YellowCard))
+		{
+			DrawImage("STKEYYSK", (101.4, 187.2), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+		}
+		
+		if (deathmatch || teamplay)
+		{
+			DrawImage("STFRAGS", (210, 187.2), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+			DrawString(mHUDFont, FormatNumber(CPlayer.FragCount, 3), (243, 172.3), DI_TEXT_ALIGN_RIGHT,Font.CR_UNTRANSLATED,1,-1,4,(1.027,(296.0/320.0)));
+		}
+		else
+		{
+			DrawImage("STHUDWPN", (201.9, 173.2), DI_ITEM_OFFSETS, 1, (-1,-1),(1.027,(296.0/320.0)));
+			DrawImage(CPlayer.HasWeaponsInSlot(3)? "STNUM3" : "", (232.8, 175.0), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+			DrawImage(CPlayer.HasWeaponsInSlot(4)? "STNUM4" : "", (246.2, 175.0), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+			DrawImage(CPlayer.HasWeaponsInSlot(5)? "STNUM5" : "", (206.0, 186.2), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+			DrawImage(CPlayer.HasWeaponsInSlot(6)? "STNUM6" : "", (219.4, 186.2), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+			DrawImage(CPlayer.HasWeaponsInSlot(7)? "STNUM7" : "", (232.8, 186.2), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+			DrawImage(CPlayer.HasWeaponsInSlot(8)? "STNUM8" : "", (246.2, 186.2), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+			if (CPlayer.ReadyWeapon)
+			{
+				if (CPlayer.ReadyWeapon.SlotNumber == 1)
+				{
+					DrawImage("STSELECT", (200.8, 172.2), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+				}
+				else if (CPlayer.ReadyWeapon.SlotNumber == 2)
+				{
+					DrawImage("STSELECT", (214.2, 172.2), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+				}
+				else if (CPlayer.ReadyWeapon.SlotNumber == 3)
+				{
+					DrawImage("STSELECT", (227.6, 172.2), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+				}
+				else if (CPlayer.ReadyWeapon.SlotNumber == 4)
+				{
+					DrawImage("STSELECT", (241.0, 172.2), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+				}
+				else if (CPlayer.ReadyWeapon.SlotNumber == 5)
+				{
+					DrawImage("STSELECT", (200.8, 183.4), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+				}
+				else if (CPlayer.ReadyWeapon.SlotNumber == 6)
+				{
+					DrawImage("STSELECT", (214.2, 183.4), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+				}
+				else if (CPlayer.ReadyWeapon.SlotNumber == 7)
+				{
+					DrawImage("STSELECT", (227.6, 183.4), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+				}
+				else if (CPlayer.ReadyWeapon.SlotNumber == 8)
+				{
+					DrawImage("STSELECT", (241.0, 183.4), DI_ITEM_OFFSETS, 1, (-1,-1),scale);
+				}
+			}
+		}
+		
+		string playerMugshot = "STF";
+		if (Cvar.GetCVar("hud_mugshot_original", players[consoleplayer]).GetBool() == 1)
+		{
+			playerMugshot = "PSX";
+		}
+		else if (cplayer.getgender()==1)
+		{
+			playerMugshot = "GAL";
+		}
+		DrawTexture(GetMugShot(5,Mugshot.XDEATHFACE|MugShot.CUSTOM,playerMugshot), (112.9, 168.6), DI_ITEM_OFFSETS, 1, (-1,-1),(200.0/240.0,296.0/320.0));
+	}
+	
+	protected void DrawFullScreenStuff ()
+	{	
+
+		Inventory a1, a2;
+		[a1, a2] = GetCurrentAmmo();
+		bool locks[6];
+		for(int i = 0; i < 6; i++) locks[i] = CPlayer.mo.CheckKeys(i + 1, false, true);
+		bool showBerserk = CVar.GetCVar("hud_berserk", players[consoleplayer]).GetInt();
+		
+		let hudColor = GetHudColor();
+		let hudAlphaFactor = CVar.GetCVar("hud_alpha", players[consoleplayer]).GetFloat();
+		
+		if (hudType <= 1) {			
+			double xadjust = 0;
+			double xoff = 0;
+			if (hudType == 1)
+			{
+				xoff = 100;
+				DrawImage("FUDHP", ((-1*xoff),-32), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER|DI_ITEM_TOP, 0.4*hudAlphaFactor,(-1,-1),scale);
+				DrawImage("FUDARMR", (xoff,-32), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER|DI_ITEM_TOP , 0.4*hudAlphaFactor,(-1,-1),scale);
+				DrawString(mHUDFont, FormatNumber(CPlayer.health), ((-1*xoff),-21),DI_SCREEN_CENTER_BOTTOM|DI_TEXT_ALIGN_CENTER|DI_NOSHADOW,hudColor,0.5*hudAlphaFactor,-1,4,scale);
+				DrawString(mHUDFont, FormatNumber(GetArmorAmount()), (xoff, -21),DI_SCREEN_CENTER_BOTTOM|DI_TEXT_ALIGN_CENTER|DI_NOSHADOW,hudColor,0.5*hudAlphaFactor,-1,4,scale);
+				
+				if (locks[0] || (ShowRed && RedCard))
+				{
+					DrawImage("STKEYRCD", ((-1*xoff)+32.5+22, -19), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER|DI_ITEM_TOP,0.45*hudAlphaFactor,(-1,-1),scale);
+				}
+				if (locks[1] || (ShowBlue && BlueCard))
+				{
+					DrawImage("STKEYBCD", ((-1*xoff)+32.5, -19), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER|DI_ITEM_TOP,0.45*hudAlphaFactor,(-1,-1),scale);
+				}
+				if (locks[2] || (ShowYellow && YellowCard))
+				{
+					DrawImage("STKEYYCD", ((-1*xoff)+32.5+11, -19), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER|DI_ITEM_TOP,0.45*hudAlphaFactor,(-1,-1),scale);
+				}
+				if (locks[3] || (ShowRed && !RedCard))
+				{
+					DrawImage("STKEYRSK", ((-1*xoff)+32.5+22, -19), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER|DI_ITEM_TOP,0.501961*hudAlphaFactor,(-1,-1),scale);
+				}
+				if (locks[4] || (ShowBlue && !BlueCard))
+				{
+					DrawImage("STKEYBSK", ((-1*xoff)+32.5, -19), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER|DI_ITEM_TOP,0.501961*hudAlphaFactor,(-1,-1),scale);
+				}
+				if (locks[5] || (ShowYellow && !YellowCard))
+				{
+					DrawImage("STKEYYSK", ((-1*xoff)+32.5+11, -19), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER|DI_ITEM_TOP,0.501961*hudAlphaFactor,(-1,-1),scale);
+				}
+				if (showBerserk && CPlayer.mo.FindInventory("PowerStrength", true))
+				{
+					DrawImage("BERSICON", (xoff-32.5, -19), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER|DI_ITEM_TOP,0.501961*hudAlphaFactor,(-1,-1),scale);
+				}
+			}
+			else
+			{
+				xoff = -36;
+				DrawImage("FUDHP", (xoff+45.5, -32), DI_ITEM_OFFSETS, 0.4*hudAlphaFactor,(-1,-1),scale);
+				DrawImage("FUDARMR", (-81.5-xoff, -32), DI_ITEM_OFFSETS , 0.4*hudAlphaFactor,(-1,-1),scale);
+				DrawString(mHUDFont, FormatNumber(CPlayer.health), (xoff+64, -21),DI_TEXT_ALIGN_CENTER|DI_NOSHADOW,hudColor,0.5*hudAlphaFactor,-1,4,scale);
+				DrawString(mHUDFont, FormatNumber(GetArmorAmount()), (-64-xoff, -21),DI_TEXT_ALIGN_CENTER|DI_NOSHADOW,hudColor,0.5*hudAlphaFactor,-1,4,scale);
+					
+				if (locks[0] || (ShowRed && RedCard))
+				{
+					DrawImage("STKEYRCD", (113+xoff, -19), DI_ITEM_OFFSETS,0.45*hudAlphaFactor,(-1,-1),scale);
+				}
+				if (locks[1] || (ShowBlue && BlueCard))
+				{
+					DrawImage("STKEYBCD", (91+xoff, -19), DI_ITEM_OFFSETS,0.45*hudAlphaFactor,(-1,-1),scale);
+				}
+				if (locks[2] || (ShowYellow && BlueCard))
+				{
+					DrawImage("STKEYYCD", (102+xoff, -19), DI_ITEM_OFFSETS,0.45*hudAlphaFactor,(-1,-1),scale);
+				}
+				if (locks[3] || (ShowRed && !RedCard))
+				{
+					DrawImage("STKEYRSK", (115+xoff, -19), DI_ITEM_OFFSETS,0.501961*hudAlphaFactor,(-1,-1),scale);
+				}
+				if (locks[4] || (ShowBlue && !BlueCard))
+				{
+					DrawImage("STKEYBSK", (93+xoff, -19), DI_ITEM_OFFSETS,0.501961*hudAlphaFactor,(-1,-1),scale);
+				}
+				if (locks[5] || (ShowYellow && !YellowCard))
+				{
+					DrawImage("STKEYYSK", (104+xoff, -19), DI_ITEM_OFFSETS,0.501961*hudAlphaFactor,(-1,-1),scale);
+				}
+				if (showBerserk && CPlayer.mo.FindInventory("PowerStrength", true))
+				{
+					DrawImage("BERSICON", (-96-xoff, -19), DI_ITEM_OFFSETS,0.501961*hudAlphaFactor,(-1,-1),scale);
+				}
+			}
+			if (a1 != null && a1.Amount > 0) DrawString(mHUDFont, FormatNumber(a1.Amount), (0, -21), DI_SCREEN_CENTER_BOTTOM|DI_TEXT_ALIGN_CENTER|DI_NOSHADOW,hudColor,0.5*hudAlphaFactor,-1,4,scale);
+		} else if (hudType == 3) {
+			DrawImage("HUDAMMO", (7, -10), DI_ITEM_OFFSETS, 0.55,(-1,-1),scale);
+			DrawImage("HUDHP", (52, -10), DI_ITEM_OFFSETS, 0.55,(-1,-1),scale);
+			DrawImage("HUDARMR", (-46, -10), DI_ITEM_OFFSETS, 0.55,(-1,-1),scale);
+			if (a1 != null) DrawString(mHUDFont, FormatNumber(GetCurrentAmmo().Amount, 3), (39, -25), DI_TEXT_ALIGN_RIGHT|DI_NOSHADOW,hudColor,0.55*hudAlphaFactor,-1,4,scale);
+			
+			DrawString(mHUDFont, FormatNumber(CPlayer.health, 3), (82, -25),DI_TEXT_ALIGN_RIGHT|DI_NOSHADOW,hudColor,0.55*hudAlphaFactor,-1,4,scale);
+			DrawString(mHUDFont, "%", (93, -25),DI_TEXT_ALIGN_RIGHT|DI_NOSHADOW,hudColor,0.55*hudAlphaFactor,-1,4,scale);
+			
+			DrawString(mHUDFont, FormatNumber(GetArmorAmount(), 3), (-17, -25),DI_TEXT_ALIGN_RIGHT|DI_NOSHADOW,hudColor,0.55*hudAlphaFactor,-1,4,scale);
+			DrawString(mHUDFont, "%", (-6, -25),DI_TEXT_ALIGN_RIGHT|DI_NOSHADOW,hudColor,0.55*hudAlphaFactor,-1,4,scale);
+
+			for(int i = 0; i < 6; i++) locks[i] = CPlayer.mo.CheckKeys(i + 1, false, true);
+			if (locks[0] || (ShowRed && RedCard))
+			{
+				DrawImage("STKEYRCD", (100, -27), DI_ITEM_OFFSETS,0.5*hudAlphaFactor,(-1,-1),scale);
+			}
+			if (locks[1] || (ShowBlue && BlueCard))
+			{
+				DrawImage("STKEYBCD", (100, -19), DI_ITEM_OFFSETS,0.5*hudAlphaFactor,(-1,-1),scale);
+			}
+			if (locks[2] || (ShowYellow && YellowCard))
+			{
+				DrawImage("STKEYYCD", (100, -11), DI_ITEM_OFFSETS,0.5*hudAlphaFactor,(-1,-1),scale);
+			}
+			if (locks[3] || (ShowRed && !RedCard))
+			{
+				DrawImage("STKEYRSK", (102, -27), DI_ITEM_OFFSETS,0.5*hudAlphaFactor,(-1,-1),scale);
+			}
+			if (locks[4] || (ShowBlue && !BlueCard))
+			{
+				DrawImage("STKEYBSK", (102, -19), DI_ITEM_OFFSETS,0.5*hudAlphaFactor,(-1,-1),scale);
+			}
+			if (locks[5] || (ShowYellow && !YellowCard))
+			{
+				DrawImage("STKEYYSK", (102, -11), DI_ITEM_OFFSETS,0.5*hudAlphaFactor,(-1,-1),scale);
+			}
+			if (showBerserk && CPlayer.mo.FindInventory("PowerStrength", true))
+			{
+				DrawImage("BERSICON", (-62, -19), DI_ITEM_OFFSETS,0.5*hudAlphaFactor,(-1,-1),scale);
+			}
+		} else {
+			int offset = 4;
+			Vector2 iconbox = (40, 20);
+			// Draw health
+			let berserk = CPlayer.mo.FindInventory("PowerStrength", true);
+			let hicon = berserk ? gameinfo.berserkpic : gameinfo.healthpic;
+			DrawImage(TexMan.GetName(hicon), (20, -2), 0, hudAlphaFactor);
+			DrawString(mHUDFont, FormatNumber(CPlayer.health, 3), (44, -20+offset), 0,hudColor,hudAlphaFactor,-1,4,scale);
+			
+			let armor = CPlayer.mo.FindInventory("BasicArmor");
+			if (armor != null && armor.Amount > 0)
+			{
+				DrawInventoryIcon(armor, (20, -22), 0, hudAlphaFactor);
+				DrawString(mHUDFont, FormatNumber(armor.Amount, 3), (44, -40+offset), 0,hudColor,hudAlphaFactor,-1,4,scale);
+			}
+			Inventory ammotype1, ammotype2;
+			[ammotype1, ammotype2] = GetCurrentAmmo();
+			int invY = -20+offset;
+			if (ammotype1 != null)
+			{
+				DrawImage(""..ammotype1.icon, (-14, -4), 0, hudAlphaFactor);
+				//DrawInventoryIcon(ammotype1, (-14, -4));
+				DrawString(mHUDFont, FormatNumber(ammotype1.Amount, 3), (-30, -20+offset), DI_TEXT_ALIGN_RIGHT,hudColor,hudAlphaFactor,-1,4,scale);
+				invY -= 20;
+			}
+			if (ammotype2 != null && ammotype2 != ammotype1)
+			{
+				DrawInventoryIcon(ammotype2, (-14, invY + 17),DI_ITEM_OFFSETS, hudAlphaFactor);
+				DrawString(mHUDFont, FormatNumber(ammotype2.Amount, 3), (-30, invY), DI_TEXT_ALIGN_RIGHT,hudColor,hudAlphaFactor,-1,4,scale);
+				invY -= 20;
+			}
+			if (!isInventoryBarVisible() && !Level.NoInventoryBar && CPlayer.mo.InvSel != null)
+			{
+				DrawInventoryIcon(CPlayer.mo.InvSel, (-14, invY + 17),DI_ITEM_OFFSETS, hudAlphaFactor);
+				DrawString(mHUDFont, FormatNumber(CPlayer.mo.InvSel.Amount, 3), (-30, invY), DI_TEXT_ALIGN_RIGHT,hudColor,hudAlphaFactor,-1,4,scale);
+			}
+			if (deathmatch)
+			{
+				DrawString(mHUDFont, FormatNumber(CPlayer.FragCount, 3), (-3, 30+offset), DI_TEXT_ALIGN_RIGHT, Font.CR_GOLD,hudAlphaFactor,-1,4,scale);
+			}
+			
+			// Draw the keys. This does not use a special draw function like SBARINFO because the specifics will be different for each mod
+			// so it's easier to copy or reimplement the following piece of code instead of trying to write a complicated all-encompassing solution.
+			Vector2 keypos = (-10, 2);
+			int rowc = 0;
+			double roww = 0;
+			for(let i = CPlayer.mo.Inv; i != null; i = i.Inv)
+			{
+				if (i is "Key" && i.Icon.IsValid())
+				{
+					DrawTexture(i.Icon, keypos, DI_SCREEN_RIGHT_TOP|DI_ITEM_LEFT_TOP|DI_ITEM_OFFSETS,hudAlphaFactor,(-1,-1),scale);
+					Vector2 size = TexMan.GetScaledSize(i.Icon);
+					keypos.Y += size.Y + 2;
+					roww = max(roww, size.X);
+					if (++rowc == 3)
+					{
+						keypos.Y = 2;
+						keypos.X -= roww + 6;
+						roww = 0;
+						rowc = 0;
+					}
+				}
+			}
+			
+			if (isInventoryBarVisible())
+			{
+				DrawInventoryBar(diparms, (0, 0), 7, DI_SCREEN_CENTER_BOTTOM, HX_SHADOW*hudAlphaFactor);
+			}
+		}
+	}
+	
+	override bool ProcessNotify(EPrintLevel printlevel, String outline)
+	{
+		int style = CVar.GetCVar("hud_messagestyle", players[consoleplayer]).GetInt();
+		bool filtered = gamestate != GS_LEVEL || printlevel < PRINT_LOW || printlevel > PRINT_TEAMCHAT || printlevel & PRINT_NONOTIFY;
+		bool enabled = currentState != HUD_AltHud && style > 0;
+		if(!enabled || filtered) return false;
+		
+		Array<string> lines;
+		outline.Split(lines, "\n");
+
+		if (style == 1 || style == 3)
+		{
+			for (int i = lines.Size() - 1; i >= 0; i--)
+			{
+				let brokenLines = mMessageFont.mFont.BreakLines(lines[i], 256);
+				int maxlines = con_notifylines - 1 + brokenLines.Count() - 1;
+				for (int j = brokenLines.Count() - 1; j >= 0; j--)
+				{
+					Shift(maxlines);
+					messagetic.Push(MSGTICS);
+					message.Push(brokenLines.StringAt(j));
+				}
+			}
+		}
+		else
+		{
+			for (int i = 0; i < lines.Size(); i ++)
+			{
+				let brokenLines = mMessageFont.mFont.BreakLines(lines[i], 256);
+				int maxlines = con_notifylines - 1 + brokenLines.Count() - 1;
+				for (int j = 0; j < brokenLines.Count(); j++)
+				{
+					Shift(maxlines);
+					messagetic.Push(MSGTICS);
+					message.Push(brokenLines.StringAt(j));
+				}
+			}
+		}
+		return true;
+	}
+	
+	override void FlushNotify()
+	{
+		message.Clear();
+		messagetic.Clear();
+	}
+
+	override void Tick()
+	{
+		super.Tick();
+		
+		double elapsed;
+		if (StartRed != 0)
+		{
+			elapsed = gametic - StartRed;
+			ShowRed = (elapsed <= BLINK_TIME || 
+				(elapsed > BLINK_TIME*2 && elapsed <= BLINK_TIME*3) || 
+				(elapsed > BLINK_TIME*4 && elapsed <= BLINK_TIME*5));
+		}
+		if (StartBlue != 0)
+		{
+			elapsed = gametic - StartBlue;
+			ShowBlue = (elapsed <= BLINK_TIME || 
+				(elapsed > BLINK_TIME*2 && elapsed <= BLINK_TIME*3) || 
+				(elapsed > BLINK_TIME*4 && elapsed <= BLINK_TIME*5));
+		}
+		if (StartYellow != 0)
+		{
+			elapsed = gametic - StartYellow;
+			ShowYellow = (elapsed <= BLINK_TIME || 
+				(elapsed > BLINK_TIME*2 && elapsed <= BLINK_TIME*3) || 
+				(elapsed > BLINK_TIME*4 && elapsed <= BLINK_TIME*5));
+		}
+		
+		if (messageTopGoal > messageTop)
+		{
+			messageTop++;
+		}
+		else if (messageTopGoal < messageTop)
+		{
+			messageTop--;
+		}
+		for (int i = 0; i < message.Size(); i++)
+		{
+			if (messageTic[i] >= 0)
+			{
+				messagetic[i]--;
+			}
+		}
+		int last = -1;
+		for (int i = 0; i < message.Size(); i++)
+		{
+			if (messageTic[i] == 0)
+			{
+				last = i;
+				break;
+			}
+		}
+		if (last > -1)
+		{
+			message.Delete(0, last + 1);
+			messagetic.Delete(0, last + 1);
+			messageTop += mMessageFont.mFont.GetHeight();
+		}
+	}
+	
+	void Shift(int maxlines)
+	{
+		if (maxlines >= 0 && message.Size() > maxlines)
+		{
+			message.Delete(0, message.Size() - maxlines);
+			messagetic.Delete(0, messagetic.Size() - maxlines);
+		}
+	}
+	
+	void PrintMessage(int state)
+	{
+		int messageLine = messageTop + mMessageFont.mFont.GetDisplacement();
+		bool messageSkip = true;
+		int messageLineAdv = mMessageFont.mFont.GetHeight();
+		
+		int style = CVar.GetCVar("hud_messagestyle", players[consoleplayer]).GetInt();
+		if (style == 2 || style == 4)
+		{
+			messageTopGoal = 20;
+			if (messageTop == 0) messageTop = 20;
+		}
+		else if (style == 1 || style == 3)
+		{
+			messageTopGoal = mMessageFont.mFont.GetHeight();
+			if (messageTop == 0) messageTop = mMessageFont.mFont.GetHeight();
+		}
+		
+		Vector2 hs = (1, MSG_VSCALE);
+		bool maxscaled = (state == HUD_StatusBar && hud_weapons_original);
+		int barh = (state == HUD_StatusBar ? 31 : 42);
+		if (maxscaled) barh += 2;
+		BeginHud(1, maxscaled);
+		
+		for (int i = 0; i < message.Size(); i++)
+		{
+			if (messagetic[i] > 0)
+			{
+				if (style == 4)
+				{
+					double messagealpha = messagetic[i] < NOTIFYFADETIME ? (messagetic[i] / (NOTIFYFADETIME*1.0)) : 1.0;
+					DrawString(mMessageFont, message[i], (-128, messageLine), DI_SCREEN_CENTER_TOP, Font.CR_UNTRANSLATED, messagealpha, 0, 4, hs);
+				}
+				else if (style == 3)
+				{
+					DrawString(mMessageFont, message[i], (-126-(maxscaled ? 14 : 0), (-barh-messageLine)), DI_SCREEN_CENTER_BOTTOM, Font.CR_UNTRANSLATED, 1.0, 0, 4, hs);
+				}
+				else if (style == 2)
+				{
+					double messagealpha = messagetic[i] < NOTIFYFADETIME ? (messagetic[i] / (NOTIFYFADETIME*1.0)) : 1.0;
+					DrawString(mMessageFont, message[i], (20, messageLine), DI_SCREEN_LEFT_TOP, Font.CR_UNTRANSLATED, messagealpha, 0, 4, hs);
+				}
+				else if (style == 1)
+				{
+					DrawString(mMessageFont, message[i], (2, (-barh-messageLine)), DI_SCREEN_LEFT_BOTTOM, Font.CR_UNTRANSLATED, 1.0, 0, 4, hs);
+				}
+				
+				messageLine += messageLineAdv;
+				messageSkip = false;
+			}
+		}
+		
+		if (messageSkip)
+		{
+			messageTop = messageTopGoal;
+		}
+	}
+	
+	int GetHudColor()
+	{
+		let fontcolor = CVar.GetCVar("hud_color", players[consoleplayer]).GetInt();
+		if (fontcolor > Font.CR_UNDEFINED && fontColor < Font.NUM_TEXT_COLORS) return fontcolor;
+		return Font.CR_UNTRANSLATED;;
+	}
+	
+	override void InitLockTypes(bool blueCard, bool redCard, bool yellowCard)
+	{
+		self.BlueCard = blueCard;
+		self.RedCard = redCard;
+		self.YellowCard = yellowCard;
+		LoadedLocks = true;
+	}
+	
+	override void BlinkBlue()
+	{
+		StartBlue = gametic;
+	}
+	
+	override void BlinkRed()
+	{
+		StartRed = gametic;
+	}
+	
+	override void BlinkYellow()
+	{
+		StartYellow = gametic;
+	}
+		
+	static int GetUiScale()
+	{
+		Vector2 ds = StatusBar.GetHudScale();
+		return (int)(ds.X);
+	}
+	
+	static int GetXResolution(int basex, int basey)
+	{
+		double factor = Screen.GetHeight() / (basey * 1.0);
+		factor = Screen.GetWidth() / factor;
+		factor = basex / factor;
+		double hr = Screen.GetWidth() * factor;
+		return (int)(hr);
+	}
+}

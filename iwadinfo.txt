@@ -1,0 +1,33 @@
+IWad
+{
+	Name = "PSX DOOM"
+	Game = "Doom"
+	AutoName = "doom.ce.psxdoom"
+	IWADName = "PSXDOOM.CE.ipk3"
+	Config = "PsxDoomCE"
+	DiscordAppId = "951527408694079508"
+	BannerColors = "00 55 FF", "07 07 14"
+	StartupSong = "D_WAIT"
+	StartupType = "hexen"
+	Mapinfo = "mapinfo/doom2.txt"
+	Required = "DOOM 2: Hell on Earth"
+	Load = "PSXDOOM.CE.Addon.BGM.Extended.pk3",
+		"PSXDOOM.CE.Addon.SFX.HQ.pk3",
+		"PSXDOOM.CE.Addon.GFX.Extra.pk3",
+		"PSXDOOM.CE.Addon.GFX.Decals.pk3",
+		"PSXDOOM.CE.Addon.GFX.Brightmaps.pk3",
+		"PSXDOOM.CE.Addon.GFX.PBR.pk3",
+		"PSXDOOM.CE.Addon.GFX.Parallax.pk3",
+		"PSXDOOM.CE.Addon.GFX.Upscale.pk3",
+		"PSXDOOM.CE.Maps.LostLevels.pk3"
+	DeleteLumps = "WIOSTK",
+		"WIOSTS",
+		"WISCRT2",
+		"WIOSTI",
+		"WITIME",
+		"WISUCKS",
+		"WIPAR",
+		"WIENTER",
+		"WIF",
+		"DEMO3"
+}

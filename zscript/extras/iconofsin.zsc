@@ -1,0 +1,69 @@
+class IconOfSin : Actor
+{
+	Default
+	{
+		//$Title "3D IoS model (do not use, applied automatically)"
+		
+		Height 40;
+		Radius 20;
+		Mass 10000000;
+		YScale 0.7;
+		-SOLID
+		-SHOOTABLE
+		-PUSHABLE
+		+NOBLOOD
+		+SHADOW
+	}
+	
+	States
+	{
+		Spawn:
+			SIN1 A 1;
+			SIN1 A 64;
+			SIN1 bcdedcb 4;
+			SIN1 A 128;
+			SIN1 bcdedcb 4;
+			loop;
+	}
+}
+
+class IconOfSinPostProcessor : LevelPostProcessor
+{
+	const DEN_ICONOFSIN_MODEL = 8642;
+
+	void Apply(Name checksum, String mapname)
+	{
+		if (!ios_enabled) return;
+		
+		let lookup = TexMan.CheckForTexture("IOSFAC1");
+		for (int i = 0; i < level.Sides.Size(); i++)
+		{
+			if (level.Sides[i].GetTexture(Side.bottom) == lookup)
+			{
+				let p1 = level.Sides[i].v1().p;
+				let p2 = level.Sides[i].v2().p;
+				
+				let pos = GetCenter(p1, p2);
+				let normal = (-level.Sides[i].linedef.delta.y, level.Sides[i].linedef.delta.x).Unit();
+				
+				let disp = pos + (normal * 4);
+				if (level.PointOnLineSide(disp, level.Sides[i].linedef)) normal *= -1;
+				disp = pos + (normal * 4);
+				
+				let ang = GetAngle(p1, p2) + 90;
+				
+				AddThing(DEN_ICONOFSIN_MODEL, (disp.x, disp.y, 0), ang);
+			}
+		}
+	}
+	
+	Vector2 GetCenter(Vector2 a, Vector2 b)
+	{
+		return ((a.x + b.x) / 2.0, (a.y + b.y) / 2.0);
+	}
+	
+	int GetAngle(Vector2 a, Vector2 b)
+	{
+		return int(round(atan2(a.y - b.y, a.x - b.x)));
+	}
+}

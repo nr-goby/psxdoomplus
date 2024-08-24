@@ -1,0 +1,23 @@
+version 223
+
+set screenblocks 11
+set wipetype 3
+set hud_aspectscale 0
+set showendoom 2
+
+set snd_musicvolume 1
+
+set cl_rockettrails 2
+
+set r_actorspriteshadow 2
+set r_drawfuzz 0
+
+set gl_fogmode 1
+set gl_texture_filter 0
+set gl_enhanced_nightvision false
+set gl_precache true
+
+set i_discordrpc true
+
+//set compat_explode1 true
+set compatflags2 256

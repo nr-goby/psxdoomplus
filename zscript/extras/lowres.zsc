@@ -1,0 +1,62 @@
+extend class CEExtrasHandler
+{
+	const ve_detail = 2;
+	const ve_res = 240;
+	const ve_q_h = 0;
+	const ve_q_w = 0;
+	const ve_smooth = 0.0;
+	
+	Vector2 upres;
+	Vector2 dnres;
+	double smoothing;
+	
+	void LowResOnRegister()
+	{
+		let ve_par = config.pixelaspectratio;
+		
+		let detail = ve_detail * 0.5;
+		let height = max(ve_res, 48);
+			
+		if (ve_q_h)
+		{
+			height = Screen.GetHeight() / int(Screen.GetHeight() / height);
+		}
+		
+		let width = Screen.GetWidth();
+		
+		if (detail <= 1)
+		{
+			let stdaspect	= 4.0 / 3.0 ;
+			let pxlaspect	= 42.0 / ve_par ;
+			let stdwidth	= Screen.GetHeight() * stdaspect;
+			let addwidth	= Screen.GetWidth() / stdwidth;
+		
+			width = int(height * stdaspect * addwidth * pxlaspect * detail);
+			
+			if (ve_q_w)
+			{
+				width = Screen.GetWidth() / int(Screen.GetWidth() / width);
+			}
+		}
+		
+		upres = (width, height);
+		dnres = (1.0 / max(width, 0.25 ), 1.0 / height);
+		smoothing = ve_smooth * 0.01;
+	}
+	
+	ui void LowResUITick()
+	{
+		let enabled = CVar.GetCVar("cx_ve_lowres_enabled", players[consoleplayer]).GetBool();
+		if (enabled)
+		{
+			PPShader.SetUniform2f("LowRes", "upres", upres);
+			PPShader.SetUniform2f("LowRes", "dnres", dnres);
+			PPShader.SetUniform1f("LowRes", "smoothing", smoothing);
+			PPShader.SetEnabled("LowRes", true);
+		}
+		else
+		{
+			PPShader.SetEnabled("LowRes", false);
+		}
+	}
+}

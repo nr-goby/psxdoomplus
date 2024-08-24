@@ -1,0 +1,8 @@
+8 "Square Dot"
+9 "Simple Plus"
+10 "D64EX Plus (small)"
+11 "D64EX Plus (large)"
+12 "D64EX Circle (small)"
+13 "D64EX Circle (large)"
+
+14 "Translucent Cross"

@@ -1,0 +1,172 @@
+intro
+{
+	Map = "MAP01"
+	Background = "D1INTRO"
+	TitlePic = "D1TITLE"
+	Music = "$D1INTRO"
+	TitleMusic = "$D1TITLE"
+	Titles = "$E1_INTROTIT1", "$E1_INTROTIT1", "$E1_INTROTIT2"
+	Texts = "$E1_INTROTXT1", "$E1_INTROTXT2", "$E1_INTROTXT3"
+}	
+
+intro
+{
+	Map = "MAP31"
+	Background = "D2INTRO"
+	TitlePic = "D2TITLE"
+	Music = "$D2INTRO"
+	TitleMusic = "$D2TITLE"
+	Titles = "$E2_INTROTIT1", "$E2_INTROTIT1"
+	Texts = "$E2_INTROTXT1", "$E2_INTROTXT2"
+}
+
+intro
+{
+	Map = "NRV01"
+	Background = "D7INTRO"
+	TitlePic = "D7TITLE"
+	Music = "$D7INTRO"
+	TitleMusic = "$D7TITLE"
+	Titles = "$E7_INTROTIT1"
+	Texts = "$E7_INTROTXT1"
+}
+
+intermission
+{
+	Map = "MAP09"
+	Background = "TALLYBKG", 274, 240
+	AltBackground = "D1INTER1", 320, 200
+	Texts = "$E1_INTERTXT1", "$E1_INTERTXT2"
+	Music = "$D1INTER1"
+}
+
+intermission
+{
+	Map = "MAP16"
+	Background = "TALLYBKG", 274, 240
+	AltBackground = "D1INT2", 320, 200
+	Texts = "$E1_INTERTXT3", "$E1_INTERTXT4"
+	Music = "$D1INTER2"
+}
+
+intermission
+{
+	Map = "MAP24"
+	Background = "TALLYBKG", 274, 240
+	AltBackground = "D1INT31", 320, 200
+	AltBackground2 = "D1INT32"
+	Texts = "$E1_INTERTXT5", "$E1_INTERTXT6"
+	Music = "$D1INTER3"
+	BackgroundType = "ScrollLeft"
+}
+
+intermission
+{
+	Map = "END1"
+	Background = "TALLYBKG", 274, 240
+	AltBackground = "D1END", 320, 200
+	Texts = "$E1_ENDTXT1"
+	Music = "$D1END"
+	Ending = true
+	Redirect = "MAP31"
+	//Redirect = "SIG01"
+	//RedirectCVar = "unl_episodes_original"
+	//FallbackRedirect = "MAP31"
+}
+
+intermission
+{
+	Map = "END3"
+	Background = "TALLYBKG", 274, 240
+	AltBackground = "D1END", 320, 200
+	Texts = "$E1_ENDTXT2", "$E1_ENDTXT3"
+	Music = "$D1END"
+	Ending = true
+	Redirect = "MAP31"
+	//Redirect = "SIG01"
+	//RedirectCVar = "unl_episodes_original"
+	//FallbackRedirect = "MAP31"
+	ClearType = "ScrollUp"
+}
+
+intermission
+{
+	Map = "MAP37"
+	Background = "TALLYBKG", 274, 240
+	AltBackground = "D2INTER1", 320, 200
+	Texts = "$E2_INTERTXT1", "$E2_INTERTXT2"
+	Music = "$D2INTER1"
+}
+
+intermission
+{
+	Map = "MAP42"
+	Background = "TALLYBKG", 274, 240
+	AltBackground = "D2INTER2", 320, 200
+	Texts = "$E2_INTERTXT3", "$E2_INTERTXT4", "$E2_INTERTXT5"
+	Music = "$D2INTER2"
+}
+
+intermission
+{
+	Map = "LOST66"
+	Background = "TALLYBKG", 274, 240
+	AltBackground = "D2INTER4", 320, 200
+	Texts = "$E2_INTERTXT8"
+	Music = "$D2INTER4"
+}
+
+intermission
+{
+	Map = "LOST67"
+	Background = "TALLYBKG", 274, 240
+	AltBackground = "D2INTER5", 320, 200
+	Texts = "$E2_INTERTXT9"
+	Music = "$D2INTER5"
+}
+
+intermission
+{
+	Map = "MAP48"
+	Background = "TALLYBKG", 274, 240
+	AltBackground = "D2INTR33", 320, 200
+	Texts = "$E2_INTERTXT6", "$E2_INTERTXT7"
+	Music = "$D2INTER3"
+}
+
+intermission
+{
+	Map = "END2"
+	Background = "BOSSBACT", 274, 240
+	AltBackground = "D2END", 320, 200
+	Texts = "$E2_ENDTXT1"
+	Music = "$D2END"
+	Ending = true
+	ClearType = "ScrollUp"
+	Redirect = "NRV01"
+	RedirectCVar = "unl_episodes_original"
+}
+
+intermission
+{
+	Map = "END4"
+	Background = "BOSSBACT", 274, 240
+	AltBackground = "D2END", 320, 200
+	Texts = "$E2_ENDTXT2", "$E2_ENDTXT3"
+	Music = "$D2END"
+	Ending = true
+	ClearType = "ScrollUp"
+	Redirect = "NRV01"
+	RedirectCVar = "unl_episodes_original"
+}
+
+intermission
+{
+	Map = "END7"
+	Background = "BOSSBACT", 274, 240
+	AltBackground = "D7TEND", 320, 200
+	Texts = "$E7_ENDTXT1", "$E7_ENDTXT2"
+	Music = "$D7END"
+	Ending = true
+	ClearType = "ScrollUp"
+}

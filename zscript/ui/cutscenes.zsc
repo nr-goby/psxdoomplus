@@ -1,0 +1,532 @@
+class CECutscenes ui
+{	
+	static void TextScreen(ScreenJobRunner runner)
+	{
+		StatusScreen statScreen;
+		foreach (job : runner.jobs)
+		{
+			statScreen = StatusScreen(job);
+			if (statScreen) break;
+		}
+		if (!statScreen) return;
+		ForceTextScreen(runner, statScreen.wbs.next.MakeLower());
+	}
+	
+	static void ForceTextScreen(ScreenJobRunner runner, string nextMap)
+	{
+		Map<string,PsxTextScreen> pageMap;
+		ReadLump("intrdefs", pageMap);
+		
+		let next = nextMap.MakeLower();
+		if (!pageMap.CheckKey(next)) return;
+		
+		let obj = new(CEConfig.Get().cutsceneJobProvider);
+		CECutsceneJobProvider(obj).Append(runner, pageMap.Get(next));
+	}
+	
+	static void ReadLump(String lumpname, out Map<string,PsxTextScreen> pageMap)
+	{
+		let lump = -1;
+		let content = "";
+		while (-1 != (lump = Wads.FindLump(lumpname, lump + 1)))
+		{
+			let content = Wads.ReadLump(lump);
+			Array<String> lines;
+			content.Split(lines, "\n");
+			
+			let i = -1;
+			while (++i < lines.Size())
+			{
+				let line = StringUtils.Clean(lines[i].MakeLower());
+				if (!line.Length() || line == "{" || line.Left(2) == "//") continue;
+				
+				if (line == "intermission")
+				{
+					Array<String> properties;
+					while ("}" != (line = StringUtils.Clean(lines[++i]))) properties.Push(line);
+					MapPages(properties, pageMap);
+				}
+			}
+		}
+	}
+	
+	static void MapPages(Array<String> properties, out Map<string,PsxTextScreen> pageMap)
+	{
+		let key = "";
+		let background = "";
+		let altBackground = "";
+		let background2 = "";
+		let altBackground2 = "";
+		let music = "";
+		let clearType = "";
+		let backgroundType = "";
+		let width = 0;
+		let height = 0;
+		let altWidth = 0;
+		let altHeight = 0;
+		let redirect = "";
+		let redirectCVar = "";
+		let fallbackredirect = "";
+		let fallbackredirectCVar = "";
+		let ending = false;
+		Array<string> texts;
+		
+		foreach (prop : properties)
+		{
+			if (prop == "{" || prop.Left(2) == "//") continue;
+			
+			prop = prop.MakeLower();
+			let equal = prop.IndexOf("=");
+			if (equal == -1) continue;
+			
+			let propName = prop.Left(equal);
+			let propValue = prop.Mid(equal+1);
+			
+			if (propName == "map")
+			{
+				key = propValue;
+			}
+			else if (propName == "background")
+			{
+				Array<string> segs;
+				propValue.Split(segs, ",");
+				background = segs[0];
+				if (segs.Size() > 1)
+				{
+					width = segs[1].ToInt();
+					height = segs[2].ToInt();
+				}
+			}
+			else if (propName == "altbackground")
+			{
+				Array<string> segs;
+				propValue.Split(segs, ",");
+				altBackground = segs[0];
+				if (segs.Size() > 1)
+				{
+					altWidth = segs[1].ToInt();
+					altHeight = segs[2].ToInt();
+				}
+			}
+			else if (propName == "background2")
+			{
+				background2 = propValue;
+			}
+			else if (propName == "altbackground2")
+			{
+				altBackground2 = propValue;
+			}
+			else if (propName == "music")
+			{
+				music = propValue;
+			}
+			else if (propName == "cleartype")
+			{
+				clearType = propValue;
+			}
+			else if (propName == "backgroundtype")
+			{
+				backgroundType = propValue;
+			}
+			else if (propName == "redirect")
+			{
+				redirect = propValue;
+			}
+			else if (propName == "redirectcvar")
+			{
+				redirectCVar = propValue;
+			}
+			else if (propName == "fallbackredirect")
+			{
+				fallbackredirect = propValue;
+			}
+			else if (propName == "fallbackredirectcvar")
+			{
+				fallbackredirectCVar = propValue;
+			}
+			else if (propName == "ending")
+			{
+				ending = propValue == "true";
+			}
+			else if (propName == "texts")
+			{
+				if (propValue == "")
+				{
+					texts.Push("");
+				}
+				else
+				{
+					propValue.Split(texts, ",");
+				}
+			}
+		}
+		
+		if (!altBackground) altBackground = background;
+		if (!altBackground2) altBackground2 = background2;
+		
+		let clearTypeValue = 0;
+		if (clearType == "still")
+		{
+			clearTypeValue = PsxPage.CT_Still;
+		}
+		else if (clearType == "scrollup")
+		{
+			clearTypeValue = PsxPage.CT_ScrollUp;
+		}
+		
+		let bkg = oip_enabled ? background : altBackground;
+		let bkg2 = oip_enabled ? background2 : altBackground2;
+		
+		let bkgTypeValue = 0;
+		if (bkg2)
+		{
+			if (backgroundType == "still")
+			{
+				bkgTypeValue = PsxPage.BG_Still;
+			}
+			else if (backgroundType == "scrollleft")
+			{
+				bkgTypeValue = PsxPage.BG_ScrollLeft;
+			}
+		}
+				
+		Array<PsxPage> pages;
+		for (int i = 0; i < texts.Size(); i++)
+		{
+			let page = new("PsxPage");
+			page.background = bkg;
+			page.text = texts[i];
+			page.music = CEMusicTracker.GetMusic(music);
+			page.clearType = clearTypeValue;
+			page.screenWidth = oip_enabled ? width : altWidth;
+			page.screenHeight = oip_enabled ? height : altHeight;
+			if (i == texts.Size() - 1)
+			{
+				page.background2 = bkg2;
+				page.backgroundType = bkgTypeValue;
+			}
+			pages.Push(page);
+		}
+		
+		let nextMap = GetRedirectMap(redirectcvar, redirect);
+		if (nextMap == "") nextMap = GetRedirectMap(fallbackredirectcvar, fallbackredirect);
+		
+		PsxTextScreen textscr = new("PsxTextScreen");
+		textscr.pages.Copy(pages);
+		textscr.redirect = nextMap;
+		textscr.ending = ending;
+		pageMap.Insert(key.MakeLower(), textscr);
+	}
+	
+	static String GetRedirectMap(string cvarName, string map)
+	{
+		if (!map) return "";
+		if (!level.info.MapExists(map)) return "";
+		if (cvarName)
+		{
+			return CVar.FindCVar(cvarName).GetBool() ? "" : map;
+		}
+		else
+		{
+			return map;
+		}
+	}
+}
+
+class CECutsceneJobProvider ui
+{
+	virtual void Append(ScreenJobRunner runner, PsxTextScreen def) { }
+}
+
+class PsxCutsceneJobProvider : CECutsceneJobProvider
+{
+	override void Append(ScreenJobRunner runner, PsxTextScreen def)
+	{
+		for (int i = 0; i < def.pages.Size(); i++)
+		{
+			runner.append(new("PsxShowBackgroundJob").Init(def.pages[i]));
+			runner.append(new("PsxWriteTextJob").Init(def.pages[i]));
+			runner.append(new("PsxShowTextJob").Init(def.pages[i]));
+			runner.append(new("PsxClearTextJob").Init(def.pages[i]));
+			runner.append(new("PsxHideBackgroundJob").Init(def.pages[i]));
+			if (i == def.pages.Size() - 1 && def.ending)
+			{
+				if (cop_enabled && def.redirect)
+				{
+					IntroCutscenes.IntroScreen(runner, def.redirect);
+					level.ChangeLevel(def.redirect, 0, CHANGELEVEL_NOINTERMISSION, -1);
+				}
+				else
+				{
+					CastCutscenes.EndGame(runner);
+				}
+			}
+		}
+	}
+}
+
+class PsxTextScreen
+{
+	Array<PsxPage> pages;
+	string redirect;
+	bool ending;
+}
+
+class PsxPage
+{
+	enum EClearTypes
+	{
+		CT_Still,
+		CT_ScrollUp
+	}
+	
+	enum EBackgroundTypes
+	{
+		BG_Still,
+		BG_ScrollLeft
+	}
+	
+	int backgroundType;	
+	String background;
+	String background2;
+	String text;
+	int clearType;
+	String music;
+	int screenHeight;
+	int screenWidth;
+}
+
+class PsxShowBackgroundJob : PsxPageJob
+{
+	override void OnTick()
+	{
+		super.OnTick();
+		if (ticks > TICRATE/2) Skip();
+	}
+}
+
+class PsxWriteTextJob : PsxPageJob
+{
+	int lineIndex;
+	int charIndex;
+	
+	override void OnTick()
+	{
+		super.OnTick();
+		if (ticks % int(5/cutsceneSpeed)) return;
+		if (lineIndex < lines.Size())
+		{
+			visibleLines[lineIndex] = visibleLines[lineIndex]..lines[lineIndex].Mid(charIndex, 1);
+			charIndex++;
+			if (charIndex > lines[lineIndex].CodePointCount() || lines[lineIndex] == "")
+			{
+				charIndex = 0;
+				lineIndex++;
+			}
+		}
+		else
+		{
+			Skip();
+		}
+	}
+}
+
+class PsxShowTextJob : PsxPageJob
+{
+	override void Start()
+	{
+		super.Start();
+		visibleLines.Copy(lines);
+	}
+	
+	override void OnTick()
+	{
+		super.OnTick();
+		if (ticks > waitTics) Skip();
+	}
+	
+	override bool OnEvent(InputEvent evt)
+	{
+		if (evt.type == InputEvent.Type_KeyDown && !System.specialKeyEvent(evt))
+		{
+			jobstate = skipped;
+			OnSkip();
+		}
+		return true;
+	}
+}
+
+class PsxClearTextJob : PsxPageJob
+{
+	override void Start()
+	{
+		super.Start();
+		visibleLines.Copy(lines);
+	}
+	
+	override void OnTick()
+	{
+		super.OnTick();
+		switch (clearType)
+		{
+			case PsxPage.CT_ScrollUp:
+				ScrollUpText();
+				break;
+			case PsxPage.CT_Still:
+			default:
+				Skip();
+				break;
+		}
+	}
+		
+	private void ScrollUpText()
+	{
+		if (textY < -bottomTextY) Skip();
+		textY -= cutsceneSpeed;
+	}
+}
+
+class PsxHideBackgroundJob : PsxPageJob
+{
+	override void Start()
+	{
+		super.Start();
+		if (clearType == PsxPage.CT_Still && backgroundType == PsxPage.BG_Still)
+		{
+			visibleLines.Copy(lines);
+		}
+	}
+	
+	override void OnTick()
+	{
+		super.OnTick();
+		switch (backgroundType)
+		{
+			case PsxPage.BG_ScrollLeft:
+				ScrollLeftBackground();
+				break;
+			case PsxPage.BG_Still:
+			default:
+				Skip();
+				break;
+		}
+	}
+	
+	private void ScrollLeftBackground()
+	{
+		if (backgroundX > screenWidth)
+		{
+			Skip();
+		}
+		else
+		{
+			backgroundX += cutsceneSpeed;
+		}
+	}
+}
+
+class PsxPageJob : SkippableScreenJob
+{
+	const TEXT_WIDTH = 274;
+	const TEXT_HEIGHT = 240;
+	const TEXT_CENTER_H = TEXT_WIDTH / 2;
+	const TEXT_SPACING_V = 14;
+	
+	int screenWidth;
+	int screenHeight;
+	int backgroundType;
+	TextureID background;
+	TextureID background2;
+	int backgroundX;
+	Array<String> lines;
+	Array<String> visibleLines;
+	int textY;
+	int bottomTextY;
+	int clearType;
+	int waitTics;
+	int cutsceneSpeed;
+	String music;
+	
+	ScreenJob Init(PsxPage page, int flags = 0)
+	{
+		Super.Init(flags);
+		cutsceneSpeed = 1;
+		ReadPage(page);
+		return self;
+	}
+		
+	override void Draw(double smoothRatio)
+	{
+		super.Draw(smoothRatio);
+		screen.DrawTexture(background,
+			true,
+			backgroundX,
+			0,
+			DTA_VirtualWidth, screenWidth,
+			DTA_VirtualHeight, screenHeight);
+		if (backgroundType == PsxPage.BG_ScrollLeft)
+		{
+			screen.DrawTexture(background2,
+				true,
+				backgroundX-screenWidth,
+				0,
+				DTA_VirtualWidth, screenWidth,
+				DTA_VirtualHeight, screenHeight);
+		}
+		for (int i = 0; i < lines.Size(); i++)
+		{
+			screen.DrawText(BigFont, 
+				Font.CR_UNTRANSLATED, 
+				TEXT_CENTER_H  - (BigFont.StringWidth(visibleLines[i])/2),
+				textY + (TEXT_SPACING_V*i),
+				visibleLines[i],
+				DTA_VirtualWidth, TEXT_WIDTH,
+				DTA_VirtualHeight, TEXT_HEIGHT);
+		}
+	}
+	
+	override bool OnEvent(InputEvent evt)
+	{
+		if (evt.type == InputEvent.Type_KeyDown && !System.specialKeyEvent(evt))
+		{
+			cutsceneSpeed = 2;
+		}
+		return true;
+	}
+	
+	override void Start()
+	{
+		S_ChangeMusic(music, 0, true, true);
+		super.Start();
+	}
+
+	void Skip()
+	{
+		jobstate = skipped;
+		OnSkip();
+	}
+	
+	private void ReadPage(PsxPage page)
+	{
+		background = TexMan.CheckForTexture(page.background);
+		background2 = TexMan.CheckForTexture(page.background2);
+		
+		int w, h;
+		[w, h] = TexMan.GetSize(background);
+		screenWidth = page.screenWidth ? page.screenWidth : w;
+		screenHeight = page.screenHeight ? page.screenHeight : h;
+		
+		backgroundType = page.backgroundType;
+		clearType = page.clearType;
+		let text = StringTable.Localize(page.text);
+		text.Split(lines, "\n");
+		textY = (TEXT_HEIGHT - lines.Size() * TEXT_SPACING_V) / 2;
+		for (int i = 0; i < lines.Size(); i++)
+		{
+			visibleLines.Push("");
+		}
+		waitTics = TICRATE * lines.Size();
+		bottomTextY = (lines.Size() * BigFont.GetHeight()) + (lines.Size() - 1 * BigFont.GetHeight());
+		music = page.music;
+	}
+}

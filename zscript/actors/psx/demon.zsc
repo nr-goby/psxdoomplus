@@ -1,0 +1,217 @@
+class PsxDemon : PsxActor replaces Demon
+{
+    Default
+    {
+		//$Title "Demon"
+		
+        Health 150;
+		PainChance 180;
+		Speed 10;
+		Radius 30;
+		Height 56;
+		Mass 400;
+		Monster;
+		+FLOORCLIP
+		SeeSound "demon/sight";
+		AttackSound "demon/melee";
+		PainSound "demon/pain";
+		DeathSound "demon/death";
+		ActiveSound "demon/active";
+		Obituary "$OB_DEMONHIT";
+		Tag "$FN_DEMON";
+
+        +MOVEWITHSECTOR;
+	    MeleeRange 50;
+        PsxActor.FootstepSound "monster/demonstep";
+        PsxActor.DeathThudSound "monster/xbody";
+        +PsxActor.WAITLOOK;
+        +PsxActor.SEETARGET;
+    }
+
+    States
+	{
+        Spawn:
+            SARG A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            SARG AB 10 A_Look;
+            Loop;
+        SmoothSpawn:
+            SDEM AB 10 fast A_Look;
+            Loop;
+
+        See:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothSee");
+            SARG AAB 2 Fast A_Chase;
+            SARG B 2 Fast { A_Chase(); A_Footstep(); }
+            SARG CCD 2 Fast A_Chase;
+            SARG D 2 Fast { A_Chase(); A_Footstep(); }
+            Loop;
+        SmoothSee:
+            SSRG A 2 fast A_Chase;
+            SSRG A 2 fast A_Chase;
+            SSRG B 2 fast A_Chase;
+            SSRG C 2 fast { A_Chase(); A_Footstep(); }
+            SSRG D 2 fast A_Chase;
+            SSRG D 2 fast A_Chase;
+            SSRG E 2 fast A_Chase;
+            SSRG F 2 fast { A_Chase(); A_Footstep(); }
+            Goto See;
+
+        Melee:		
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothMelee");
+            SARG E 8 Fast A_FaceTarget;
+            SARG F 8 Fast A_FaceTarget;
+            SARG G 8 A_SargAttack;
+            Goto See;
+        SmoothMelee:
+            SSRG G 8 fast A_FaceTarget;
+            SSRG GGGHIIIJ 1 fast A_FaceTarget;
+            SSRG K 2 A_SargAttack;
+            SSRG L 3;
+            SSRG G 3;
+            Goto See;
+
+        Pain:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothPain");
+            SARG H 2 Fast;
+            SARG H 2 Fast A_Pain;
+            Goto See;
+        SmoothPain:
+            SSRG M 1 fast;
+            SSRG N 2 fast;
+            SSRG M 1 fast A_Pain;
+            Goto See;
+
+        Death:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothDeath");
+            SARG I 8;
+            SARG J 8 A_Scream;
+            SARG K 4;
+            SARG L 4 A_NoBlocking;
+            SARG M 4;
+            SARG N -1;
+            Stop;
+        SmoothDeath:
+            SSRD A 3;
+		    SSRD B 3 A_Scream;
+		    SSRD C 3;
+		    SSRD D 3 A_NoBlocking;
+		    SSRD EFGH 3;
+		    SSRD I -1;
+		    Stop;
+        
+        XDeath:
+			TNT1 A 0 a_jumpif(IsSmooth(), "SmoothXDeath");
+            TNT1 A 0 A_JumpIf(!kch_enabled,"Death");
+            SDEM O 4 A_GoreExplosion;
+			SDEM Q 4 A_XScream;
+            SDEM R 4;
+			SDEM T 4 A_NoBlocking;
+			SDEM UW 4;
+			SDEM X -1;
+            Stop;
+        SmoothXDeath:
+			SDEM O 2 A_GoreExplosion;
+			SDEM P 2 A_XScream;
+			SDEM QRS 2;
+			SDEM S 2 A_NoBlocking;
+			SDEM TUVW 2;
+			SDEM X -1;
+		    Stop;
+
+        Raise:
+			TNT1 A 0 a_jumpif(IsSmooth(), "SmoothRaise");
+            SARG N 5;
+		    SARG MLKJI 5;
+		    Goto See;
+        SmoothRaise:
+            SSRD IHGFED 3;
+            SSRD CBA 3;
+            goto see;
+	}
+}
+
+//for compatiblity with the old psx doom tc
+
+class PsxSpectre : PsxDemon replaces Spectre
+{
+    Default
+    {
+		//$Title "Spectre"
+	
+        //+SHADOW;
+        //RenderStyle "OptFuzzy";
+        //Alpha 0.5;
+        SeeSound "spectre/sight";
+        PainSound "spectre/pain";
+        DeathSound "spectre/death";
+        ActiveSound "spectre/active";
+        AttackSound "spectre/melee";
+        Obituary "$OB_SPECTREHIT";
+        Tag "$FN_SPECTRE";
+
+        +PsxActor.TRANSLUCENT;
+		+PsxActor.ADDITIVE;
+		+PsxActor.SUBTRACTIVE;
+    }
+	
+	int previousDrawFuzz;
+
+	override void PostBeginPlay()
+	{
+		previousDrawFuzz = -1;
+		super.PostBeginPlay();
+	}
+
+    override void Tick()
+    {
+        super.Tick();
+		BecomeFuzzy();
+    }
+	
+	virtual void BecomeFuzzy()
+	{
+		int drawFuzz = r_drawfuzz;
+		if (drawFuzz != previousDrawFuzz)
+		{
+			A_SetRenderStyle(alpha, r_drawfuzz ? STYLE_OptFuzzy : STYLE_Add);
+		}
+		previousDrawFuzz = drawFuzz;
+	}
+}
+
+class PsxNightmareSpectre : PsxSpectre
+{
+    Default
+    {
+		//$Title "Nightmare Spectre"
+		
+        Obituary "$OB_NMSPECTREHIT";
+        Tag "$CC_NIGHTMARESPECTRE";
+		
+		-PsxActor.ADDITIVE;
+    }
+	
+	override void BecomeFuzzy() { }
+}
+
+class PsxFocusSpectre : PsxSpectre
+{
+    Default
+    {
+		//$Title "Spectre (additive)"
+		
+		-PsxActor.TRANSLUCENT;
+		-PsxActor.SUBTRACTIVE;
+    }
+	
+	override void BecomeFuzzy() { }
+}
+
+extend class PsxActor
+{
+	void A_SargAttack()
+    {
+        //A_CustomBulletAttack (0, 0, 1, random(1, 8) * 4, "PSXBulletPuff", 50, CBAF_NORANDOM);
+        A_CustomMeleeAttack(random(1, 8) * 4); //inaccurate but doesnt't spawn blood
+    }
+}

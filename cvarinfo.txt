@@ -1,0 +1,221 @@
+//first time setup
+server bool ce_firstsetup = true;
+
+//64 fades
+server int d64_enterfade = 1;
+server int d64_exitfade = 1;
+
+//actors
+server int ce_playertics = 1;
+server bool ce_weapontics = true;
+server bool ce_actortics = true;
+server bool ce_pcspeed = true;
+server bool ce_gibrules = true;
+server bool ce_ssgtics = true;
+server bool ce_actorthrust = true;
+server int ce_particlelimit = 1000;
+server bool ce_altssg = false;
+server int ce_lostsoullimit = 21;
+server int ce_nightmarestyle = 0;
+server color ce_nightmarecolor = "16 64 00";
+
+//ambient
+server int amb_enabled = 1;
+server float amb_volume_mul = 0.8;
+
+//damage indicator
+user bool DI_DamageIndicators = true;
+user float DI_DIScale = 0.5;
+user float DI_DIAlpha = 0.5;
+
+//wipe
+server int d64_wipeeffect = 1;
+
+//fancyworld
+server int cx_fw_enabled = 1;
+server float cx_fw_volume_mul = 0.8;
+
+//firesky
+server bool hq_firesky = false;
+
+//player footsteps
+server int cx_fs_enabled = 1;
+server float cx_fs_volume_mul = 0.8;
+server float cx_fs_delay_mul = 0.5;
+
+//hud
+user int hud_legacy = 1;
+user int hud_berserk = 0;
+user int hud_messagestyle = 0;
+user int hud_mugshot_original = 0;
+server int hud_weapons_original = 0;
+user int hud_color = -1;
+user float hud_alpha = 1.0;
+
+//icon of sin
+server bool ios_enabled = true;
+
+//intros
+server bool ce_skipcopyright = false;
+server int isk_disabled = 0;
+server int cop_enabled = 0;
+server int itt_enabled = 0;
+server int oen_enabled = 0;
+server int oip_enabled = 0;
+server int hpt_enabled = 0;
+server int ois_enabled = 0;
+server int stl_enabled = 0;
+server int mov_enabled = 0;
+server bool psw_enabled = false;
+
+//ketchup
+server int kch_enabled = 1;
+
+//map name
+server int smn_enabled = 1;
+server int sma_enabled = 0;
+
+//monster footsteps
+server int cx_mfs_enabled = 1;
+server float cx_mfs_volume_mul = 0.8;
+
+//music
+nosave int mus_original = 0;
+nosave int mus_dynamic = 0;
+user bool mus_trackname = false;
+server int mus_minlength = 90;
+
+//nashgore
+server int cx_nashgore_maxgore = 1024;
+server int cx_nashgore_bloodtype = 0;
+server int cx_nashgore_bloodamount = 255;
+server bool cx_nashgore_spriteblood = false;
+server bool cx_nashgore_bloodspurt = false;
+server int cx_nashgore_gibtype = 0;
+server int cx_nashgore_gibamount = 255;
+server bool cx_nashgore_corpseblood = true;
+server bool cx_nashgore_footprints = true;
+server bool cx_nashgore_deathflip = true;
+server bool cx_nashgore_squish = false;
+server bool cx_nashgore_icedeath = true;
+server bool cx_nashgore_splat = true;
+
+//actor/texture replacements
+server int rep_enabled = 0;
+server int vil_enabled = 1;
+server int spd_enabled = 1;
+server int rtx_enabled = 0;
+server int wol_enabled = 0;
+server int rtw_enabled = 0;
+
+//resurrection
+server int resurrect_life = 1;
+server int resurrect_seconds = 3;
+
+//skyboxes
+server bool alt_skybox = true;
+server bool alt_skies = true;
+
+//slow weapon switch
+server int slw_enabled = 0;
+
+//smooth
+server int smw_enabled = 1;
+server int smp_enabled = 1;
+server int smm_enabled = 1;
+server int smd_enabled = 1;
+server int smi_enabled = 1;
+server int catoggle = 2;
+server int gltoggle = 0;
+server bool retoggle = true;
+server float restrength = 1.0;
+
+//bullet tracers
+server int trc_enabled = 1;
+server int trw_enabled = 1;
+
+//unlockables
+user int unl_episodes = 9;
+user int unl_skills = 9;
+user int unl_bonus = 0;
+server bool unl_episodes_original = false;
+user bool unl_skills_original = false;
+server bool levelselect_disabled = false;
+user string levelselect_password = "";
+user int levelselect_level = 0;
+user int levelselect_skill = 2;
+user int levelselect_health = 100;
+user int levelselect_armor = 0;
+user bool levelselect_chainsaw = false;
+user bool levelselect_shotgun = false;
+user bool levelselect_ssg = false;
+user bool levelselect_chaingun = false;
+user bool levelselect_rl = false;
+user bool levelselect_plasma = false;
+user bool levelselect_bfg = false;
+user int levelselect_clip = 50;
+user int levelselect_shell = 0;
+user int levelselect_rocket = 0;
+user int levelselect_cell = 0;
+user bool levelselect_backpack = false;
+user bool levelselect_ma = false;
+user bool levelselect_warping = false;
+user int level_state_0 = 0;
+user int level_state_1 = 0;
+user int level_state_2 = 0;
+user int level_state_3 = 0;
+user int level_state_4 = 0;
+user int level_state_5 = 0;
+user int level_state_6 = 0;
+user int level_state_7 = 0;
+user int level_state_8 = 0;
+user int level_state_9 = 0;
+user int level_state_10 = 0;
+user int level_state_11 = 0;
+user int level_state_12 = 0;
+user int level_state_13 = 0;
+user int level_state_14 = 0;
+user int level_state_15 = 0;
+user int level_state_16 = 0;
+user int level_state_17 = 0;
+user int level_state_18 = 0;
+user int level_state_19 = 0;
+user int level_state_20 = 0;
+user int level_state_21 = 0;
+user int level_state_22 = 0;
+user int level_state_23 = 0;
+user int level_state_24 = 0;
+user int level_state_25 = 0;
+user int level_state_26 = 0;
+user int level_state_27 = 0;
+user int level_state_28 = 0;
+user int level_state_29 = 0;
+user int level_state_30 = 0;
+user int level_state_31 = 0;
+user int level_state_32 = 0;
+user int level_state_33 = 0;
+user int level_state_34 = 0;
+user int level_state_35 = 0;
+
+//brightness
+user float ce_brightness = 0.0;
+user bool ce_psxbrightness = false;
+
+//blends
+user bool d64_additiveblend = true;
+
+//gradients
+user bool d64_gradients = true;
+user bool d64_doublepasscolor = false;
+
+//particles
+server int zp_enabled = 1;
+server bool hq_enabled = false;
+server bool hq_torches = false;
+server bool hq_soul = false;
+
+//shaders
+user bool cx_ve_lowres_enabled = false;
+user bool ce_bandedswlight = false;
+user bool ce_filter = false;
+user bool ce_aspect = false;

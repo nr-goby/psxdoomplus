@@ -1,0 +1,21 @@
+// The Great Outdoors
+class FancySectorSky : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/fsky";
+		FancyWorldBase.Attenuation 0.25;
+	}
+}
+
+class FancySectorCeilingLite : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/ceilite";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+	}
+}

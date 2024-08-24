@@ -1,0 +1,14 @@
+class StringUtils
+{
+	const FONT_COLOR = Font.CR_LIGHTBLUE;
+	
+	static String Clean(string source)
+	{
+		source.Replace("\"", "");
+		source.Replace("\r", "");
+		source.Replace("\n", "");
+		source.Replace("\t", "");
+		source.Replace(" ", "");
+		return source;
+	}
+}

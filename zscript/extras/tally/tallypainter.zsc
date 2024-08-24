@@ -1,0 +1,308 @@
+class TallyPainter
+{
+	ui int currentYPos;
+	ui int overallCount, overallTotal;
+	TallyTracker tracker;
+	ui int xfactor;
+	ui int yfactor;
+
+	ui void DrawStats()
+	{
+		InitOverlay();
+		DrawHeader("$TALLYMAP");
+		DrawHeader("");
+		DrawKills();
+		DrawItems();
+		DrawSecrets();
+		DrawCurrency();
+		DrawTime();
+		DrawParTime();
+		DrawHeader("");
+		DrawDifficulty();
+		DrawEpisodes();
+		DrawMapCount();
+		DrawOverall();
+		if (multiplayer)
+		{
+			DrawHeader("");
+			DrawMultiplayerStats();
+		}
+	}
+	
+	ui void InitOverlay()
+	{
+		xfactor = CleanXFac;
+		yfactor = CleanYFac;
+		int totalLines = multiplayer ? 13 + CountPlayers() : 11;
+		if (tracker.completedEpisodes > 0) totalLines++;
+		int boxHeight = GetLineHeight() * totalLines;
+		currentYPos = (screen.GetHeight() - boxHeight)/2;
+		
+		int hPadding = 23 * xfactor;
+		int vpadding = 13 * yfactor;
+		int leftMargin = GetLeftAlignment() - hPadding;
+		int width = GetBoxWidth() + hPadding + hPadding;
+		int topMargin = currentYPos - vPadding;
+		int height = boxHeight + vPadding + vPadding;
+		screen.Dim(0, 0.9, leftMargin,topMargin,width,height);
+		screen.DrawFrame(leftMargin,topMargin,width,height);
+	}
+	
+	ui int CountPlayers()
+	{
+		int count;
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			if (playeringame[i]) count++;
+		}
+		return count;
+	}
+	
+	ui void ClearOverlay()
+	{
+		screen.Dim(0, 0.0, 0, 0, screen.GetWidth(), screen.GetHeight());
+	}
+
+	ui void DrawHeader(string s)
+	{
+		string ls = Stringtable.Localize(s);
+		DrawText(ls
+			,(screen.GetWidth() - SmallFont2.StringWidth(ls) * xfactor) / 2
+			,currentYPos);
+		currentYPos += GetLineHeight();
+	}
+
+	ui void DrawKills()
+	{
+		int killCount = tracker.killedMonsters + level.killed_monsters;
+		int killTotal = tracker.totalMonsters + level.total_monsters;
+		DrawDetailedPercentage("$TXT_KILLS",killCount,killTotal);
+	}
+	
+	ui void DrawItems()
+	{
+		int itemCount = tracker.foundItems + level.found_items;
+		int itemTotal = tracker.totalItems + level.total_items;
+		DrawDetailedPercentage("$TXT_ITEMS",itemCount,itemTotal,false);
+	}
+	
+	ui void DrawSecrets()
+	{
+		int secretCount = tracker.foundSecrets + level.found_secrets;
+		int secretTotal = tracker.totalSecrets + level.total_secrets;
+		DrawDetailedPercentage("$TXT_SECRETS",secretCount,secretTotal);
+	}
+
+	ui void DrawCurrency()
+	{
+		DrawIntStat("Total Currency",tracker.currency);
+	}
+	
+	ui void DrawTime()
+	{
+		int tics = tracker.totalTime + level.maptime;
+		string timeString = TicsToHHMMSS(tics);
+		DrawStringStat("$TXT_TIME", timeString);
+	}
+	
+	ui void DrawParTime()
+	{
+		int currentPar;
+		if (level.parTime > 0) currentPar += level.maptime;
+		//int elapsed = tracker.elapsedTime + currentPar;
+		int par = tracker.parTime + (level.parTime * TICRATE);
+		//string elapsedString = TicsToHHMMSS(elapsed);
+		string parString = TicsToHHMMSS(par);
+		//string parTotal = String.Format("%s / %s",elapsedString, parString);
+		DrawStringStat("$TXT_PAR", parString);
+	}
+	
+	ui void DrawDifficulty()
+	{
+		int number = tracker.skill;
+		string difficulty = String.format("%s (%i)",G_SkillName(),number);
+		/*if (players[consoleplayer].cheats > 0 || tracker.cheats > 0)
+			difficulty = "$TXT_CHEATER";*/
+		DrawStringStat("$TXT_DIFFICULTY", difficulty);
+	}
+	
+	ui void DrawEpisodes()
+	{
+		if (tracker.completedEpisodes > 0)
+			DrawIntStat("$TXT_EPISODES",tracker.completedEpisodes);
+	}
+	
+	ui void DrawMapCount()
+	{
+		int completedMaps = tracker.completedMaps.Size() /*+ 1*/;
+		int foundMaps = tracker.foundMaps.Size();
+		//if (foundMaps == 0) foundMaps = 1;
+		DrawDetailedPercentage("$TXT_MAPS",completedMaps,foundMaps);
+	}
+	
+	ui void DrawOverall()
+	{
+		DrawPercentage("$TXT_OVERALL",overallCount,overallTotal);
+		overallCount = 0;
+		overallTotal = 0;
+	}
+	
+	ui void DrawDetailedPercentage(string title, int count, int total, bool overall = true)
+	{
+		int percentage = GetPercentage(count, total, overall);
+		String s = String.format("%i%% (%i/%i)",percentage,count,total);
+		DrawStringStat(title, s);
+	}
+	
+	ui void DrawPercentage(string title, int count, int total, bool overall = true)
+	{
+		int percentage = GetPercentage(count, total, overall);
+		String s = String.format("%i%%",percentage);
+		DrawStringStat(title, s);
+	}
+	
+	ui int GetPercentage(int count, double total, bool overall = true)
+	{
+		int percentage;
+		if (total > 0)
+		{
+			percentage = int((count/total)*100);
+		}
+		else
+		{
+			percentage = 100;
+		}
+		if (overall)
+		{
+			overallCount += percentage;
+			overallTotal += 100;
+		}
+		return percentage;
+	}
+	
+	ui void DrawMultiplayerStats()
+	{
+		int x = GetLeftAlignment();
+		int itemCount = 6;
+		if (deathmatch) itemCount++;
+		int xStep = GetBoxWidth() / itemCount;
+		DrawMultiplayerTitles(x,xStep);
+		currentYPos += GetLineHeight();
+		DrawMultiplayerValues(x,xStep);
+	}
+	
+	ui void DrawMultiplayerTitles(double x, double xStep)
+	{
+		x+=xStep*2;
+		DrawText("$TXT_KILLS",x,currentYPos);
+		x += xStep;
+		DrawText("$TXT_ITEMS",x,currentYPos);
+		x += xStep;
+		DrawText("$TXT_SECRETS",x,currentYPos);
+		x += xStep;
+		DrawText("$TXT_DEATHS",x,currentYPos);
+		if (deathmatch){
+			x += xStep;
+			DrawText("$TXT_FRAGS",x,currentYPos);
+		}
+	}
+	
+	ui void DrawMultiplayerValues(double x, double xStep)
+	{
+		for (int i=0; i<MAXPLAYERS; i++)
+		{
+			if (playeringame[i]) DrawPlayerinfo(i,int(x),int(xStep));
+		}
+	}
+	
+	ui void DrawPlayerInfo(int playerNumber, int x, int xStep)
+	{
+		DrawText(players[playerNumber].GetUserName(),x,currentYPos);
+		x+=xStep*2;
+		int kills = tracker.playerKills[playerNumber]+players[playerNumber].killcount;
+		DrawInt(kills,x,currentYPos);
+		x+=xStep;
+		int items = tracker.playerItems[playerNumber]+players[playerNumber].itemcount;
+		DrawInt(items,x,currentYPos);
+		x+=xStep;
+		int secrets = tracker.playerSecrets[playerNumber]+players[playerNumber].secretcount;
+		DrawInt(secrets,x,currentYPos);
+		x+=xStep;
+		int deaths = tracker.playerDeaths[playerNumber];
+		DrawInt(deaths,x,currentYPos);
+		if (deathmatch){
+			x+=xStep;
+			int frags = tracker.playerFrags[playerNumber]+players[playerNumber].fragcount;
+			DrawInt(frags,x,currentYPos);
+		}
+		currentYPos += GetLineHeight();
+	}
+	
+	ui void DrawIntStat(string title, int stat)
+	{
+		String s = String.format("%i",stat);
+		DrawStringStat(title, s);
+	}
+	
+	ui void DrawStringStat(string title, string value)
+	{
+		DrawTitle(title, currentYPos);
+		DrawValue(value, currentYPos);
+		currentYPos += GetLineHeight();
+	}
+	
+	ui void DrawTitle(string s, double y)
+	{
+		int x = GetLeftAlignment();
+		DrawText(s,x,y);
+	}
+	
+	ui void DrawValue(string s, double y)
+	{
+		int x = GetRightAlignment(s);
+		DrawText(s,x,y);
+	}
+	
+	ui void DrawInt(int i, double x, double y)
+	{
+		DrawText(String.Format("%i",i),x,y);
+	}
+	
+	ui void DrawText(string s, double x, double y)
+	{
+		DrawColoredText(s,OptionMenuSettings.mFontColor,x,y);
+	}
+	
+	ui void DrawColoredText(string s, Color color, double x, double y)
+	{
+		screen.DrawText(SmallFont2, color, x, y, s, DTA_CleanNoMove, true);
+		//screen.DrawText(SmallFont2, color, x, y, s, DTA_ScaleX, CleanXFac, DTA_ScaleY, (274.0/320.0)*CleanYFac);
+	}
+	
+	ui string TicsToHHMMSS(int tics)
+	{
+		int sec = Thinker.Tics2Seconds(tics); 
+		return String.Format("%02d:%02d:%02d", sec / 3600, (sec % 3600) / 60, sec % 60);
+	}
+	
+	ui int GetLineHeight()
+	{
+		return (SmallFont2.GetHeight() + 2) * yfactor;
+	}
+	
+	ui int GetBoxWidth()
+	{
+		return int(screen.getWidth() * 0.6);
+	}
+
+	ui int GetLeftAlignment()
+	{
+		return (screen.GetWidth() - GetBoxWidth())/2;
+	}
+	
+	ui int GetRightAlignment(string s)
+	{
+		string ls = Stringtable.Localize(s);
+		return screen.GetWidth() - SmallFont2.StringWidth(ls)* xfactor - GetLeftAlignment();
+	}
+}

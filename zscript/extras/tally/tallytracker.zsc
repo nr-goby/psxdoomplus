@@ -1,0 +1,124 @@
+class TallyTracker : Thinker
+{
+	int totalSecrets,foundSecrets;
+	int currency;
+	int totalItems,foundItems;
+	int totalMonsters,killedMonsters;
+	int parTime,elapsedTime,totalTime;
+	int completedEpisodes;
+	int skill;
+	int cheats;
+	Array<string> foundMaps,completedMaps;
+	int playerKills[MAXPLAYERS];
+	int playerItems[MAXPLAYERS];
+	int playerSecrets[MAXPLAYERS];
+	int playerDeaths[MAXPLAYERS];
+	int playerFrags[MAXPLAYERS];
+	CEConfig config;
+	
+	TallyTracker Init()
+	{
+		ChangeStatNum(STAT_STATIC);
+		skill = G_SkillPropertyInt(SKILLP_ACSReturn);
+		return self;
+	}
+
+	static TallyTracker Get()
+	{
+		ThinkerIterator it = ThinkerIterator.Create("TallyTracker",STAT_STATIC);
+		let p = TallyTracker(it.Next());
+		if (p == null)
+		{
+			p = new("TallyTracker").Init();
+		}
+		return p;
+	}
+	
+	void UpdateLevelStats()
+	{
+		if (!IsExcluded(level.MapName)){
+			totalSecrets += level.total_secrets;
+			foundSecrets += level.found_secrets;
+			currency += level.found_secrets;
+			totalItems += level.total_items;
+			foundItems += level.found_items;
+			totalMonsters += level.total_monsters;
+			killedMonsters += level.killed_monsters;
+			totalTime = level.totaltime;
+		}
+	}
+	
+	void UpdateMapCount()
+	{
+		TraverseMap(level.MapName);
+		CompleteMap(level.MapName.MakeUpper());
+	}
+
+	void TraverseMap(String map)
+	{
+		if (!map || !LevelInfo.MapExists(map) ||
+			foundMaps.Find(map) != foundMaps.Size()) return;
+		RegisterMap(map.MakeUpper());
+		let i = level.info.FindLevelInfo(map);
+		if (!i) return;
+		TraverseMap(i.NextMap);
+		TraverseMap(i.NextSecretMap);
+	}
+	
+	void UpdateEpisodeCount(String nextMap)
+	{
+		if (!LevelInfo.MapExists(nextMap))
+		{
+			completedEpisodes++;
+		}
+	}
+	
+	void UpdateParTime()
+	{
+		if (level.partime > 0){
+			parTime += (level.partime * TICRATE);
+			elapsedTime += level.totaltime;
+		}
+	}
+	
+	void UpdateMultiplayerStats()
+	{
+		for (int i=0; i<players.Size(); i++){
+			playerItems[i] += players[i].itemcount;
+			playerKills[i] += players[i].killcount;
+			playerSecrets[i] += players[i].secretcount;
+			playerFrags[i] += players[i].fragcount;
+			//if (players[i].cheats > 0) { cheats = 1;}
+		}
+	}
+	
+	void AddPlayerDeath(int playerNumber)
+	{
+		playerDeaths[playerNumber]++;
+	}
+	
+	void RegisterMap(string map)
+	{
+		if (IsNewMap(map,foundMaps.Find(map),foundMaps.Size())){
+			foundMaps.Push(map);
+		}
+	}
+	
+	void CompleteMap(string map)
+	{
+		if (IsNewMap(map,completedMaps.Find(map),completedMaps.Size())){
+			completedMaps.Push(map);
+		}
+		RegisterMap(map);
+	}
+	
+	bool IsNewMap(string item, int arrayIndex, int arraySize)
+	{
+		return item != "" && !IsExcluded(item) && arrayIndex == arraySize;
+	}
+		
+	bool IsExcluded(string map)
+	{
+		return CEConfig.Get().IsExcluded(map);
+	}
+}

@@ -1,0 +1,136 @@
+/*
+	NOTES:
+	
+	the pythagoras'd player speed value (called "speed" in the code below) caps
+	at 16.666667 or 21 when doing SR50 no matter the Player.ForwardMove or
+	Player.SideMove value.
+*/
+extend class CEExtrasHandler
+{
+	// can probably be done without a magic number but it works for now
+	const MAX_SPEED = 16.666667;
+	
+	// a wait timer for each player. when wait[i] hits 0 it plays a footstep
+	private Array<double> wait;
+	
+	Map<TextureId,Sound> sounds;
+	TextureID notex;
+		
+	void FootstepsWorldLoaded(WorldEvent e)
+	{
+		ReadFootstepLump("footsnds");
+		notex = TexMan.CheckForTexture("-");
+		for (int i = 0; i < players.size(); ++i) {			
+			wait.insert(i, 1.0);
+			//Console.printf("%d", consolePlayer);
+		}
+	}
+	
+	void FootstepsWorldTick()
+	{
+		if (!cx_fs_enabled) return;
+		double speed;
+		PlayerPawn pl;
+		for (int i = 0; i < players.size(); ++i)
+		{
+			if (players[i].mo)
+			{
+				pl = players[i].mo;
+				
+				if (players[i].onground)
+				{
+					speed = clamp(sqrt(pl.vel.x * pl.vel.x + pl.vel.y * pl.vel.y),
+								0.0, MAX_SPEED);
+					
+					// you can probably find out that this means that a sound is
+					// only played when the player is moving > 2.0 speed
+					if (speed > 2.0)
+					{
+						if (wait[i] <= 0.0)
+						{
+							float volCvar = cx_fs_volume_mul;
+							double volume = clamp(speed / MAX_SPEED, 0.4, 1.0)*volCvar;
+							let snd = getStepSound(pl);
+							if (snd) pl.A_StartSound(snd, CHAN_BODY, CHANF_UI|CHANF_OVERLAP, volume);
+							float delayCvar = 2 - cx_fs_delay_mul;
+							double delay = (7.0 * clamp(MAX_SPEED / speed, 1.0, 1.5)) * delayCvar;
+							wait[i] = delay;
+						}
+						
+						--wait[i];
+					}
+					else
+					{
+						wait[i] = 1.0;
+					}
+				}
+				else // to create the "shuffling down stairs" effect
+				{
+					wait[i] = 0.0;
+				}
+			}
+		}
+	}
+	
+	void FootstepsPlayerEntered(PlayerEvent e)
+	{
+		wait.insert(e.playerNumber, 1.0);
+	}
+	
+	void FootstepsPlayerRespawned(PlayerEvent e)
+	{
+		wait[e.playerNumber] = 1.0;
+	}
+	
+	private Sound getStepSound(PlayerPawn pl)
+	{
+		let flat = pl.floorPic;
+		if (sounds.CheckKey(flat))
+		{
+			//Console.Printf(""..TexMan.GetName(flat).." mapped to "..sounds.Get(flat));
+			return sounds.Get(flat);
+		}
+		else if (flat == skyflatnum || flat == notex)
+		{
+			//Console.Printf(""..TexMan.GetName(flat).." is silent");
+			return "";
+		}
+		else
+		{
+			//Console.Printf(""..TexMan.GetName(flat).." not mapped");
+			return "step/default";
+		}
+	}
+	
+	void ReadFootstepLump(String lumpname)
+	{
+		let lump = -1;
+		while (-1 != (lump = Wads.FindLump(lumpname, lump + 1)))
+		{
+			let content = Wads.ReadLump(lump);
+			Array<String> lines;
+			content.Split(lines, "\n");
+			
+			let i = -1;
+			while (++i < lines.Size())
+			{
+				let line = StringUtils.Clean(lines[i].MakeLower());
+				if (!line.Length() || line.Left(2) == "//") continue;
+				
+				let equal = line.IndexOf("=");
+				if (equal == -1) continue;
+				
+				let texname = line.Left(equal);
+				let tex = TexMan.CheckForTexture(texname);
+				if (tex.IsValid())
+				{
+					sounds.Insert(tex, line.Mid(equal+1));
+				}
+				else
+				{
+					Console.Printf("Warning: invalid footstep texture "..texname);
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,262 @@
+class PsxExplosiveBarrel : PsxActor replaces ExplosiveBarrel
+{
+    Default
+	{
+		//$Category "Obstacles"
+		//$Title "Barrel"
+		//$NotAngled
+		//$Color 3
+		
+		Health 20;
+		Radius 10;
+		Height 42;
+		+SOLID
+		+SHOOTABLE
+		+NOBLOOD
+		+ACTIVATEMCROSS
+		+DONTGIB
+		+NOICEDEATH
+		+OLDRADIUSDMG
+		DeathSound "world/barrelx";
+		Obituary "$OB_BARREL";
+        
+	    +MOVEWITHSECTOR;
+        PsxActor.AmbientSound "props/bubbles";
+		Tag "$CC_BARREL";
+	}
+    
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            BAR1 AB 6;
+            Loop;
+        SmoothSpawn:
+            SBR1 abcdefghijklm 3;
+            Loop;
+
+        Death:
+            TNT1 A 0 a_jumpif(zp_enabled && hq_enabled, "HQDeath");
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothDeath");
+            BEXP A 4 BRIGHT A_ZPSmoke;
+            BEXP B 6 BRIGHT A_Scream;
+            BEXP C 6 BRIGHT;
+            BEXP D 10 BRIGHT { A_Explode(); A_ZPExplosion(); }
+            BEXP E 10 BRIGHT;
+            TNT1 A 1050 BRIGHT A_BarrelDestroy;
+            TNT1 A 5 A_Respawn;
+            Wait;
+        SmoothDeath:
+            sexp A 5 Bright A_ZPSmoke;
+            sexp B 5 Bright A_Scream;
+            sexp C 3 Bright;
+            sexp D 2 Bright;
+            sexp E 3 Bright { A_Explode(); A_ZPExplosion(); }
+            sexp FGH 3 Bright;
+            sexp I 3 Bright;
+            sexp I 1050 Bright A_BarrelDestroy;
+            sexp I 5 A_Respawn;
+            Wait;
+        HQDeath:
+            sexp A 5 Bright;
+            sexp B 5 Bright;
+            sexp C 3 Bright { A_Scream(); A_ZPSmoke(); }
+            sexp D 2 Bright { A_ZPExplosion(); A_Explode(); }
+            sexp E 5 Bright;
+            TNT1 A 1050 A_BarrelDestroy;
+		    TNT1 A 5 A_Respawn;
+            Wait;
+    }
+
+    override bool IsSmooth() { return smi_enabled; }
+
+    void A_ZPExplosion()
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+                for(int i=0;i<16;i++) A_SpawnItemEx("ExplosionSpark",0,0,16,FRandom(5,10),0,FRandom(-5,10),Random(1,360));
+	            A_SetScale(0.65);
+	            for(int i=0;i<9;i++) A_SpawnItemEx("RandomExplosionSprite",0,0,16,FRandom(0,5),0,FRandom(-1,4),Random(1,360),SXF_TRANSFERSCALE);
+	            for(int i=0;i<3;i++) A_SpawnItemEx("ExplosionSmoke",0,0,16,FRandom(0,3),0,FRandom(-1,3),Random(1,360),SXF_TRANSFERSCALE);
+	            A_SetScale(1);
+            }
+            else
+            {
+                A_SpawnItemEx("DeathSpawner_Rocket",0,0,10,0,0,0,0,SXF_NOCHECKPOSITION);
+            }
+        }
+    }
+
+    void A_ZPSmoke()
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+                Radius_Quake(2,8,0,10,0);
+	            A_SpawnItemEx("BigSlowSmoke");
+            }
+            else
+            {
+                A_SpawnItem("BigSlowSmoke");
+            }
+        }
+    }
+}
+
+class PsxBulletPuff : PsxProjectile replaces BulletPuff
+{
+    Default
+	{
+		+NOBLOCKMAP
+		+NOGRAVITY
+		+ALLOWPARTICLES
+		+RANDOMIZE
+		//+ZDOOMTRANS
+		//RenderStyle "Translucent";
+		//Alpha 0.5;
+		VSpeed 1;
+		Mass 5;
+        
+        RenderStyle "Add";
+        Alpha 0.95;
+        +NOTONAUTOMAP;
+        +FORCEXYBILLBOARD;
+	}
+
+    States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(zp_enabled && hq_enabled, "HQSpawn");
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothSpawn");
+            PUFF A 4 Bright;
+            PUFF B 4;
+            PUFF C 4 A_ZPExplosion;
+            PUFF D 4;
+            Stop;
+        SmoothSpawn:
+            spuf a 2 bright A_SetRenderStyle(0.7, STYLE_Add);
+            spuf bcd 2 bright;
+            spuf e 2 A_ZPExplosion;
+            spuf fghi 2;
+            stop;
+        HQSpawn:
+            TNT1 A 0 { A_HQGlow(); A_HQSetup(); }
+            IPF2 ABCDABCDABCDABCD 0 A_Jump(64,"Anim");
+        Anim:
+            "----" AAA 1 Bright A_SetScale(Scale.X*0.9);
+            TNT1 A 0 A_ZPExplosion;
+            Stop;
+
+        Melee:
+            TNT1 A 0 a_jumpif(zp_enabled && hq_enabled, "HQMelee");
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothMelee");
+            PUFF CD 4;
+            Stop;
+        SmoothMelee:
+            spuf e 2 A_SetRenderStyle(0.7, STYLE_Add);
+            spuf fghi 2;
+            Stop;
+        HQMelee:
+            TNT1 A 1 A_HQSetup;
+            TNT1 A 2 A_HQMeleeExplosion;
+            Stop;
+	}
+	
+	override void BeginPlay()
+	{
+		SetExtremeDeath();
+		super.BeginPlay();
+	}
+	
+	virtual void SetExtremeDeath()
+	{
+		if (ce_gibrules) bEXTREMEDEATH = false;
+	}
+
+    void A_ZPExplosion()
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+                for(int i=0;i<2;i++) A_SpawnItemEx("ShotSmoke",0,0,0,FRandom(0,0.5),0,FRandom(-0.5,0.5),Random(1,360));
+                for(int i=0;i<4;i++) A_SpawnItemEx("BulletPuffSpark",0,0,0,FRandom(0,3),0,FRandom(2,4),Random(1,360),1);
+            }
+            else
+            {
+                A_SpawnItem("ShotSmoke");
+            }
+        }
+    }
+
+    void A_HQMeleeExplosion()
+    {
+        for(int i=0;i<2;i++) A_SpawnItemEx("ShotSmoke",0,0,0,FRandom(0,0.5),0,FRandom(-0.5,0.5),Random(1,360));
+    }
+
+    void A_HQGlow()
+    {
+        A_SetScale(0.05);
+        A_SpawnItemEx("BulletPuffGlow",0,0,0,0,0,0,0,SXF_TRANSFERSCALE|1);
+    }
+
+    void A_HQSetup()
+    {
+        A_SetRenderStyle(0.55,STYLE_Add);
+        A_SetScale(0.07);
+        if (Random(0,1) == 0)
+        {
+            if (Random(0,1) == 0) A_SetScale(-Scale.X,Scale.Y);
+        }
+        else
+        {
+            A_SetScale(Scale.X,-Scale.Y);
+        }
+    }
+}
+
+class PsxFistPuff : PsxBulletPuff
+{
+    Default
+    {
+        AttackSound "weapons/fistcrash";
+        SeeSound "weapons/fistflesh";
+    }
+}
+
+class PsxMegaFistPuff : PsxFistPuff
+{
+	override void SetExtremeDeath()
+	{
+		bEXTREMEDEATH = ce_gibrules;
+	}
+}
+
+class PsxChainsawPuff : PsxMegaFistPuff
+{
+    Default
+    {
+        AttackSound "weapons/sawcrash";
+	    SeeSound "weapons/sawflesh";
+    }
+}
+
+class DummyPuff : Actor
+{
+	Default
+    {
+        +NOINTERACTION;
+        +NOTONAUTOMAP;
+    }
+
+	States
+	{
+		Spawn:
+		Death:
+            TNT1 A 1;
+            Stop;
+	}
+}

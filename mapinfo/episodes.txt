@@ -1,0 +1,1042 @@
+ClearEpisodes
+
+Episode MAP01
+{
+	Name = "$MNU_DOOM"
+	Key = "u"
+	intro
+	{
+		Function = "PsxDoomIntros.Doom"
+	}
+}
+
+/*
+Episode SIG01
+{
+	Name = "$MNU_SIGIL"
+	Key = "s"
+	intro
+	{
+		Function = "PsxDoomIntros.Sigil"
+	}
+}
+*/
+
+Episode MAP31
+{
+	Name = "$MNU_DOOM2"
+	Key = "h"
+	intro
+	{
+		Function = "PsxDoomIntros.Doom2"
+	}
+}
+
+Episode NRV01
+{
+	Name = "$MNU_NRFTL"
+	Key = "n"
+	intro
+	{
+		Function = "PsxDoomIntros.NRFTL"
+	}
+}
+
+episode FUN00
+{
+	name = "$MNU_BONUS"
+	key = "b"
+}
+
+DefaultMap
+{
+	gravity = 686
+	aircontrol = 0
+	nojump
+	nocrouch
+	evenlighting
+	sucktime = 1
+	enterpic = "INTERPIC"
+	exitpic = "INTERPIC"
+}
+
+Map TITLEMAP Lookup "TITLEMAP"
+{
+	nointermission
+	noautosavehint
+	next = "MAP01"
+}
+
+cluster 1 { } //doom1 e1
+cluster 2 { } //doom1 e2
+cluster 3 { } //doom1 e3
+cluster 4 { } //doom1 e4
+cluster 5 { } //doom2 e1
+cluster 6 { } //doom2 e2
+cluster 7 { } //doom2 e3
+cluster 8 { } //nrftl
+cluster 9 { } //sigil
+cluster 10 { } //bonus maps
+
+// EVIL UNLEASHED EPISODE
+
+AddDefaultMap
+{
+	sky1 = "SKY01",0
+	InterMusic = "$INTERMUS"
+	Cluster = 1
+}
+
+//E1M1
+Map MAP01 Lookup "HUSTR_1"
+{
+	Music = "$MAPMUS_1"
+	Next = "MAP02"
+	Par = 30
+	LevelNum = 1
+	Author = "$AUTHOR_MAP01"
+	resethealth
+	resetinventory
+}
+
+//E1M2
+Map MAP02 Lookup "HUSTR_2"
+{
+	Music = "$MAPMUS_2"
+	Next = "MAP03"
+	Par = 75
+	LevelNum = 2
+	Author = "$AUTHOR_MAP02"
+}
+
+//E1M3
+Map MAP03 Lookup "HUSTR_3"
+{
+	Music = "$MAPMUS_3"
+	Next = "MAP04"
+	SecretNext = "MAP56"
+	Par = 120
+	LevelNum = 3
+	Author = "$AUTHOR_MAP03"
+}
+
+//E1M9
+Map MAP56 Lookup "HUSTR_56"
+{
+	Music = "$MAPMUS_56"
+	Next = "MAP04"
+	Par = 165
+	LevelNum = 56
+	Sky1 = "SKY01"
+	Author = "$AUTHOR_MAP56"
+}
+
+//E1M4
+Map MAP04 Lookup "HUSTR_4"
+{
+	Music = "$MAPMUS_4"
+	Next = "MAP05"
+	Par = 90
+	LevelNum = 4
+	Author = "$AUTHOR_MAP04"
+}
+
+//E1M5
+Map MAP05 Lookup "HUSTR_5"
+{
+	Music = "$MAPMUS_5"
+	Next = "MAP06"
+	Par = 165
+	LevelNum = 5
+	Author = "$AUTHOR_MAP05"
+}
+
+//E1M6
+Map MAP06 Lookup "HUSTR_6"
+{
+	Music = "$MAPMUS_6"
+	Next = "MAP07"
+	Par = 180
+	LevelNum = 6
+	Author = "$AUTHOR_MAP06"
+}
+
+//E1M7
+Map MAP07 Lookup "HUSTR_7"
+{
+	Music = "$MAPMUS_7"
+	Next = "MAP08"
+	Par = 180
+	LevelNum = 7
+	Author = "$AUTHOR_MAP07"
+}
+
+//E1M8
+Map MAP08 Lookup "HUSTR_8"
+{
+	Music = "$MAPMUS_8"
+	Next = "MAP09"
+	Par = 30
+	LevelNum = 8
+	Author = "$AUTHOR_MAP08"
+}
+
+AddDefaultMap
+{
+	Sky1 = "SKY02",0
+	Cluster = 2
+}
+
+//E2M1
+Map MAP09 Lookup "HUSTR_9"
+{
+	Music = "$MAPMUS_9"
+	Next = "MAP10"
+	Par = 90
+	LevelNum = 9
+	Author = "$AUTHOR_MAP09"
+}
+
+//E2M2
+Map MAP10 Lookup "HUSTR_10"
+{
+	Music = "$MAPMUS_10"
+	Next = "MAP11"
+	Par = 90
+	LevelNum = 10
+	Author = "$AUTHOR_MAP10"
+}
+
+//E2M3
+Map MAP11 Lookup "HUSTR_11"
+{
+	Music = "$MAPMUS_11"
+	Next = "MAP12"
+	Par = 90
+	LevelNum = 11
+	Author = "$AUTHOR_MAP11"
+}
+
+//E2M4
+Map MAP12 Lookup "HUSTR_12"
+{
+	Music = "$MAPMUS_12"
+	Next = "MAP13"
+	Par = 120
+	LevelNum = 12
+	Author = "$AUTHOR_MAP12"
+}
+
+//E2M5
+Map MAP13 Lookup "HUSTR_13"
+{
+	Music = "$MAPMUS_13"
+	Next = "MAP14"
+	Par = 90
+	LevelNum = 13
+	Sky1 = "SKY09"
+	Author = "$AUTHOR_MAP13"
+}
+
+//E2M6
+Map MAP14 Lookup "HUSTR_14"
+{
+	Music = "$MAPMUS_14"
+	Next = "MAP15"
+	Par = 360
+	LevelNum = 14
+	Author = "$AUTHOR_MAP14"
+}
+
+//E2M7
+Map MAP15 Lookup "HUSTR_15"
+{
+	Music = "$MAPMUS_15"
+	Next = "MAP16"
+	SecretNext = "MAP55"
+	Par = 240
+	LevelNum = 15
+	Author = "$AUTHOR_MAP15"
+}
+
+//E2M9
+Map MAP55 Lookup "HUSTR_55"
+{
+	Music = "$MAPMUS_55"
+	Next = "MAP16"
+	Par = 170
+	LevelNum = 55
+	Sky1 = "SKY01"
+	Author = "$AUTHOR_MAP55"
+}
+
+AddDefaultMap
+{
+	Sky1 = "SKY09",0
+	Cluster = 3
+}
+
+//EXCLUSIVE hell gate
+Map MAP16 Lookup "HUSTR_16"
+{
+	Music = "$MAPMUS_16"
+	Next = "MAP17"
+	Par = 60
+	LevelNum = 16
+	Author = "$AUTHOR_MAP16"
+}
+
+//EXCLUSIVE hell keep
+Map MAP17 Lookup "HUSTR_17"
+{
+	Music = "$MAPMUS_17"
+	Next = "MAP18"
+	Par = 80
+	LevelNum = 17
+	Author = "$AUTHOR_MAP17"
+}
+
+//E3M3
+Map MAP18 Lookup "HUSTR_18"
+{
+	Music = "$MAPMUS_18"
+	Next = "MAP19"
+	Par = 90
+	LevelNum = 18
+	Author = "$AUTHOR_MAP18"
+}
+
+//E3M4
+Map MAP19 Lookup "HUSTR_19"
+{
+	Music = "$MAPMUS_19"
+	Next = "MAP20"
+	Par = 150
+	LevelNum = 19
+	Author = "$AUTHOR_MAP19"
+}
+
+//E3M5
+Map MAP20 Lookup "HUSTR_20"
+{
+	Music = "$MAPMUS_20"
+	Next = "MAP21"
+	Par = 90
+	LevelNum = 20
+	Author = "$AUTHOR_MAP20"
+}
+
+//E3M6
+Map MAP21 Lookup "HUSTR_21"
+{
+	Music = "$MAPMUS_21"
+	Next = "MAP22"
+	Par = 90
+	LevelNum = 21
+	Author = "$AUTHOR_MAP21"
+}
+
+//E3M7
+Map MAP22 Lookup "HUSTR_22"
+{
+	Music = "$MAPMUS_22"
+	Next = "MAP23"
+	Par = 165
+	LevelNum = 22
+	Author = "$AUTHOR_MAP22"
+}
+
+//E2M8
+Map MAP23 Lookup "HUSTR_23"
+{
+	Music = "$MAPMUS_23"
+	Next = "MAP24"
+	Par = 30
+	LevelNum = 23
+	Author = "$AUTHOR_MAP23"
+}
+
+AddDefaultMap
+{
+	Sky1 = "SKY07"
+	Cluster = 4
+}
+
+//E4M1
+Map MAP24 Lookup "HUSTR_24"
+{
+	Music = "$MAPMUS_24"
+	Next = "MAP25"
+	Par = 165
+	LevelNum = 24
+	Author = "$AUTHOR_MAP24"
+}
+
+//E4M2
+Map MAP25 Lookup "HUSTR_25"
+{
+	Music = "$MAPMUS_25"
+	Next = "MAP26"
+	Par = 255
+	LevelNum = 25
+	Author = "$AUTHOR_MAP25"
+}
+
+//E4M3
+Map MAP26 Lookup "HUSTR_26"
+{
+	Music = "$MAPMUS_26"
+	Next = "MAP27"
+	Par = 135
+	LevelNum = 26
+	Author = "$AUTHOR_MAP26"
+}
+
+//E4M4
+Map MAP27 Lookup "HUSTR_27"
+{
+	Music = "$MAPMUS_27"
+	Next = "MAP28"
+	Par = 150
+	LevelNum = 27
+	Author = "$AUTHOR_MAP27"
+}
+
+//E4M8
+Map MAP28 Lookup "HUSTR_28"
+{
+	Music = "$MAPMUS_28"
+	Next = "MAP29"
+	Par = 360
+	LevelNum = 28
+	Author = "$AUTHOR_MAP28"
+}
+
+//EXCLUSIVE twilight descends
+Map MAP29 Lookup "HUSTR_29"
+{
+	Music = "$MAPMUS_29"
+	Next = "MAP30"
+	SecretNext = "MAP57"
+	Par = 300
+	LevelNum = 29
+	Author = "$AUTHOR_MAP29"
+}
+
+//EXCLUSIVE the marshes
+Map MAP57 Lookup "HUSTR_57"
+{
+	Music = "$MAPMUS_57"
+	Next = "MAP30"
+	Par = 30
+	LevelNum = 57
+	Sky1 = "SKY04"
+	Author = "$AUTHOR_MAP57"
+}
+
+//EXCLUSIVE threshold of pain
+Map MAP30 Lookup "HUSTR_30"
+{
+	Music = "$MAPMUS_30"
+	Next = "END1"
+	Par = 142
+	LevelNum = 30
+	Sky1 = "SKY09"
+	Author = "$AUTHOR_MAP30"
+}
+
+map END1 ""
+{
+	intro
+	{
+		Function = "CECutscenes.TextScreen"
+	}
+}
+
+// HELL ON EARTH EPISODE
+
+AddDefaultMap
+{
+	sky1 = "SKY04",0
+	InterMusic = "$DINTERMUS"
+	Cluster = 5
+}
+
+//MAP01
+Map MAP31 Lookup "HUSTR_31"
+{
+	Music = "$MAPMUS_31"
+	Next = "MAP32"
+	Par = 30
+	LevelNum = 31
+	Author = "$AUTHOR_MAP31"
+	resethealth
+	resetinventory
+}
+
+//MAP02
+Map MAP32 Lookup "HUSTR_32"
+{
+	Music = "$MAPMUS_32"
+	Next = "MAP33"
+	Par = 90
+	LevelNum = 32
+	Author = "$AUTHOR_MAP32"
+}
+
+//MAP03
+Map MAP33 Lookup "HUSTR_33"
+{
+	Music = "$MAPMUS_33"
+	Next = "MAP34"
+	Par = 120
+	LevelNum = 33
+	Author = "$AUTHOR_MAP33"
+}
+
+//MAP04
+Map MAP34 Lookup "HUSTR_34"
+{
+	Music = "$MAPMUS_34"
+	Next = "MAP35"
+	Par = 120
+	LevelNum = 34
+	Sky1 = "SKY01"
+	Author = "$AUTHOR_MAP34"
+}
+
+//MAP05
+Map MAP35 Lookup "HUSTR_35"
+{
+	Music = "$MAPMUS_35"
+	Next = "MAP36"
+	Par = 90
+	LevelNum = 35
+	Author = "$AUTHOR_MAP35"
+}
+
+//MAP06
+Map MAP36 Lookup "HUSTR_36"
+{
+	Music = "$MAPMUS_36"
+	Next = "MAP37"
+	Par = 150
+	LevelNum = 36
+	Author = "$AUTHOR_MAP36"
+}
+
+//MAP07
+Map MAP37 Lookup "HUSTR_37"
+{
+	Music = "$MAPMUS_37"
+	Next = "MAP38"
+	Par = 120
+	LevelNum = 37
+	Author = "$AUTHOR_MAP37"
+}
+
+//MAP08
+Map MAP38 Lookup "HUSTR_38"
+{
+	Music = "$MAPMUS_38"
+	Next = "MAP39"
+	Par = 120
+	LevelNum = 38
+	Sky1 = "SKY01"
+	Author = "$AUTHOR_MAP38"
+}
+
+//MAP09
+Map MAP39 Lookup "HUSTR_39"
+{
+	Music = "$MAPMUS_39"
+	Next = "MAP40"
+	Par = 270
+	LevelNum = 39
+	Author = "$AUTHOR_MAP39"
+}
+
+//MAP10
+Map MAP40 Lookup "HUSTR_40"
+{
+	Music = "$MAPMUS_40"
+	Next = "MAP41"
+	Par = 90
+	LevelNum = 40
+	Author = "$AUTHOR_MAP40"
+}
+
+//MAP11
+Map MAP41 Lookup "HUSTR_41"
+{
+	Music = "$MAPMUS_41"
+	Next = "MAP42"
+	Par = 210
+	LevelNum = 41
+	Author = "$AUTHOR_MAP41"
+}
+
+AddDefaultMap
+{
+	Sky1 = "SKY05", 0
+	Cluster = 6
+}
+
+//MAP12
+Map MAP42 Lookup "HUSTR_42"
+{
+	Music = "$MAPMUS_42"
+	Next = "MAP43"
+	Par = 150
+	LevelNum = 42
+	Author = "$AUTHOR_MAP42"
+}
+
+//MAP14
+Map MAP43 Lookup "HUSTR_43"
+{
+	Music = "$MAPMUS_43"
+	Next = "MAP44"
+	Par = 150
+	LevelNum = 43
+	Author = "$AUTHOR_MAP43"
+}
+
+//MAP16
+Map MAP44 Lookup "HUSTR_44"
+{
+	Music = "$MAPMUS_44"
+	Next = "MAP45"
+	SecretNext = "MAP58"
+	Par = 150
+	LevelNum = 44
+	Author = "$AUTHOR_MAP44"
+}
+
+//EXCLUSIVE the mansion
+Map MAP58 Lookup "HUSTR_58"
+{
+	Music = "$MAPMUS_58"
+	Next = "MAP45"
+	SecretNext = "MAP59"
+	Par = 180
+	LevelNum = 58
+	Sky1 = "SKY04"
+	Author = "$AUTHOR_MAP58"
+}
+
+//EXCLUSIVE club doom
+Map MAP59 Lookup "HUSTR_59"
+{
+	Music = "$MAPMUS_59"
+	Next = "MAP45"
+	Par = 40
+	LevelNum = 59
+	Sky1 = "SKY01"
+	Author = "$AUTHOR_MAP59"
+}
+
+//MAP17
+Map MAP45 Lookup "HUSTR_45"
+{
+	Music = "$MAPMUS_45"
+	Next = "MAP46"
+	Par = 420
+	LevelNum = 45
+	Author = "$AUTHOR_MAP45"
+}
+
+//MAP18
+Map MAP46 Lookup "HUSTR_46"
+{
+	Music = "$MAPMUS_46"
+	Next = "MAP47"
+	Par = 150
+	LevelNum = 46
+	Author = "$AUTHOR_MAP46"
+}
+
+//MAP19
+Map MAP47 Lookup "HUSTR_47"
+{
+	Music = "$MAPMUS_47"
+	Next = "MAP48"
+	Par = 210
+	LevelNum = 47
+	Author = "$AUTHOR_MAP47"
+}
+
+AddDefaultMap
+{
+	Sky1 = "SKY06", 0
+	Cluster = 7
+}
+
+//MAP21
+Map MAP48 Lookup "HUSTR_48"
+{
+	Music = "$MAPMUS_48"
+	Next = "MAP49"
+	Par = 240
+	LevelNum = 48
+	Author = "$AUTHOR_MAP48"
+}
+
+//MAP22
+Map MAP49 Lookup "HUSTR_49"
+{
+	Music = "$MAPMUS_49"
+	Next = "MAP50"
+	Par = 150
+	LevelNum = 49
+	Author = "$AUTHOR_MAP49"
+}
+
+//MAP23
+Map MAP50 Lookup "HUSTR_50"
+{
+	Music = "$MAPMUS_50"
+	Next = "MAP51"
+	Par = 180
+	LevelNum = 50
+	Author = "$AUTHOR_MAP50"
+}
+
+//MAP25
+Map MAP51 Lookup "HUSTR_51"
+{
+	Music = "$MAPMUS_51"
+	Next = "MAP52"
+	Par = 150
+	LevelNum = 51
+	Author = "$AUTHOR_MAP51"
+}
+
+//MAP26
+Map MAP52 Lookup "HUSTR_52"
+{
+	Music = "$MAPMUS_52"
+	Next = "MAP53"
+	Par = 300
+	LevelNum = 52
+	Author = "$AUTHOR_MAP52"
+}
+
+//MAP27
+Map MAP53 Lookup "HUSTR_53"
+{
+	Music = "$MAPMUS_53"
+	Next = "MAP54"
+	Par = 330
+	LevelNum = 53
+	Author = "$AUTHOR_MAP53"
+}
+
+//EXCLUSIVE redemption denied
+Map MAP54 Lookup "HUSTR_54"
+{
+	Music = "$MAPMUS_54"
+	Next = "END2"
+	par = 300
+	LevelNum = 54
+	Sky1 = "SKY07"
+	Author = "$AUTHOR_MAP54"
+}
+
+map END2 ""
+{
+	intro
+	{
+		Function = "CECutscenes.TextScreen"
+	}
+}
+
+// SIGIL EPISODE
+
+AddDefaultMap
+{
+	InterMusic = "$SIGLINTER"
+	Cluster = 9
+}
+
+//E5M1
+Map SIG01 lookup "SHUSTR_01"
+{
+    Music = "$SMAPMUS_1"
+	Next  = "SIG02"
+	Par = 90
+	LevelNum = 88
+	Author = "$AUTHOR_SIGIL01"
+	Sky1  = "SKY5_ZD" ,0
+}
+
+//E5M2
+Map SIG02 lookup "SHUSTR_02"
+{
+    Music = "$SMAPMUS_2"
+	Next  = "SIG03"
+	Par = 150
+	LevelNum = 89
+	Author = "$AUTHOR_SIGIL02"
+	Sky1  = "SKY5_ZD" ,0
+}
+
+//E5M3
+Map SIG03 lookup "SHUSTR_03"
+{
+    Music = "$SMAPMUS_3"
+	Next  = "SIG04" 
+	Par = 360
+	LevelNum = 90
+	Author = "$AUTHOR_SIGIL03"
+	Sky1  = "SKY5_ZD" ,0
+}
+
+//E5M4
+Map SIG04 lookup "SHUSTR_04"
+{
+    Music = "$SMAPMUS_4"
+	Next  = "SIG05" 
+	Par = 420
+	LevelNum = 91
+	Author = "$AUTHOR_SIGIL04"
+	Sky1  = "SKY5_ZD" ,0
+}
+
+//E5M5
+Map SIG05 lookup "SHUSTR_05"
+{
+    Music = "$SMAPMUS_5"
+	Next  = "SIG06" 
+	Par = 780
+	LevelNum = 92
+	Author = "$AUTHOR_SIGIL05"
+	Sky1  = "SKY5_ZD" ,0
+}
+
+//E5M6
+Map SIG06 lookup "SHUSTR_06"
+{
+    Music = "$SMAPMUS_6"
+	Next  = "SIG07" 
+	SecretNext  = "SIG09"
+	Par = 420
+	LevelNum = 93
+	Author = "$AUTHOR_SIGIL06"
+	Sky1  = "SKY5_ZD" ,0
+}
+
+//E5M9
+Map SIG09 lookup "SHUSTR_09"
+{
+    Music = "$SMAPMUS_9"
+	Next  = "SIG07"
+	Par = 780
+	LevelNum = 96
+	Author = "$AUTHOR_SIGIL09"
+	Sky1  = "SKY5_ZD" ,0
+}
+
+//E5M7
+Map SIG07 lookup "SHUSTR_07"
+{
+    Music = "$SMAPMUS_7"
+	Next  = "SIG08"
+	Par = 300
+	LevelNum = 94
+	Author = "$AUTHOR_SIGIL07"
+	Sky1  = "SKY5_ZD" ,0
+}
+
+//E5M8
+Map SIG08 lookup "SHUSTR_08"
+{
+    Music = "$SMAPMUS_8"
+	Next  = "END8"
+	Par = 660
+	LevelNum = 95
+	Author = "$AUTHOR_SIGIL08"
+	Sky1  = "SKY5_ZD" ,0
+}
+
+map END8 ""
+{
+	intro
+	{
+		Function = "CECutscenes.TextScreen"
+	}
+}
+
+// NO REST FOR THE LIVING EPISODE
+
+AddDefaultMap
+{
+	InterMusic = "$NRFTINTER"
+	Cluster = 8
+}
+
+//NERVE01
+Map NRV01 lookup "NHUSTR_01"
+{
+    Music = "$NRFTMUS_1"
+	Next  = "NRV02"
+	Par = 75
+	LevelNum = 79
+	Author = "$AUTHOR_NRFTL01"
+	Sky1  = "SKY04" 
+	resethealth
+	resetinventory
+}
+
+//NERVE02
+Map NRV02 lookup "NHUSTR_02"
+{
+    Music = "$NRFTMUS_2"
+	Next  = "NRV03"
+	Par = 105
+	LevelNum = 80
+	Author = "$AUTHOR_NRFTL02"
+	Sky1  = "SKY04" 
+}
+
+//NERVE03
+Map NRV03 lookup "NHUSTR_03"
+{
+    Music = "$NRFTMUS_3"
+	Next  = "NRV04" 
+	Par = 120
+	LevelNum = 81
+	Author = "$AUTHOR_NRFTL03"
+	Sky1  = "SKY04" 
+}
+
+//NERVE04
+Map NRV04 lookup "NHUSTR_04"
+{
+    Music = "$NRFTMUS_4"
+	Next  = "NRV05" 
+	SecretNext  = "NRV09"
+	Par = 105
+	LevelNum = 82
+	Author = "$AUTHOR_NRFTL04"
+	Sky1  = "SKY03" 
+}
+
+//NERVE09
+Map NRV09 lookup "NHUSTR_09"
+{
+    Music = "$NRFTMUS_9"
+	Next  = "NRV05"
+	Par = 135
+	LevelNum = 87
+	Author = "$AUTHOR_NRFTL09"
+	Sky1  = "SKY02" 
+}
+
+//NERVE05
+Map NRV05 lookup "NHUSTR_05"
+{
+    Music = "$NRFTMUS_5"
+	Next  = "NRV06" 
+	Par = 210
+	LevelNum = 83
+	Author = "$AUTHOR_NRFTL05"
+	Sky1  = "SKY03" 
+}
+
+//NERVE06
+Map NRV06 lookup "NHUSTR_06"
+{
+    Music = "$NRFTMUS_6"
+	Next  = "NRV07" 
+	Par = 105
+	LevelNum = 84
+	Author = "$AUTHOR_NRFTL06"
+	Sky1  = "SKY03" 
+}
+
+//NERVE07
+Map NRV07 lookup "NHUSTR_07"
+{
+    Music = "$NRFTMUS_7"
+	Next  = "NRV08"
+	Par = 165
+	LevelNum = 85
+	Author = "$AUTHOR_NRFTL07"
+	Sky1  = "SKY06" 
+}
+
+//NERVE08
+Map NRV08 lookup "NHUSTR_08"
+{
+    Music = "$NRFTMUS_8"
+	Next  = "END7"
+	Par = 105
+	LevelNum = 86
+	Sky1  = "SKY09" 
+	Author = "$AUTHOR_NRFTL08"
+}
+
+map END7 ""
+{
+	intro
+	{
+		Function = "CECutscenes.TextScreen"
+	}
+}
+
+// BONUS EPISODE
+
+AddDefaultMap
+{
+	InterMusic = "$INTERMUS"
+	Cluster = 10
+}
+
+// Bonus Fun Map Hub
+map FUN00 lookup "HUSTR_FUN"
+{
+	levelnum = 97
+	par = 0
+	music = "$XMAPMUS_1"
+	next = "CAST"
+	//nointermission
+	noautosavehint
+	resethealth
+	resetinventory
+	Sky1  = "SKY03" ,0
+}
+
+//BONUS phobos mission control
+Map MAP04B lookup "HUSTR_4B"
+{
+	Music = "$MAPMUS_4B"
+	Next  = "FUN00"
+	Par = 30
+	Author = "$AUTHOR_MAP04B"
+	LevelNum = 98
+	sky1 = "SKY01",0
+	resethealth
+	resetinventory
+}
+
+//BONUS tech gone bad
+Map MAP08B lookup "HUSTR_8B"
+{ 
+	Music = "$MAPMUS_8B"
+	Next  = "FUN00"
+	par = 70
+	Author = "$AUTHOR_08B"
+	LevelNum = 99
+	sky1 = "SKY01",0
+	resethealth
+	resetinventory
+}
+
+Map CAST ""
+{
+	intro
+	{
+		Function = "CastCutscenes.Cast"
+	}
+}

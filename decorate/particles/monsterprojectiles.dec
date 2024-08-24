@@ -1,0 +1,90 @@
+Actor ArachPlasmaTrail : VisualSpecialEffect
+{
+  RenderStyle Add
+  Scale 0.25
+  Alpha 0.9
+  States
+  {
+  Spawn:
+    APCL A 1 Bright A_FadeOut(0.02)
+    loop
+  }
+}
+
+actor ImpBoom : VisualSpecialEffect
+{
+  States
+  {
+  Spawn:
+    NULL A 0
+	TNT1 A 0 A_SpawnItemEx("RedExplosionFlareSmall", 0, 0, 3, 0, 0, 0, 0, 0, 0)
+    Stop
+  }
+}
+
+actor RocketBoom : VisualSpecialEffect
+{
+  States
+  {
+  Spawn:
+    NULL A 0
+	TNT1 A 0 A_SpawnItemEx("SHRedTorchFlare", 0, 0, 3, 0, 0, 0, 0, 0, 0)
+    Stop
+  }
+}
+
+
+actor NightmareImpBoom : VisualSpecialEffect
+{
+  States
+  {
+  Spawn:
+    NULL A 0
+	TNT1 A 0 A_SpawnItemEx("SHBlueTorchFlare", 0, 0, 3, 0, 0, 0, 0, 0, 0)
+    Stop
+  }
+}
+
+actor CacoBoom : VisualSpecialEffect
+{
+  States
+  {
+  Spawn:
+    NULL A 0
+	TNT1 A 0 A_SpawnItemEx("SHPurpleTorchFlare", 0, 0, 3, 0, 0, 0, 0, 0, 0)
+    Stop
+  }
+}
+
+actor BaronBoom : VisualSpecialEffect
+{
+  States
+  {
+  Spawn:
+    NULL A 0
+	TNT1 A 0 A_SpawnItemEx("GreenExplosionFlareSmall", 0, 0, 3, 0, 0, 0, 0, 0, 0)
+    Stop
+  }
+}
+
+actor MancuBoom : VisualSpecialEffect
+{
+  States
+  {
+  Spawn:
+    NULL A 0
+	TNT1 A 0 A_SpawnItemEx("RedExplosionFlareMedium", 0, 0, 6, 0, 0, 0, 0, 0, 0)
+    Stop
+  }
+}
+
+actor ReveBoom : VisualSpecialEffect
+{
+  States
+  {
+  Spawn:
+    NULL A 0
+	TNT1 A 0 A_SpawnItemEx("RedExplosionFlareMedium", 0, 0, 6, 0, 0, 0, 0, 0, 0)
+    Stop
+  }
+}

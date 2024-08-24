@@ -1,0 +1,27 @@
+Automap
+{
+    Base = "Doom"
+    ShowLocks = true
+    Background = "00 00 00"
+    YourColor = "00 FF 00"
+    WallColor = "98 00 00"
+    TwoSidedWallColor = "8A 5C 30"
+    FloorDiffWallColor = "8A 5C 30"
+    CeilingDiffWallColor = "8A 5C 30"
+    ExtraFloorWallColor = "8A 5C 30"
+    ThingColor = "33 73 B3"
+    ThingColor_Item = "33 73 B3"
+    ThingColor_CountItem = "33 73 B3"
+    ThingColor_Monster = "A4 00 00"
+    ThingColor_Friend = "33 73 B3"
+    SpecialWallColor = "BB BB 00"
+    SecretWallColor = "A4 00 00"
+    GridColor = "40 40 40"
+    XHairColor = "00 00 00"
+    NotSeenColor = "80 80 80"
+    LockedColor = "00 CC 00"
+    IntraTeleportColor = "BB BB 00"
+    InterTeleportColor = "BB BB 00"
+    //SecretSectorColor = "00 00 00"
+    AlmostBackgroundColor = "00 00 00"
+}

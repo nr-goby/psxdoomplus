@@ -1,0 +1,99 @@
+terrain Blood
+{
+	liquid
+}
+
+terrain Lava
+{
+	liquid
+}
+
+terrain LavaSmoke
+{
+	liquid
+}
+
+terrain Nuke
+{
+	liquid
+}
+
+terrain SlimeBrown
+{
+	liquid
+}
+
+terrain SludgeGreenBrown
+{
+	liquid
+}
+
+terrain Water
+{
+	liquid
+}
+
+floor BLOOD1 Blood
+floor BLOOD2 Blood
+floor BLOOD3 Blood
+
+floor WATER01 Water
+floor WATER02 Water
+floor WATER03 Water
+floor WATER04 Water
+
+floor LAVA01 Lava
+floor LAVA02 Lava
+floor LAVA03 Lava
+floor LAVA04 Lava
+
+floor SLIME01 Nuke
+floor SLIME02 Nuke
+floor SLIME03 Nuke
+
+floor GLOW01 LavaSmoke
+floor GLOW02 LavaSmoke
+floor GLOW03 LavaSmoke
+floor GLOW04 LavaSmoke
+floor ROK04 LavaSmoke
+floor ROK05 LavaSmoke
+
+floor BSLIME01 SlimeBrown
+floor BSLIME02 SlimeBrown
+floor BSLIME03 SlimeBrown
+floor BSLIME04 SlimeBrown
+
+floor CSLIME01 SludgeGreenBrown
+floor CSLIME02 SludgeGreenBrown
+floor CSLIME03 SludgeGreenBrown
+floor CSLIME04 SludgeGreenBrown
+
+floor BLOOD1 Blood
+floor BLOOD2 Blood
+floor BLOOD3 Blood
+
+floor FWATER1 Water
+floor FWATER2 Water
+floor FWATER3 Water
+floor FWATER4 Water
+
+floor LAVA1 Lava
+floor LAVA2 Lava
+floor LAVA3 Lava
+floor LAVA4 Lava
+
+floor NUKAGE1 Nuke
+floor NUKAGE2 Nuke
+floor NUKAGE3 Nuke
+
+floor SLIME04 SlimeBrown
+
+floor SLIME05 SlimeBrown
+floor SLIME06 SlimeBrown
+floor SLIME07 SlimeBrown
+floor SLIME08 SlimeBrown
+
+floor SLIME09 LavaSmoke
+floor SLIME10 LavaSmoke
+floor SLIME11 LavaSmoke
+floor SLIME12 LavaSmoke

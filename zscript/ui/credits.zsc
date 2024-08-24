@@ -1,0 +1,114 @@
+class OptionMenuCredits : OptionMenu
+{
+	int scrollTime;
+	const SCROLL_TIME = 12.0;
+
+	override void Init(Menu parent, OptionMenuDescriptor desc)
+	{
+		string credits = ReadLump();
+		Array<string> creditLines;
+		credits.Split(creditLines,"\n");
+
+		OptionMenuDescriptor newDesc = new("OptionMenuDescriptor");
+		newDesc.mTitle = StringTable.Localize(desc.mTitle);
+		newDesc.mSelectedItem = desc.mSelectedItem;
+		newDesc.mDrawTop = desc.mDrawTop;
+		newDesc.mScrollTop = desc.mScrollTop;
+		newDesc.mScrollPos = desc.mScrollPos;
+		newDesc.mIndent = desc.mIndent;
+		newDesc.mPosition = desc.mPosition;
+		newDesc.mDontDim = desc.mDontDim;
+		newDesc.mFont = desc.mFont;
+		Array<OptionMenuItem> items;
+		
+		Font of = OptionFont();
+		int fHeight = of.GetHeight() * cleanYFac_1;
+		int height = Screen.GetHeight();
+		int emptyItems = height / fHeight;
+		for (int i=0; i<emptyItems; i++)
+		{
+			let item = new("OptionMenuItemCredits");
+			item.mCentered = true;
+			item.newLabel = "";
+			items.Push(item);
+		}
+		
+		for (int i=0; i<creditLines.Size(); i++)
+		{
+			let item = new("OptionMenuItemCredits");
+			item.mCentered = true;
+			item.newLabel = creditLines[i].Left(creditLines[i].IndexOf(" - "));
+			item.fontcolor = StringUtils.FONT_COLOR;
+			items.Push(item);
+		}
+
+		newDesc.mItems.Move(items);
+		Super.Init(parent,newDesc);
+	}
+	
+	override void Ticker()
+	{
+		++scrollTime;
+		if (scrollTime % SCROLL_TIME == 0)
+		{
+			mDesc.mScrollPos += 1;
+			if (mDesc.mScrollPos == mDesc.mItems.Size())
+			{
+				mDesc.mScrollPos = 0;
+				scrollTime = 1;
+			}
+		}
+		super.Ticker();
+	}
+	
+	private string ReadLump(){
+	
+		string credits = "";
+		int lump = -1;
+		string line = "";
+		while (-1 != (lump = Wads.FindLump("CREDITS-CE", lump + 1)))
+		{
+			line = Wads.ReadLump(lump);
+			credits.AppendFormat("%s\n",line);
+		}
+		return credits;
+	}
+}
+
+class OptionMenuItemCredits : OptionMenuItemStaticText 
+{
+	string newLabel;
+	int fontcolor;
+
+	int drawTextLabel(string label, int indent, int y, int color, bool grayed = false)
+	{	
+		label.Replace("\t","");
+		int x;
+		int w = Menu.OptionWidth(label) * CleanXfac_1;
+		if (!mCentered) x = indent - w;
+		else x = (screen.GetWidth() - w) / 2;
+		Menu.DrawOptionText(x, y, color, label, grayed);
+		return x;
+	}
+
+	override int Draw(OptionMenuDescriptor desc, int y, int indent, bool selected)
+	{
+		if(newLabel.Left(1) == "	")
+		{
+			drawTextLabel(newLabel, indent, y, Font.CR_WHITE);
+		}
+		else if (newLabel.Left(1) == "-")
+		{
+			drawTextLabel(newLabel, indent, y, Font.CR_GOLD);
+		}
+		else if (newLabel.Left(1) == "*")
+		{
+			drawTextLabel(newLabel, indent, y, Font.CR_DARKGRAY);
+		}
+		else
+		{
+			drawTextLabel(newLabel, indent, y, fontcolor);
+		}
+		return -1;
+	}
+}

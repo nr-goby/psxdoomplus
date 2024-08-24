@@ -1,0 +1,210 @@
+// Test Actor
+class FancyWallTestSound : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/test";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		FancyWorldBase.RandomSound "misc/chat2";
+		+FancyWorldBase.DESTROYNEAR;
+	}
+}
+
+// Plutonia Waterfalls
+class FancyWallWaterfall : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/waterfall";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		+FancyWorldBase.DESTROYNEAR;
+	}
+}
+
+// Bloodfalls
+class FancyWallBloodfall : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/bloodfall";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		+FancyWorldBase.DESTROYNEAR;
+	}
+}
+
+// Doom 2 Slimefalls
+class FancyWallSlimefall : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/slimefall";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		+FancyWorldBase.DESTROYNEAR;
+	}
+}
+
+// ObAddon (and prob. others) Lavafalls
+class FancyWallLavafall : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/lavafall";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		+FancyWorldBase.DESTROYNEAR;
+	}
+}
+
+// Doom 1 slime dripping out of a drain
+class FancyWallSlimedrip : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/slimedrip";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		+FancyWorldBase.DESTROYNEAR;
+	}
+}
+
+// Gargoyle-head blood fountain
+class FancyWallGargfont : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/slimedrip";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		+FancyWorldBase.DESTROYNEAR;
+	}
+}
+
+// COMPSTA Wall Computers
+class FancyWallCompstation : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/compstation";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		+FancyWorldBase.DESTROYNEAR;
+	}
+}
+
+// Flaming Walls
+class FancyWallFirewall : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/firewall";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		+FancyWorldBase.DESTROYNEAR;
+	}
+}
+
+// The Battler-Prince
+class FancyWallFireblu : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/fireblu";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		+FancyWorldBase.DESTROYNEAR;
+	}
+}
+
+// Creepy Faces on the Wall
+class FancyWallFaces : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/faces";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		+FancyWorldBase.DESTROYNEAR;
+	}
+}
+
+// Tech Humming
+class FancyWallTechhum : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/techhum";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		+FancyWorldBase.DESTROYNEAR;
+	}
+}
+
+// Lights on the Wall
+class FancyWallLights : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/walllight";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		+FancyWorldBase.DESTROYNEAR;
+	}
+}
+
+// Static Monitor
+class FancyWallStatic : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/static";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		+FancyWorldBase.DESTROYNEAR;
+	}
+}
+
+// Fan
+class FancyWallFan : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/fan";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		+FancyWorldBase.DESTROYNEAR;
+	}
+}

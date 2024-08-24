@@ -1,0 +1,627 @@
+class PsxActor : Actor
+{
+    const SLOWER_SPEED_ADJUST_FACTOR = 0.916672; // scales down to d64/final doom speed
+    const SLOWEST_SPEED_ADJUST_FACTOR = SLOWER_SPEED_ADJUST_FACTOR * 0.977; // scales down to slowed d64/final doom speed
+    const PSX_TICRATE = 30.0;
+    const PSX_PAL_TICRATE = 25.0;
+    const SCALE_TICRATE = PSX_TICRATE/TICRATE;
+    const SCALE_TICRATE_SLOW = SCALE_TICRATE * SLOWER_SPEED_ADJUST_FACTOR;
+	const SCALE_TICRATE_SLOWEST = SCALE_TICRATE * SLOWEST_SPEED_ADJUST_FACTOR;
+    const SCALE_FRAME = TICRATE/PSX_TICRATE;
+
+    const PSX_FRICTION = (0xD240/65536.0);
+	const SCALE_FRICTION = PSX_FRICTION/ORIG_FRICTION;
+
+    const SPREAD_XY = 22.412109;
+
+    enum GoreExplosionColors
+    {
+        GORE_Default,
+        GORE_Green,
+        GORE_Blue
+    }
+
+    int lastTic;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin DoubleThrust;
+
+    sound AmbientSound;
+    int AmbientSoundChannel;
+    sound FootstepSound;
+    sound DeathThudSound;
+	sound WaterFootstepSound;
+	sound WaterThudSound;
+    int FootstepSoundChannel;
+    double PCSpeed;
+	double NightmareMissileChanceFactor;
+	double NightmarePainChanceFactor;
+	double NightmareTicFactor;
+    int ActorFlags;
+    
+    property AmbientSound : AmbientSound;
+    property AmbientSoundChannel : AmbientSoundChannel;
+    property FootstepSound : FootstepSound;
+    property DeathThudSound : DeathThudSound;
+	property WaterFootstepSound : WaterFootstepSound;
+	property WaterThudSound : WaterThudSound;
+	property FootstepSoundChannel : FootstepSoundChannel;
+    property PCSpeed : PCSpeed;
+	property NightmareMissileChanceFactor : NightmareMissileChanceFactor;
+	property NightmarePainChanceFactor : NightmarePainChanceFactor;
+	property NightmareTicFactor : NightmareTicFactor;
+    flagdef WAITLOOK : ActorFlags, 0;
+    flagdef SEETARGET : ActorFlags, 1;
+
+    Default
+    {
+		//$Category "Monsters"
+		//$Color 12
+	
+        Friction SCALE_FRICTION;
+        PsxActor.AmbientSoundChannel CHAN_AUTO;
+		PsxActor.WaterFootstepSound "monster/waterstep";
+		PsxActor.WaterThudSound "monster/xwater";
+		PsxActor.FootstepSoundChannel CHAN_AUTO;
+		PsxActor.NightmareMissileChanceFactor 1.5;
+		PsxActor.NightmarePainChanceFactor 0.3;
+		PsxActor.NightmareTicFactor 0.5;
+    }
+	
+	States
+	{
+		GenericCrush:
+			TNT1 A 0 A_StartSound("misc/gibbed");
+			POL5 A -1;
+			Stop;
+	}
+    
+    override void MarkPrecacheSounds()
+    {
+        super.MarkPrecacheSounds();
+        MarkSound(AmbientSound);
+		MarkSound(FootstepSound);
+		MarkSound(DeathThudSound);
+		MarkSound(WaterFootstepSound);
+		MarkSound(WaterThudSound);
+    }
+
+    override void PostBeginPlay()
+    {
+        A_StartAmbientSound();
+        if (PCSpeed != 0 && ce_pcspeed)
+        {	
+			vel *= (PCSpeed/speed);
+            speed = PCSpeed;
+        }
+        if (IsSlow())
+        {
+			//speed *= SCALE_TICRATE;
+            //vel *= SCALE_TICRATE;
+            reactiontime = int(reactiontime*SCALE_FRAME);    
+            gravity *= SCALE_TICRATE;
+        }
+		if (user_translucent) bTRANSLUCENT = true;
+		if (user_additive) bADDITIVE = true;
+		if (user_subtractive) bSUBTRACTIVE = true;
+		if (skill == 5)
+		{
+			PainChance = int(Round(PainChance * NightmarePainChanceFactor));
+			MinMissileChance = int(Round(MinMissileChance * NightmareMissileChanceFactor));
+		}
+		ApplyBlends();
+        super.PostBeginPlay();
+    }
+	
+    override void Tick()
+    {
+        if (lastTic < tics)
+		{
+			if (IsSlow())
+				tics = int(Round(tics * SCALE_FRAME));
+			if (skill == 5) tics = int(Round(tics * frandompick[Nightmare](1.0, 1.0, NightmareTicFactor, NightmareTicFactor, 1.0 - NightmareTicFactor)));
+		}
+        lastTic = tics;
+        super.Tick();
+    }
+
+    virtual bool IsSmooth()
+    {
+        return smm_enabled;
+    }
+	
+	virtual bool IsSlow()
+	{
+		return ce_actortics;
+	}
+	
+	void A_StartAmbientSound()
+	{
+		if (AmbientSound != 0 && amb_enabled) A_StartSound(AmbientSound,AmbientSoundChannel,CHANF_LOOPING|CHANF_OVERLAP,amb_volume_mul,ATTN_NORM);
+	}
+
+    void A_Look()
+    {
+        if (bWAITLOOK && level.maptime <= 18) return;
+		super.A_Look();
+    }
+
+    void A_Chase(statelabel melee = '_a_chase_default', statelabel missile = '_a_chase_default', int flags = 0)
+    {
+        if (bSEETARGET && !bFRIENDLY && target && target.bCORPSE && !target.bSHOOTABLE && !target.bFRIENDLY)
+        {
+            SetIdle();
+            return;
+        }
+		if (skill == 5 && target && target.CountsAsKill() && random[Nightmare](0, 19) <= 3)
+		{
+			A_ClearTarget();
+		}
+        super.A_Chase(melee, missile, flags);
+    }
+	
+	void A_Pain()
+	{
+		super.A_Pain();
+		if (skill == 5)
+		{
+			if (MissileState != null)
+			{
+				SetState(MissileState);
+			}
+			else
+			{
+				SetState(SeeState);
+			}
+		}
+	}
+
+    void A_PsxBulletAttack(double spread_xy = SPREAD_XY, int numbullets = 1, int diceBound = 5, int spawnHeight = 32, class<Actor> pufftype = "BulletPuff", class<Actor> missile = null, int spawnofs_xy = 0, double spread_z = 0, int ptr = AAPTR_TARGET, int flags = CBAF_NORANDOM, int range = 0)
+    {
+        if (trc_enabled)
+        {
+            pufftype = "DummyPuff";
+            missile = "PsxBulletTracer";
+        }
+        
+		let ref = GetPointer(ptr);
+
+		if (range == 0)
+			range = MISSILERANGE;
+
+		int i;
+		double bangle;
+		double bslope = 0.;
+		int laflags = (flags & CBAF_NORANDOMPUFFZ)? LAF_NORANDOMPUFFZ : 0;
+		FTranslatedLineTarget t;
+
+		if (ref != NULL || (flags & CBAF_AIMFACING))
+		{
+			if (!(flags & CBAF_AIMFACING))
+			{
+				A_Face(ref);
+			}
+			bangle = self.Angle;
+
+			if (!(flags & CBAF_NOPITCH)) bslope = AimLineAttack (bangle, MISSILERANGE);
+			if (pufftype == null) pufftype = 'BulletPuff';
+
+			A_StartSound(AttackSound, CHAN_WEAPON);
+			for (i = 0; i < numbullets; i++)
+			{
+				double pangle = bangle;
+				double slope = bslope;
+
+				if (flags & CBAF_EXPLICITANGLE)
+				{
+					pangle += spread_xy;
+					slope += spread_z;
+				}
+				else
+				{
+					pangle += spread_xy * Random2[cwbullet]() / 255.;
+					slope += spread_z * Random2[cwbullet]() / 255.;
+				}
+
+				int damage = random(1, diceBound)*3;
+
+				let puff = LineAttack(pangle, range, slope, damage, 'Hitscan', pufftype, laflags, t);
+				if (missile != null && pufftype != null)
+				{
+					double ang = pangle - 90;
+					let ofs = AngleToVector(ang, Spawnofs_xy);
+					let pos = self.pos;
+					SetXYZ(Vec3Offset(ofs.x, ofs.y, 0.));
+					let proj = SpawnMissileAngleZSpeed(Pos.Z + GetBobOffset() + Spawnheight, missile, self.Angle, 0, GetDefaultByType(missile).Speed, self, false);
+					SetXYZ(pos);
+					
+					if (proj)
+					{
+						bool temp = (puff == null);
+						if (!puff)
+						{
+							puff = LineAttack(pangle, range, slope, 0, 'Hitscan', pufftype, laflags | LAF_NOINTERACT, t);
+						}
+						if (puff)
+						{			
+							AimBulletMissile(proj, puff, flags, temp, true);
+							if (t.unlinked)
+							{
+								proj.Angle = pangle;
+								proj.Pitch = bslope;
+								proj.Vel3DFromAngle(proj.Speed, proj.Angle, proj.Pitch);
+							}
+						}
+					}
+				}
+			}
+		}
+    }
+
+    void A_StopAmbientSound()
+    {
+        A_StopSound(AmbientSoundChannel);
+    }
+
+    void A_ShellCasing()
+    {
+        if (catoggle == 2) A_SpawnItemEx("PsxShellCasing", 30, 0, 30, random(3,4), random(7,8), random(7,9), 0);
+    }
+
+    void A_BulletCasing()
+    {
+        if (catoggle == 2) A_SpawnItemEx("PsxBulletCasing", 40, 0, 25, random(4,6), random(7,8), random(7,9), 0);
+    }
+
+    void A_Footstep()
+    {
+        PlayFootstepSound(GetFloorTerrain().IsLiquid ? WaterFootstepSound : FootstepSound);
+    }
+
+    void A_DeathThud()
+    {
+        PlayFootstepSound(GetFloorTerrain().IsLiquid ? WaterThudSound : DeathThudSound);
+    }
+
+    void A_GoreExplosion(int spurts = 6, int color = GORE_Default)
+    {
+        if (kch_enabled)
+        {
+            string wallblood;
+            string gore;
+            switch (color)
+            {
+                case GORE_Green:
+                    wallblood = "SuperWallGreenBlood";
+                    gore = "GreenSuperGoreSpawner";
+                    break;
+                case GORE_Blue:
+                    wallblood = "SuperWallBlueFBlood";
+                    gore = "BlueFSuperGoreSpawner";
+                    break;
+                default:
+                    wallblood = "SuperWallRedBlood";
+                    gore = "SuperGoreSpawner";
+                    break;
+            }
+            for (int i=0; i<8; i++) A_SpawnProjectile(wallblood, random(40,80), 0, random (0, 360), CMF_AIMDIRECTION|CMF_BADPITCH, random (0, 5));
+            for (int i=0; i<4; i++) A_SpawnItemEx("Blood", frandom(radius*-1, radius), frandom(radius*-1, radius), height,cos(random (-5, 5))*(cos(random (0, 360))*frandom(-2.0, 2.0)), cos(random (-5, 5))*(sin(random (0, 360))*frandom(-2.0, 2.0)), sin(random (-5, 5))*frandom(0, 4.0), random (0, 360), SXF_USEBLOODCOLOR);
+            for (int i=0; i<spurts; i++) A_SpawnProjectile (gore, 32, 0, random (0, 360), CMF_AIMDIRECTION|CMF_BADPITCH, random (50, 130));
+        }
+    }
+	
+	void A_PCTics(int pcTics)
+	{
+		if (ce_pcspeed) A_SetTics(pcTics);
+	}
+
+    private void PlayFootstepSound(sound soundname)
+    {
+        if (!soundname || !cx_mfs_enabled) return;
+		if (Pos.Z > FloorZ || self.bOnMobj || waterlevel > 0) return;
+		
+        A_StartSound(soundname, FootstepSoundChannel, CHANF_DEFAULT, cx_fs_volume_mul);
+    }
+}
+
+class PsxProjectile : PsxActor
+{
+	double NightmareMissileSpeedFactor;
+	property NightmareMissileSpeedFactor : NightmareMissileSpeedFactor;
+	
+	default
+	{
+		PsxProjectile.NightmareMissileSpeedFactor 1.2;
+	}
+
+    override bool IsSmooth()
+    {
+        return smp_enabled;
+    }
+	
+	override void PostBeginPlay()
+    {
+        if (target && target is "PsxActor")
+        {
+            let source = PsxActor(target);
+			bSUBTRACTIVE = source.bSUBTRACTIVE 
+				&& !source.bADDITIVE;
+        }
+		if (IsSlow())
+        {
+            speed *= SCALE_TICRATE;
+			vel *= SCALE_TICRATE;
+        }
+		if (skill == 5)
+		{
+			speed *= frandompick[Nightmare](1.0, 1.0, NightmareMissileSpeedFactor);
+			vel *= frandompick[Nightmare](1.0, 1.0, NightmareMissileSpeedFactor);
+		}
+		super.PostBeginPlay();
+    }
+	
+	void A_SetRenderStyle(double alpha, int style)
+	{
+		if (!bSUBTRACTIVE)
+		{
+			super.A_SetRenderStyle(alpha, style);
+		}
+	}
+	
+	void A_SetTranslucent(double alpha, int style=0)
+	{
+		if (bSUBTRACTIVE)
+		{
+			self.alpha = alpha;
+		}
+		else
+		{
+			super.A_SetTranslucent(alpha, style);
+		}
+	}
+}
+
+class BlendableActor : Actor
+{
+	mixin VarsCache;
+	mixin BlendFlags;
+	
+	int ActorFlags;
+	
+	flagdef LIMITQUANTITY : ActorFlags, 0;
+	
+	default
+	{
+		+BlendableActor.LIMITQUANTITY;
+	}
+
+	override void PostBeginPlay()
+    {
+        if (target)
+		{
+			if (target is "PsxActor")
+			{
+				let source = PsxActor(target);
+				bSUBTRACTIVE = source.bSUBTRACTIVE 
+					&& !source.bADDITIVE;
+			}
+			else if (target is "BlendableActor")
+			{
+				let source = BlendableActor(target);
+				bSUBTRACTIVE = source.bSUBTRACTIVE 
+					&& !source.bADDITIVE;
+			}
+		}
+		if (user_subtractive) bSUBTRACTIVE = true;
+		if (bLIMITQUANTITY)
+		{
+			Vars().particleCount++;
+			if (Vars().particleCount > ce_particlelimit) Destroy();
+		}
+		ApplyBlends();
+		super.PostBeginPlay();
+    }
+	
+	override void OnDestroy()
+	{
+		super.OnDestroy();
+		if (bLIMITQUANTITY) Vars().particleCount--;
+	}
+}
+
+mixin class OverlapPickupSound
+{
+    override void PlayPickupSound(Actor toucher)
+    {
+        toucher.A_StartSound(PickupSound, CHAN_7, CHANF_OVERLAP|CHANF_NOPAUSE);
+    }
+}
+
+mixin class VarsCache
+{
+	CECache cache;	
+    CECache Vars()
+	{
+		if (!cache) cache = CECache.Get();
+		if (!cache) { cache = new("CECache"); cache.OnRegister(); }  //ugly hack
+		return cache;
+	}
+}
+
+mixin class BlendFlags
+{
+	//$UserDefaultValue false
+	bool user_translucent;
+	//$UserDefaultValue false
+	bool user_additive;
+	//$UserDefaultValue false
+	bool user_subtractive;
+	
+	int BlendFlags;
+	
+	flagdef TRANSLUCENT : BlendFlags, 0;
+	flagdef ADDITIVE : BlendFlags, 1;
+	flagdef SUBTRACTIVE : BlendFlags, 2;
+	
+	void ApplyBlends()
+	{
+		MakeBlendable(self, bTRANSLUCENT, bSUBTRACTIVE, bADDITIVE);
+	}
+	
+	static void MakeBlendable(Actor target, bool translucent, bool subtractive, bool additive)
+	{
+		if (translucent && subtractive && additive)
+		{
+			MakeAdditive(target, 0.25);
+		}
+		else if (translucent && subtractive)
+		{
+			MakeNightmare(target);
+        }
+		else if (translucent)
+		{
+			MakeTranslucent(target);
+		}
+		else if (additive)
+		{
+			MakeAdditive(target);
+		}
+		else if (subtractive)
+		{
+			MakeSubtractive(target);
+		}
+	}
+	
+	static void MakeAdditive(Actor target, double factor = 1.0)
+	{
+		target.A_SetRenderStyle(factor, STYLE_Add);
+		MakeSilent(target);
+	}
+	
+	static void MakeNightmare(Actor target)
+	{
+		target.health = target.starthealth = target.default.health * 2;
+		MakeSubtractive(target);
+	}
+	
+	static void MakeTranslucent(Actor target, double factor = 0.5)
+	{
+		target.A_SetRenderStyle(factor, STYLE_Translucent);
+		MakeSilent(target);
+	}
+	
+	static void MakeSubtractive(Actor target)
+	{
+		if (ce_nightmarestyle)
+		{
+			target.SetShade(ce_nightmarecolor);
+			target.A_SetRenderStyle(target.alpha, STYLE_AddShaded);
+			target.bBRIGHT = true;
+		}
+		else
+		{
+			target.A_SetRenderStyle(target.alpha, STYLE_Subtract);
+		}
+		MakeSilent(target);
+	}
+	
+	static void MakeSilent(Actor target)
+	{
+		if (target is "PsxActor")
+		{
+			let a = PsxActor(target);
+			a.FootstepSound = "";
+			a.DeathThudSound = "";
+		}
+		target.bNOSPRITESHADOW = true;
+	}
+}
+
+mixin class ApplyBlendFlags
+{	
+	override void PostBeginPlay()
+    {
+		if (user_translucent) bTRANSLUCENT = true;
+		if (user_additive) bADDITIVE = true;
+		if (user_subtractive) bSUBTRACTIVE = true;
+		ApplyBlends();
+		super.PostBeginPlay();
+	}
+}
+
+mixin class DoubleThrust
+{
+	override void ApplyKickback(Actor inflictor, Actor source, int damage, double angle, Name mod, int flags)
+	{
+		double ang;
+		int kickback;
+		double thrust;
+
+		if (inflictor && inflictor.projectileKickback)
+			kickback = inflictor.projectileKickback;
+		else if (!source || !source.player || !source.player.ReadyWeapon)
+			kickback = gameinfo.defKickback;
+		else
+			kickback = source.player.ReadyWeapon.Kickback;
+
+		kickback = int(kickback * G_SkillPropertyFloat(SKILLP_KickbackFactor));
+		if (kickback)
+		{
+		
+			Actor origin = (source && (flags & DMG_INFLICTOR_IS_PUFF)) ? source : inflictor;
+
+			if (flags & DMG_USEANGLE)
+			{
+				ang = angle;
+			}
+			else if (origin.pos.xy == pos.xy)
+			{
+				ang = frandom[Kickback](0., 360.);
+			}
+			else
+			{
+				ang = origin.AngleTo(self);
+			}
+
+			thrust = mod == 'MDK' ? 10 : 32;
+			if (Mass > 0)
+			{
+				int thrustFactor = ce_actorthrust ? 2 : 1; //psx/64 versions have double thrust strength
+				thrust = clamp((damage * 0.125 * thrustFactor * kickback) / Mass, 0., thrust);
+			}
+
+			// Don't apply ultra-small damage thrust
+			if (thrust < 0.01) thrust = 0;
+
+			// make fall forwards sometimes
+			if ((damage < 40) && (damage > health)
+				&& (pos.Z - origin.pos.Z > 64)
+				&& random[Kickback](0, 1)
+				// [RH] But only if not too fast and not flying
+				&& thrust < 10
+				&& !bNoGravity
+				&& !bNoForwardFall
+				&& (inflictor == NULL || !inflictor.bNoForwardFall)
+				)
+			{
+				ang += 180.;
+				thrust *= 4;
+			}
+			if (source && source.player && (flags & DMG_INFLICTOR_IS_PUFF)
+				&& source.player.ReadyWeapon != NULL &&	(source.player.ReadyWeapon.bSTAFF2_KICKBACK))
+			{
+				// Staff power level 2
+				Thrust(10, ang);
+				if (!bNoGravity)
+				{
+					Vel.Z += 5.;
+				}
+			}
+			else
+			{
+				//thrust *= PsxActor.SCALE_TICRATE;
+				Thrust(thrust, ang);
+			}
+		}
+	}
+}

@@ -1,0 +1,149 @@
+floors
+{
+	SLIME01, FancySectorNukage
+	SLIME02, FancySectorNukage
+	SLIME03, FancySectorNukage
+	NUKAGE1, FancySectorNukage
+	NUKAGE2, FancySectorNukage
+	NUKAGE3, FancySectorNukage
+	WATER01, FancySectorWater
+	WATER02, FancySectorWater
+	WATER03, FancySectorWater
+	WATER04, FancySectorWater
+	FWATER1, FancySectorWater
+	FWATER2, FancySectorWater
+	FWATER3, FancySectorWater
+	FWATER4, FancySectorWater
+	BSLIME01, FancySectorSlime
+	BSLIME02, FancySectorSlime
+	BSLIME03, FancySectorSlime
+	BSLIME04, FancySectorSlime
+	CSLIME01, FancySectorSlime
+	CSLIME02, FancySectorSlime
+	CSLIME03, FancySectorSlime
+	CSLIME04, FancySectorSlime
+	SLIME04, FancySectorSlime
+	SLIME05, FancySectorSlime
+	SLIME06, FancySectorSlime
+	SLIME07, FancySectorSlime
+	SLIME08, FancySectorSlime
+	LAVA01, FancySectorLava
+	LAVA02, FancySectorLava
+	LAVA03, FancySectorLava
+	LAVA04, FancySectorLava
+	BLOOD1, FancySectorBlood
+	BLOOD2, FancySectorBlood
+	BLOOD3, FancySectorBlood
+	GLOW01, FancySectorHot
+	GLOW02, FancySectorHot
+	GLOW03, FancySectorHot
+	GLOW04, FancySectorHot
+	ROK04, FancySectorHot
+	ROK05, FancySectorHot
+	SLIME09, FancySectorHot
+	SLIME10, FancySectorHot
+	SLIME11, FancySectorHot
+	SLIME12, FancySectorHot
+}
+
+centerfloors
+{
+	GATE01, FancySectorTeleporter
+	GATE02, FancySectorTeleporter
+	GATE03, FancySectorTeleporter
+	GATE04, FancySectorTeleporter
+	GATE05, FancySectorTeleporter
+}
+
+ceilings
+{
+	LIGHT01, FancySectorCeilingLite
+	LIGHT02, FancySectorCeilingLite
+	LIGHT03, FancySectorCeilingLite
+	LIGHT03, FancySectorCeilingLite
+	LIGHT04, FancySectorCeilingLite
+	LIGHT05, FancySectorCeilingLite
+	LIGHT06, FancySectorCeilingLite
+	CEIL1_2, FancySectorCeilingLite
+	CEIL1_3, FancySectorCeilingLite
+	CEIL3_6, FancySectorCeilingLite
+	FLAT2, FancySectorCeilingLite
+	FLAT17, FancySectorCeilingLite
+	GRNLITE1, FancySectorCeilingLite
+	TLITE6_1, FancySectorCeilingLite
+	TLITE6_4, FancySectorCeilingLite
+	TLITE6_5, FancySectorCeilingLite
+	TLITE6_6, FancySectorCeilingLite
+}
+
+walls
+{
+	WFALL1, FancyWallWaterfall
+	WFALL2, FancyWallWaterfall
+	WFALL3, FancyWallWaterfall
+	WFALL4, FancyWallWaterfall
+	BFALL1, FancyWallBloodfall
+	BFALL2, FancyWallBloodfall
+	BFALL3, FancyWallBloodfall
+	BFALL4, FancyWallBloodfall
+	SFALL1, FancyWallSlimefall
+	SFALL2, FancyWallSlimefall
+	SFALL3, FancyWallSlimefall
+	SFALL4, FancyWallSlimefall
+	GSTFONT1, FancyWallGargfont
+	GSTFONT2, FancyWallGargfont
+	GSTFONT3, FancyWallGargfont
+	COMP06, FancyWallCompstation
+	COMP22, FancyWallCompstation
+	COMP23, FancyWallCompstation
+	ENERGY01, FancyWallFireblu
+	ENERGY02, FancyWallFireblu
+	ENERGY03, FancyWallFireblu
+	ENERGY04, FancyWallFireblu
+	FIREBLU1, FancyWallFireblu
+	FIREBLU2, FancyWallFireblu
+	FLAME01, FancyWallFirewall
+	FLAME02, FancyWallFirewall
+	FLAME03, FancyWallFirewall
+	LAVWAL01, FancyWallFirewall
+	LAVWAL02, FancyWallFirewall
+	LAVWAL03, FancyWallFirewall
+	FIRE01, FancyWallFirewall
+	FIRE02, FancyWallFirewall
+	LAVAW01, FancyWallFirewall
+	LAVAW02, FancyWallFirewall
+	FIREMAG1, FancyWallFirewall
+	FIREMAG2, FancyWallFirewall
+	FIREMAG3, FancyWallFirewall
+	FIREWALL, FancyWallFirewall
+	FIREWALA, FancyWallFirewall
+	FIREWALB, FancyWallFirewall
+	FIRELAVA, FancyWallFirewall
+	FIRELAV2, FancyWallFirewall
+	FIRELAV3, FancyWallFirewall
+	COMP03, FancyWallTechhum
+	COMP09, FancyWallTechhum
+	COMP21, FancyWallTechhum
+	COMPTALL, FancyWallTechhum
+	SPACEW3, FancyWallTechhum
+	BRICK11A, FancyWallLights
+	BRONZE07, FancyWallLights
+	LITE01, FancyWallLights
+	LITE02, FancyWallLights
+	METAL04, FancyWallLights
+	LITE3, FancyWallLights
+	LITE5, FancyWallLights
+	LITEBLU1, FancyWallLights
+	LITEBLU4, FancyWallLights
+	BRICKLIT, FancyWallLights
+	BSTONE3, FancyWallLights
+	TVSNOW01, FancyWallStatic
+	TVSNOW02, FancyWallStatic
+	TVSNOW03, FancyWallStatic
+	SP_FACE1, FancyWallFaces
+}
+
+//FancyWallSlimedrip
+//FancySectorXWater
+//FancyWallLavafall
+//FancyWallFan

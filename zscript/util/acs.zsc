@@ -1,0 +1,7 @@
+class ACSHelper
+{
+	static String GetAuthorName()
+	{
+		return StringTable.Localize(level.authorname);
+	}
+}

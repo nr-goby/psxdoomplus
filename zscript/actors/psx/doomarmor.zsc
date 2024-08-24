@@ -1,0 +1,145 @@
+class PsxArmorBonus : BasicArmorBonus replaces ArmorBonus
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Armor bonus"
+		
+		Radius 20;
+		Height 16;
+		Inventory.Pickupmessage "$GOTARMBONUS";
+		Inventory.Icon "BON2A0";
+		Armor.Savepercent 33.335;
+		//Armor.Saveamount 1;
+		Armor.Maxsaveamount 200;
+		+COUNTITEM
+		+INVENTORY.ALWAYSPICKUP
+
+	    Armor.Saveamount 2;
+	    +MOVEWITHSECTOR;
+		Tag "$CC_ARMORBONUS";
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            BON2 ABCDCB 6;
+            loop;
+        SmoothSpawn:
+            HELB abcdefghgfedcb 3;
+	        loop;
+	}
+
+	virtual bool IsSmooth() { return smi_enabled; }
+
+	int lastTic;
+	override void Tick()
+    {
+        if (lastTic < tics && ce_actortics && !IsSmooth())
+            tics = int(Round(tics * PsxActor.SCALE_FRAME));
+        lastTic = tics;
+        super.Tick();
+    }
+}
+
+class PsxGreenArmor : BasicArmorPickup replaces GreenArmor
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Green armor"
+		
+		Radius 20;
+		Height 16;
+		Inventory.Pickupmessage "$GOTARMOR";
+		Inventory.Icon "ARM1A0";
+		Armor.SavePercent 33.335;
+		Armor.SaveAmount 100;
+        
+	    +MOVEWITHSECTOR;
+        Inventory.Icon "_AR1A0";
+		Tag "$CC_GREENARMOR";
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            ARM1 A 6;
+            ARM1 B 7 bright;
+            loop;
+        SmoothSpawn:
+            garm ab 4 bright;
+            garm cdcb 4;
+            loop;
+	}
+
+	virtual bool IsSmooth() { return smi_enabled; }
+
+	int lastTic;
+	override void Tick()
+    {
+        if (lastTic < tics && ce_actortics && !IsSmooth())
+            tics = int(Round(tics * PsxActor.SCALE_FRAME));
+        lastTic = tics;
+        super.Tick();
+    }
+}
+
+class PsxBlueArmor : BasicArmorPickup replaces BlueArmor
+{
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Title "Blue armor"
+		
+		Radius 20;
+		Height 16;
+		Inventory.Pickupmessage "$GOTMEGA";
+		Inventory.Icon "ARM2A0";
+		Armor.Savepercent 50;
+		Armor.Saveamount 200;
+
+        +MOVEWITHSECTOR;
+        Inventory.Icon "_AR2A0";
+		Tag "$CC_BLUEARMOR";
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            ARM2 A 6;
+            ARM2 B 6 bright;
+            loop;
+        SmoothSpawn:
+            blar ab 4 bright;
+            blar cdcb 4;
+            loop;
+	}
+
+	virtual bool IsSmooth() { return smi_enabled; }
+
+	int lastTic;
+	override void Tick()
+    {
+        if (lastTic < tics && ce_actortics && !IsSmooth())
+            tics = int(Round(tics * PsxActor.SCALE_FRAME));
+        lastTic = tics;
+        super.Tick();
+    }
+}
+

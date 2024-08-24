@@ -1,0 +1,147 @@
+class FancyWorldBase : Actor
+{
+	const WAIT_TIME = 72;
+	const MAX_DISTANCE = 2048;
+	const DESTROY_DISTANCE = 16;
+	
+	bool initialized;
+	bool playing;
+	int wait;
+	int randomWait;
+	bool scheduledRandom;
+	
+	sound AmbientSound;
+	double Attenuation;
+	double MinPitch;
+	double MaxPitch;
+	double MinStartTime;
+	double MaxStartTime;
+	sound RandomSound;
+	double RandomSoundChance;
+	int FancyFlags;
+	
+	property AmbientSound: AmbientSound;
+	property Attenuation: Attenuation;
+	property MinPitch : MinPitch;
+	property MaxPitch : MaxPitch;
+	property MinStartTime : MinStartTime;
+	property MaxStartTime : MaxStartTime;
+	property RandomSound: RandomSound;
+	property RandomSoundChance: RandomSoundChance;
+	
+	flagdef RANDOMIZEWAIT : FancyFlags, 0;
+	flagdef DESTROYNEAR : FancyFlags, 1;
+	
+	default
+	{
+		-SOLID
+		//-NOCLIP
+		+NOCLIP
+		+DONTSPLASH
+		+NOTELEPORT
+		+NOINTERACTION
+		//+MOVEWITHSECTOR
+		+NOSECTOR;
+		+NOTONAUTOMAP;
+		+NOBLOCKMAP;
+		radius 1;
+		height 1;
+		RenderRadius -1;
+		RenderStyle "None";
+		
+		FancyWorldBase.Attenuation ATTN_NORM;
+		FancyWorldBase.RandomSoundChance 0.2;
+		+FancyWorldBase.RANDOMIZEWAIT;
+	}
+	
+	override void Tick() 
+	{ 
+		if (!initialized)
+		{
+			super.Tick();
+			if (bRANDOMIZEWAIT) wait = random[FancyWorld](0, 9);
+			initialized = true;
+		}
+		if (wait <= 0)
+		{
+			DestroyNear();
+			PlaySounds();
+			wait = WAIT_TIME;
+		}
+		else
+		{
+			wait--;
+		}
+		if (randomWait <= 0)
+		{
+			PlayRandomSound();
+		}
+		else
+		{
+			randomWait--;
+		}
+	}
+	
+	void DestroyNear()
+	{
+		if (!bDESTROYNEAR) return;
+		if (CountProximity(self.GetClassName(), DESTROY_DISTANCE, CPXF_NOZ))
+		{
+			//Console.Printf("Too close, destroying.");
+			Destroy();
+		}
+		bDESTROYNEAR = false;
+	}
+	
+	void PlaySounds()
+	{
+		//Console.Printf("Checking distance...");
+		if (CheckSightOrRange(MAX_DISTANCE, true))
+		{
+			StopAmbientSound();
+		}
+		else
+		{
+			PlayAmbientSound();
+			ScheduleRandomSound();
+		}
+	}
+	
+	void StopAmbientSound()
+	{
+		if (!playing || !AmbientSound) return;
+		//Console.Printf("Stopping ambient sound");
+		A_StopSound(CHAN_BODY);
+		playing = false;
+	}
+	
+	void PlayAmbientSound()
+	{
+		if (playing || !AmbientSound) return;
+		//Console.Printf("Playing ambient sound.");
+		A_StartSound(AmbientSound,
+			slot: CHAN_BODY,
+			flags: CHANF_LOOPING|CHANF_LISTENERZ,
+			volume: cx_fw_volume_mul,
+			attenuation: Attenuation,
+			pitch: frandom(MinPitch, MaxPitch),
+			startTime: frandom(MinStartTime, MaxStartTime));
+		playing = true;
+	}
+	
+	void ScheduleRandomSound()
+	{
+		if (!RandomSound || scheduledRandom || frandom[FancyWorld](0.0, 1.0) >= RandomSoundChance) return;
+		//Console.Printf("Scheduling random sound.");
+		randomWait = random[FancyWorld](0, TICRATE*8);
+		scheduledRandom = true;
+	}
+	
+	void PlayRandomSound()
+	{
+		if (!scheduledRandom) return;
+		//Console.Printf("Playing random sound.");
+		A_StartSound(RandomSound, CHAN_VOICE, 0, cx_fw_volume_mul);
+		scheduledRandom = false;
+	}
+}

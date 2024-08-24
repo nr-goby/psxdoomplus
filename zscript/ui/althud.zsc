@@ -1,0 +1,150 @@
+class PsxAltHud : AltHud
+{
+	override void Init()
+	{
+		super.Init();
+		HudFont = Font.GetFont("DBIGFONT");
+	}
+	
+	override void DrawHealth(PlayerInfo CPlayer, int x, int y)
+	{
+		int health = CPlayer.health;
+
+		// decide on the color first
+		int fontcolor =
+			health < hud_health_red ? Font.CR_RED :
+			health < hud_health_yellow ? Font.CR_GOLD :
+			health <= hud_health_green ? Font.CR_GREEN :
+			Font.CR_BLUE;
+
+		bool haveBerserk = hud_berserk_health
+			&& !gameinfo.berserkpic.IsNull()
+			&& CPlayer.mo.FindInventory('PowerStrength', true);
+
+		DrawImageToBox(haveBerserk ? gameinfo.berserkpic : gameinfo.healthpic, x, y, 31, 17);
+		DrawHudNumberScaled(HudFont, fontcolor, health, x + 33, y + 17 + 1);
+	}
+	
+	override void DrawArmor(BasicArmor barmor, HexenArmor harmor, int x, int y)
+	{
+		int ap = 0;
+		int bestslot = 4;
+
+		if (harmor)
+		{
+			let ac = (harmor.Slots[0] + harmor.Slots[1] + harmor.Slots[2] + harmor.Slots[3] + harmor.Slots[4]);
+			ap += int(ac);
+			
+			if (ac)
+			{
+				// Find the part of armor that protects the most
+				bestslot = 0;
+				for (int i = 1; i < 4; ++i)
+				{
+					if (harmor.Slots[i] > harmor.Slots[bestslot])
+					{
+						bestslot = i;
+					}
+				}
+			}
+		}
+
+		if (barmor)
+		{
+			ap += barmor.Amount;
+		}
+
+		if (ap)
+		{
+			// decide on color
+			int fontcolor =
+				ap < hud_armor_red ? Font.CR_RED :
+				ap < hud_armor_yellow ? Font.CR_GOLD :
+				ap <= hud_armor_green ? Font.CR_GREEN :
+				Font.CR_BLUE;
+
+
+			// Use the sprite of one of the predefined Hexen armor bonuses.
+			// This is not a very generic approach, but it is not possible
+			// to truly create new types of Hexen armor bonus items anyway.
+			if (harmor && bestslot < 4)
+			{
+				static const String harmorIcons[] = { "AR_1A0", "AR_2A0", "AR_3A0", "AR_4A0" };
+				DrawImageToBox(TexMan.CheckForTexture(harmorIcons[bestslot], TexMan.Type_Sprite), x, y, 31, 17);
+			}
+			else if (barmor) DrawImageToBox(barmor.Icon, x, y, 31, 17);
+			DrawHudNumberScaled(HudFont, fontcolor, ap, x + 33, y + 17 + 2);
+		}
+	}
+	
+	void DrawHudNumberScaled(Font fnt, int color, int num, int x, int y, double trans = 0.75)
+	{
+		DrawHudTextScaled(fnt, color, String.Format("%d", num), x, y, trans);
+	}
+	
+	void DrawHudTextScaled(Font fnt, int color, String text, int x, int y, double trans = 0.75)
+	{
+		int zerowidth = fnt.GetCharWidth("0");
+		screen.DrawText(fnt, color, x, y-fnt.GetHeight(), text, DTA_VirtualWidth, hudwidth, DTA_VirtualHeight, hudheight,
+			 DTA_KeepRatio, true, DTA_Alpha, trans, DTA_Monospace, MONO_CellCenter, DTA_Spacing, zerowidth, DTA_ScaleY, (274.0/320.0));
+	}
+
+	override bool DrawOneKey(int xo, int x, int y, in out int c, Key inv)
+	{
+		TextureID icon;
+		
+		if (!inv) return false;
+		
+		TextureID AltIcon = inv.AltHUDIcon;
+		if (!AltIcon.Exists()) return false;	// Setting a non-existent AltIcon hides this key.
+
+		if (AltIcon.isValid()) 
+		{
+			icon = AltIcon;
+		}
+		else if (inv.SpawnState && inv.SpawnState.sprite!=0)
+		{
+			let state = inv.SpawnState;
+			if (state != null) icon = state.GetSpriteTexture(0);
+			else icon.SetNull();
+		}
+		// missing sprites map to TNT1A0. So if that gets encountered, use the default icon instead.
+		if (icon.isNull() || icon == tnt1a0) icon = inv.Icon; 
+
+		if (icon.isValid())
+		{
+			DrawHudImageToBox(icon, x, y, 8, 10);
+			return true;
+		}
+		return false;
+	}
+
+	void DrawHudImageToBox(TextureID tex, int x, int y, int w, int h, double trans = 0.75, bool animate = false)
+	{
+		double scale1, scale2;
+
+		if (tex)
+		{
+			let texsize = TexMan.GetScaledSize(tex);
+
+			if (w < texsize.X) scale1 = w / texsize.X;
+			else scale1 = 1.0;
+			if (h < texsize.Y) scale2 = h / texsize.Y;
+			else scale2 = 1.0;
+			scale1 = min(scale1, scale2);
+			if (scale2 < scale1) scale1=scale2;
+
+			x += w >> 1;
+			y += h;
+
+			w = (int)(texsize.X * scale1);
+			h = (int)(texsize.Y * scale1);
+
+			screen.DrawTexture(tex, animate, x, y,
+				DTA_KeepRatio, true,
+				DTA_VirtualWidth, hudwidth, DTA_VirtualHeight, hudheight, DTA_Alpha, trans, 
+				DTA_DestWidth, w, DTA_DestHeight, h, DTA_CenterBottomOffset, 1, DTA_ScaleY, (256.0/320.0));
+
+		}
+	}
+}

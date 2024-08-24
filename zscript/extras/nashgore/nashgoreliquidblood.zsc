@@ -1,0 +1,166 @@
+// Copyright 2006-2019 Nash Muhandes
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+//
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+// 3. The name of the author may not be used to endorse or promote products
+//    derived from this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+// IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+// OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+// IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+// NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+// THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+//===========================================================================
+//
+//
+//
+//===========================================================================
+
+class CXNashGoreLiquidBlood : Actor
+{
+	Default
+	{
+		/*
+		Radius 3;
+		Height 7;
+		MaxStepHeight 0;
+		MaxDropOffHeight 0;
+		FloatBobPhase 0;
+		+NOGRAVITY
+		+DONTSPLASH
+		+FLATSPRITE
+		*/
+		Radius 4;
+		Height 5;
+		+NOTELEPORT
+		+CANTLEAVEFLOORPIC
+		+NOBLOCKMAP
+		+MOVEWITHSECTOR
+		+SLIDESONWALLS
+		+NOTONAUTOMAP
+		alpha 0;
+		Gravity 1;
+		Speed 0.02;
+		MaxStepHeight 1;
+		RenderStyle "Translucent";
+	}
+	
+	bool waxing;
+	double user_size, user_rot, final_scale;
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+	
+	static void SpawnLiquidBlood(Actor self, double finalScale = 0.0)
+	{
+		if (!self) return;
+		Actor liquidblood;
+		bool result;
+		[result, liquidblood] = self.A_SpawnItemEx("CXNashGoreLiquidBlood",
+			angle: CXNashGoreStatics.RandomAngle4(), 
+			flags: CXNashGoreBloodBase.BLOOD_FLAGS);
+		if (liquidblood) {
+			if (finalScale > 0) {
+				CXNashGoreLiquidBlood(liquidblood).final_scale = finalScale * 8;
+			} else {
+				CXNashGoreLiquidBlood(liquidblood).final_scale = frandom(4.5,6.5);
+			}
+		}
+	}
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+
+	override void Tick(void)
+	{
+		Super.Tick();
+		if (!bNoTimeFreeze && (isFrozen() || Level.isFrozen())) return;
+
+		A_SetScale(Scale.X * 1.01);
+		
+		if (waterlevel > 0)
+		{
+			//bFlatSprite = false;
+			Destroy();
+			return;
+		}
+		if (waterlevel >= 3)
+		{
+			Vel.X = Vel.X + cos(Angle) * 0.06;
+			Vel.Y = Vel.Y + sin(Angle) * 0.06;
+			//Vel.Z = -0.3;
+		}
+	}
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+/*
+	States
+	{
+	Spawn:
+		NLIQ A 1 A_FadeOut(0.01);
+		Loop;
+	}
+*/
+	States
+	{
+	Spawn:
+		TNT1 A 0 NoDelay A_QueueCorpse;
+		BFOG A 0
+		{
+			frame = random(0,6);
+			waxing = true;
+			user_size = 0.01;
+			angle = frandom(0,360);
+			user_rot = frandompick(-0.45,0.45) * frandom(0.5,1.0);
+		}
+		goto Pool;
+	Pool:
+		BFOG "#" 1 A_FogWander;
+		Loop;
+	}
+	
+	action void A_FogWander()
+	{
+		invoker.scale = (invoker.user_size, 1.0);
+		invoker.A_Wander(CHF_NODIRECTIONTURN|CHF_DONTTURN);
+		invoker.angle += invoker.user_rot;
+		if (invoker.waxing)
+		{
+			invoker.user_size += (invoker.final_scale - invoker.user_size) / 100;
+			invoker.alpha += (0.25 - invoker.alpha) / 100;
+			if (invoker.alpha >= 0.2)
+				invoker.waxing = false;
+		}
+		else
+		{
+			invoker.user_size += (invoker.final_scale - invoker.user_size) / 100;
+			invoker.alpha = max(0.0, invoker.alpha + (-0.05 - invoker.alpha) / 100);
+			if (invoker.alpha == 0.0)
+				invoker.Destroy();
+		}
+	}
+}

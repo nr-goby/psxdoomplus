@@ -1,0 +1,241 @@
+Class ZParticleFire_Yellow : ZParticleFire_General
+{
+	Default {
+		alpha 0.6;
+		scale 0.55;
+	}
+	states{
+	Spawn:
+		FIPY ABCDEFGHIJKL 2 A_FadeOut(0.06);
+		stop;
+	}
+}
+
+Class ZParticleFire_General : ZBD_BaseFlare abstract
+{
+	Default {
+		scale 0.5;
+		alpha 0.5;
+	}
+	Override void PostBeginPlay() {
+		super.PostBeginPlay();
+		bSPRITEFLIP = randompick(0,1);
+	}
+}
+
+Class ZBD_BaseFlare : BlendableActor abstract
+{
+	protected state mdeath;
+	protected state mxdeath;
+	name fcolor;		//flare of the color; can be set as a property or externally
+	double fscale;		//scale; used to when scale needs to be easily set externally from the spawner
+	double falpha;		//alpha; used to when scale needs to be easily set externally from the spawner
+	property fcolor : fcolor;
+	Default {
+		+BRIGHT
+		+NOINTERACTION
+		renderstyle 'Add';
+		alpha 0.4;
+		scale 0.4;
+		gravity 0;
+	}
+	override void PostBeginPlay() {
+		super.PostBeginPlay();
+		if (master) {
+			mdeath = master.FindState("Death");
+			mxdeath = master.FindState("XDeath");
+		}
+		SetColor();
+	}
+	virtual void SetColor() { //fcolor is meant to be set by the actor that spawns the flare
+		switch (fcolor) {
+			case 'red'		: sprite = GetSpriteIndex("LENR"); break;
+			case 'green'	: sprite = GetSpriteIndex("LENG"); break;
+			case 'blue'		: sprite = GetSpriteIndex("LENB"); break;
+			case 'yellow'	: sprite = GetSpriteIndex("LENY"); break;
+			case 'tech'		: sprite = GetSpriteIndex("LENS"); break; //tech lamps use a completely different flare
+			case 'cbra'		: sprite = GetSpriteIndex("LENC"); break; //so do candelabras
+		}
+		if (fscale != 0)
+			A_SetScale(fscale);
+		if (falpha != 0)
+			alpha = falpha;
+	}
+	states {
+	Spawn:
+		#### # -1;
+		stop;
+	}
+}
+
+Class DSCcandleLight : Actor
+{
+
+	Default
+	{
+		+Float;
+		+NoGravity;
+		+RELATIVETOFLOOR;
+		+NoBlockMap;
+		+NoInteraction;
+		+NoClip;
+		+ClientSideOnly;
+		+MoveWithSector;
+		+NOTONAUTOMAP;
+		Renderstyle "Add";
+		Scale 0.05;
+	}
+
+	States
+	{
+	Spawn:
+		CLGH ABC 2
+		{
+			if ( Random(1,101) > 50)
+			{
+				frame = random(0,2);
+			}
+		}
+	Loop;
+
+	Inactive:
+		TNT1 A 1;
+		Loop;
+	}
+}
+
+Class DSCcandlelabra : DSCcandleLight
+{
+	States
+	{
+	Spawn:
+		CLGB ABC 2
+		{
+			if ( Random(1,101) > 50)
+			{
+				frame = random(0,2);
+			}
+		}
+	Loop;
+
+	Inactive:
+		TNT1 A 1;
+		Loop;
+	}
+}
+
+class MKTorchFire : actor
+{
+    default
+    {
+		+Float;
+		+NoGravity;
+		+RELATIVETOFLOOR;
+		+NoBlockMap;
+		+NoInteraction;
+		+NoClip;
+		+ClientSideOnly;
+		+MoveWithSector;
+		+NOTONAUTOMAP;
+        renderstyle "add";
+        Yscale 0.252;
+        xscale 0.375;
+    }
+    states
+    {
+        Spawn:
+            FLXM A -1 bright;
+            Stop;
+
+    }
+}
+
+class MKTorchFireSmall : MKTorchFire
+{
+    default
+    {
+        Yscale 0.24;
+        xscale 0.33;
+    }
+}
+
+class MKTorchFireBig : MKTorchFire
+{
+    default
+    {
+        Yscale 0.15;
+        xscale 0.35;
+    }
+	
+	Override void PostBeginPlay()
+	{
+		SpriteOffset = (2,0);
+		Super.PostBeginPlay();
+	}
+}
+
+class MKTorchFireRed : MKTorchFire
+{
+    states
+    {
+        Spawn:
+            FLXM B -1 bright;
+            Stop;
+
+    }
+}
+
+class MKTorchFireRedSmall : MKTorchFireSmall
+{
+    states
+    {
+        Spawn:
+            FLXM B -1 bright;
+            Stop;
+
+    }
+}
+
+class MKTorchFireBlue : MKTorchFire
+{
+    states
+    {
+        Spawn:
+            FLXM C -1 bright;
+            Stop;
+
+    }
+}
+
+class MKTorchFireBlueSmall : MKTorchFireSmall
+{
+    states
+    {
+        Spawn:
+            FLXM C -1 bright;
+            Stop;
+
+    }
+}
+
+class MKTorchFireGreen : MKTorchFire
+{
+    states
+    {
+        Spawn:
+            FLXM D -1 bright;
+            Stop;
+
+    }
+}
+
+class MKTorchFireGreenSmall : MKTorchFireSmall
+{
+    states
+    {
+        Spawn:
+            FLXM D -1 bright;
+            Stop;
+
+    }
+}

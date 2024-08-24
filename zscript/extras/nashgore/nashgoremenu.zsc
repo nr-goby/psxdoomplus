@@ -1,0 +1,351 @@
+// Copyright 2006-2019 Nash Muhandes
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+//
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+// 3. The name of the author may not be used to endorse or promote products
+//    derived from this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+// IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+// OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+// IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+// NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+// THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+//===========================================================================
+//
+// Custom Widgets for NashGore
+// Adds tooltips to widgets
+//
+// Some redundant duplicates here but whatever; menus are painful to work
+// with in general anyway. >:(
+//
+//===========================================================================
+
+class OptionMenuItemNashGoreOptionCX : OptionMenuItemOption
+{
+	String mTooltip;
+	bool mRequired;
+
+	OptionMenuItemNashGoreOptionCX Init(String label, String tooltip, Name command, Name values, CVar graycheck = null, int center = 0)
+	{
+		mTooltip = tooltip;
+		let tl = StringTable.Localize(label);
+		mRequired = tl.Mid(tl.Length() - 1) == "*";
+		Super.Init(label, command, values, graycheck, center);
+		return self;
+	}
+}
+
+class OptionMenuItemNashGoreSliderCX : OptionMenuItemSlider
+{
+	String mTooltip;
+	bool mRequired;
+
+	OptionMenuItemNashGoreSliderCX Init(String label, String tooltip, Name command, double min, double max, double step, int showval = 1, CVar graycheck = NULL)
+	{
+		mTooltip = tooltip;
+		let tl = StringTable.Localize(label);
+		mRequired = tl.Mid(tl.Length() - 1) == "*";
+		Super.Init(label, command, min, max, step, showval, graycheck);
+		return self;
+	}
+}
+
+class OptionMenuItemNashGoreControlCX : OptionMenuItemControl
+{
+	String mTooltip;
+	bool mRequired;
+
+	OptionMenuItemNashGoreControlCX Init(String label, String tooltip, Name command)
+	{
+		mTooltip = tooltip;
+		let tl = StringTable.Localize(label);
+		mRequired = tl.Mid(tl.Length() - 1) == "*";
+		Super.Init(label, command);
+		return self;
+	}
+}
+
+class OptionMenuItemNashGoreSubMenuCX : OptionMenuItemSubmenu
+{
+	String mTooltip;
+	bool mRequired;
+
+	OptionMenuItemNashGoreSubMenuCX Init(String label, String tooltip, Name command, int param = 0, bool centered = false)
+	{
+		mTooltip = tooltip;
+		let tl = StringTable.Localize(label);
+		mRequired = tl.Mid(tl.Length() - 1) == "*";
+		Super.Init(label, command, param, centered);
+		return self;
+	}
+}
+/*
+class OptionMenuItemNashGoreSafeCommandCX : OptionMenuItemSafeCommand
+{
+	String mTooltip;
+
+	OptionMenuItemNashGoreSafeCommandCX Init(String label, String tooltip, Name command, String prompt = "")
+	{
+		mTooltip = tooltip;
+		Super.Init(label, command, prompt);
+		return self;
+	}
+}
+*/
+
+class OptionMenuItemNashGoreColorPickerCX : OptionMenuItemColorPicker
+{
+	String mTooltip;
+	bool mRequired;
+	CVar mGrayCheck;
+
+	OptionMenuItemNashGoreColorPickerCX Init(String label, String tooltip, Name command, CVar graycheck = null)
+	{
+		mTooltip = tooltip;
+		let tl = StringTable.Localize(label);
+		mRequired = tl.Mid(tl.Length() - 1) == "*";
+		mGrayCheck = graycheck;
+		Super.Init(label, command);
+		return self;
+	}
+	
+	//this hack should be removed when gzdoom 4.12 is released and 4.10 support is dropped
+	bool IsGrayedCX(void)
+	{
+		return mGrayCheck != NULL && !mGrayCheck.GetInt();
+	}
+	
+	override bool Selectable(void)
+	{
+		return !IsGrayedCX();
+	}
+	
+	override int Draw(OptionMenuDescriptor desc, int y, int indent, bool selected)
+	{
+		drawLabel(indent, y, selected? OptionMenuSettings.mFontColorSelection : OptionMenuSettings.mFontColor, IsGrayedCX());
+
+		if (mCVar != null)
+		{
+			int box_x = indent + CursorSpace();
+			int box_y = y + CleanYfac_1;
+			screen.Clear (box_x, box_y, box_x + 32*CleanXfac_1, box_y + OptionMenuSettings.mLinespacing*CleanYfac_1, mCVar.GetInt() | 0xff000000);
+		}
+		return indent;
+	}
+}
+
+//===========================================================================
+//
+// NashGore Menu
+//
+//===========================================================================
+
+class CXNashGoreMenu : OptionMenu
+{
+	const START_TIME = TICRATE * 2;
+	const END_TIME = TICRATE * 4;
+	const SCROLL_SPEED = 1;
+	const MAX_ASPECT = 16 / 9.;
+	
+	int mDefaultPosition;
+	String mTooltip;
+	bool mRequired;
+	int yOffset;
+	
+	private int startTimer;
+	private int endTimer;
+	private int scrollTimer;
+	private int prevSelected;
+	
+	override void Init(Menu parent, OptionMenuDescriptor desc)
+	{
+		super.Init(parent, desc);
+		
+		mDefaultPosition = mDesc.mPosition;
+		prevSelected = -1;
+		yOffset = 0;
+	}
+	
+	override void Drawer ()
+	{
+		mToolTip = "";
+		super.Drawer();
+		DrawTooltip();
+	}
+	
+	override void Ticker()
+	{
+		if (startTimer > 0)
+				--startTimer;
+		if (endTimer > 0)
+		{
+			--endTimer;
+			if (endTimer <= 0)
+			{
+				scrollTimer = 0;
+				startTimer = START_TIME;
+			}
+		}
+		super.Ticker();
+	}
+	
+	void DrawTooltip()
+	{
+		if (mDesc.mSelectedItem >= 0)
+		{
+			if (mDesc.mItems[mDesc.mSelectedItem] is "OptionMenuItemNashGoreOptionCX")
+			{
+				let item = OptionMenuItemNashGoreOptionCX(mDesc.mItems[mDesc.mSelectedItem]);
+				mToolTip = StringTable.Localize(item.mTooltip);
+				mRequired = item.mRequired;
+			}
+
+			if (mDesc.mItems[mDesc.mSelectedItem] is "OptionMenuItemNashGoreSliderCX")
+			{
+				let item = OptionMenuItemNashGoreSliderCX(mDesc.mItems[mDesc.mSelectedItem]);
+				mToolTip = StringTable.Localize(item.mTooltip);
+				mRequired = item.mRequired;
+			}
+
+			if (mDesc.mItems[mDesc.mSelectedItem] is "OptionMenuItemNashGoreControlCX")
+			{
+				let item = OptionMenuItemNashGoreControlCX(mDesc.mItems[mDesc.mSelectedItem]);
+				mToolTip = StringTable.Localize(item.mTooltip);
+				mRequired = item.mRequired;
+			}
+			
+			if (mDesc.mItems[mDesc.mSelectedItem] is "OptionMenuItemNashGoreSubMenuCX")
+			{
+				let item = OptionMenuItemNashGoreSubMenuCX(mDesc.mItems[mDesc.mSelectedItem]);
+				mToolTip = StringTable.Localize(item.mTooltip);
+				mRequired = item.mRequired;
+			}
+			/*
+			if (mDesc.mItems[mDesc.mSelectedItem] is "OptionMenuItemNashGoreSafeCommandCX")
+			{
+				mToolTip = StringTable.Localize(OptionMenuItemNashGoreSafeCommandCX(mDesc.mItems[mDesc.mSelectedItem]).mTooltip);
+			}
+			*/
+			if (mDesc.mItems[mDesc.mSelectedItem] is "OptionMenuItemNashGoreColorPickerCX")
+			{
+				let item = OptionMenuItemNashGoreColorPickerCX(mDesc.mItems[mDesc.mSelectedItem]);
+				mToolTip = StringTable.Localize(item.mTooltip);
+				mRequired = item.mRequired;
+			}
+			
+			Font of = OptionFont();
+			int fHeight = of.GetHeight() * cleanYFac_1;
+			int padding = fHeight<<1;
+			
+			if (prevSelected != mDesc.mSelectedItem)
+			{
+				startTimer = START_TIME;
+				endTimer = 0;
+				scrollTimer = 0;
+			}
+			
+			if (mToolTip.Length() > 0)
+			{
+				int realWidth = Screen.GetWidth();
+				int height = Screen.GetHeight();
+				
+				int width = realWidth;
+				if (width / height > MAX_ASPECT)
+					width = (int)(height * MAX_ASPECT);
+				
+				int textBoxWidth = (int)(width * 3/4.);
+				int textBoxStart = width / 8 + (realWidth - width) / 2;
+				
+				int length = of.StringWidth(mToolTip) * cleanXFac_1;
+				int xOfs = (realWidth - length) / 2;
+				if (length > textBoxWidth)
+				{
+					xOfs = textBoxStart;
+					if (startTimer <= 0)
+					{
+						xOfs -= SCROLL_SPEED * (endTimer <= 0 ? ++scrollTimer : scrollTimer);
+						
+						int end = xOfs + length;
+						if (endTimer > 0 || end < textBoxStart + textBoxWidth)
+						{
+							xOfs += (textBoxStart + textBoxWidth - end);
+							if (endTimer <= 0)
+								endtimer = END_TIME;
+						}
+					}
+					
+					if (endTimer <= 0)
+						textBoxWidth -= of.StringWidth("...") * cleanXFac_1;
+				}
+				
+				int cx, cy, cw, ch;
+				[cx, cy, cw, ch] = Screen.GetClipRect();
+				Screen.SetClipRect(textBoxStart, yOffset+padding, textBoxWidth, fHeight);
+				
+				int fontcolor = StringUtils.FONT_COLOR;
+				
+				Screen.DrawText(of, fontcolor,
+								xOfs, yOffset+padding,
+								mToolTip,
+								DTA_CleanNoMove_1, true);
+				
+				Screen.SetClipRect(cx, cy, cw, ch);
+				
+				if (length > textBoxWidth && endTimer <= 0)
+				{
+					Screen.DrawText(of, fontcolor,
+									textBoxStart+textBoxWidth, yOffset+padding,
+									"...",
+									DTA_CleanNoMove_1, true);
+				}
+				
+				if (mRequired)
+				{
+					string note = StringTable.Localize("$CEMNU_NOTE");
+					length = of.StringWidth(note) * cleanXFac_1;
+					Screen.DrawText(of, fontcolor,
+										(width/2)-(length/2), yOffset+padding,
+										"\n"..note,
+										DTA_CleanNoMove_1, true);
+				}
+			}
+			/*
+			if (startTimer > 0)
+				--startTimer;
+			
+			if (endTimer > 0)
+			{
+				--endTimer;
+				if (endTimer <= 0)
+				{
+					scrollTimer = 0;
+					startTimer = START_TIME;
+				}
+			}
+			*/
+			int shift = -padding / cleanYFac_1;
+			if (shift > mDefaultPosition)
+				shift = mDefaultPosition;
+				
+			mDesc.mPosition = shift;
+			prevSelected = mDesc.mSelectedItem;
+			
+			
+			mDesc.mPosition = mDefaultPosition;
+		}
+	}
+}

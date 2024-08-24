@@ -1,0 +1,231 @@
+
+//Flare actors
+
+Actor SHRedTorchFlare : VisualSpecialEffect
+{
+  RenderStyle Add
+  Scale 0.55
+  Alpha 0.3
+  States
+  {
+  Spawn:
+    RFLR A 2 Bright
+    Stop
+  }
+}
+
+Actor SHBlueTorchFlare : SHRedTorchFlare
+{
+  States
+  {
+  Spawn:
+    BFLR A 2 Bright
+    Stop
+  }
+}
+
+Actor SHPurpleTorchFlare : SHRedTorchFlare
+{
+  States
+  {
+  Spawn:
+    XFLR A 2 Bright
+    Stop
+  }
+}
+
+Actor SmallGreenFlare : SHRedTorchFlare
+{
+  Scale 0.2
+  States
+  {
+  Spawn:
+    GFLR A 2 Bright
+    Stop
+  }
+}
+
+Actor SmallRedFlare : SHRedTorchFlare
+{
+  Scale 0.2
+  States
+  {
+  Spawn:
+    RFLR A 2 Bright
+    Stop
+  }
+}
+
+Actor SmallBlueFlare : SHRedTorchFlare
+{
+  Scale 0.2
+  States
+  {
+  Spawn:
+    BFLR A 2 Bright
+    Stop
+  }
+}
+
+Actor RedExplosionFlare : SHRedTorchFlare
+{
+  Scale 0.9
+  States
+  {
+  Spawn:
+    RFLR A 1 Bright A_FadeOut(0.01)
+    loop
+  }
+}
+Actor RedExplosionFlareSmall : SHRedTorchFlare
+{
+  Scale 0.5
+  States
+  {
+  Spawn:
+    RFLR A 1 Bright A_FadeOut(0.01)
+    loop
+  }
+}
+Actor RedExplosionFlareMedium : SHRedTorchFlare
+{
+  Scale 0.7
+  States
+  {
+  Spawn:
+    RFLR A 1 Bright A_FadeOut(0.01)
+    loop
+  }
+}
+Actor BlueExplosionFlare : SHRedTorchFlare
+{
+  Scale 0.5
+  States
+  {
+  Spawn:
+    BFLR A 1 Bright A_FadeOut(0.01)
+    loop
+  }
+}
+Actor GreenExplosionFlare : SHRedTorchFlare
+{
+  Scale 1.2
+  Alpha 0.42
+  States
+  {
+  Spawn:
+    GFLR A 1 Bright A_FadeOut(0.01)
+    loop
+  }
+}
+Actor GreenTeleportFlare : GreenExplosionFlare
+{
+	Scale 0.9
+	Alpha 0.3
+}
+Actor GreenExplosionFlareSmall : SHRedTorchFlare
+{
+  Scale 0.5
+  States
+  {
+  Spawn:
+    GFLR A 1 Bright A_FadeOut(0.01)
+    loop
+  }
+}
+Actor GreenExplosionFlareSmallFaded: GreenExplosionFlare
+{
+  Alpha 0.3
+  Scale 0.5
+}
+
+//Flame actors
+
+Actor RedTorchFire1
+{
+ +NoGravity
+ +NoInteraction
+ +NoBlockmap
+ +NoTeleport
+ +ForceXYBillboard
+ Radius 0
+ Height 0
+ RenderStyle Add
+ Scale 0.165
+ Alpha 0.9
+ States
+ {
+  Spawn:
+   FIR1 ABCDEFG 1 Bright
+   FIR1 HIJKL 1 Bright A_FadeOut(0.15)
+   Stop
+ }
+}
+
+Actor GreenTorchFire1 : RedTorchFire1
+{
+ States
+ {
+  Spawn:
+   FIG1 ABCDEFG 1 Bright
+   FIG1 HIJKL 1 Bright A_FadeOut(0.15)
+   Stop
+ }
+}
+
+Actor YellowTorchFire1 : RedTorchFire1
+{
+ States
+ {
+  Spawn:
+   FIY1 ABCDEFG 1 Bright
+   FIY1 HIJKL 1 Bright A_FadeOut(0.15)
+   Stop
+ }
+}
+
+Actor YellowTorchFire2 : GreenTorchFire1
+{
+ States
+ {
+  Spawn:
+   FIY2 ABCDEFG 1 Bright
+   FIY2 HIJKL 1 Bright A_FadeOut(0.15)
+   Stop
+ }
+}
+
+Actor RedEmber : VisualSpecialEffect
+{
+  +RANDOMIZE
+  Radius 0
+  Height 0
+  RenderStyle Add
+  Scale 0.165
+  States
+  {
+  Spawn:
+    FRED A 8 bright
+  Loopy:
+    FRED A 1 bright A_FadeOut(0.08)
+    Loop
+  }
+}
+
+Actor YellowEmber : RedEmber
+{
+  States
+  {
+  Spawn:
+    FRE2 A 8 bright
+  Loopy:
+    FRE2 A 1 bright A_FadeOut(0.08)
+    Loop
+  }
+}
+
+Actor BlueTeleportFlare : RedExplosionFlare
+{
+	Translation "ZPBlueBall"
+  Scale 0.7
+}

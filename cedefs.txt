@@ -1,0 +1,23 @@
+//cvar prefix for cvars (0..35) that stores unlocked level states
+UnlockCVar = "level_state"
+
+//level select menus in menudefs
+UnlockMenus = "LevelSelectEp1", "LevelSelectEp2", "LevelSelectEp3"
+
+//level select menu titles
+UnlockMenuTitles = "$MNU_DOOM", "$MNU_DOOM2", "$MNU_NRFTL"
+
+//whether the last episode in the list is hidden unless the unl_bonus cvar is true
+HideBonusEpisode = true
+
+//maps that should have special scripts disabled (map name toast, music changer, etc)
+ExcludedMaps = "TITLEMAP"
+
+//should always be set to true in map packs: disables scripts that should only activate in the main campaigns
+IsPwad = false
+
+//pixel aspect ratio for low res shader
+PixelAspectRatio = 48
+
+//skip stats screen, but still show cutscenes
+SkipStatsScreen = "FUN00"

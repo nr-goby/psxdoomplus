@@ -1,0 +1,71 @@
+skybox SkyS1{
+	01_FR
+	01_LF
+	01_BK
+	01_RT
+	01_UP
+	01_DN
+}
+
+skybox SkyS2{
+	02_FR
+	02_LF
+	02_BK
+	02_RT
+	02_UP
+	02_DN
+}
+
+skybox SkyS3{
+	03_FR
+	03_LF
+	03_BK
+	03_RT
+	03_UP
+	03_DN
+}
+
+skybox SkyS4 fliptop{
+	04_FR
+	04_FR
+	04_FR
+	04_FR
+	04_UP
+	04_UP
+}
+
+skybox SkyS5{
+	05_FR
+	05_LF
+	05_BK
+	05_RT
+	05_UP
+	05_DN
+}
+
+skybox SkyS6{
+	06_FR
+	06_LF
+	06_FR
+	06_LF
+	06_UP
+	06_DN
+}
+
+skybox SkyS7{
+	07_FR
+	07_LF
+	07_FR
+	07_LF
+	07_UP
+	07_UP
+}
+
+skybox SkyS8{
+	M04_FR
+	M04_FR
+	M04_FR
+	M04_FR
+	M04_UP
+	M04_DN
+}

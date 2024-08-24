@@ -1,0 +1,274 @@
+class PsxNightmareImp : PsxDoomImp
+{
+    Default
+    {
+		//$Title "Nightmare Imp"
+	
+        Health 60;
+        PainChance 100;
+        Speed 14;
+        Obituary "$OB_NMIMP";
+        HitObituary "$OB_NMIMPHIT";
+		RenderStyle "Subtract";
+        PsxActor.FootstepSound "";
+        PsxActor.DeathThudSound "";
+        Tag "$FN_NMIMP";
+    }
+
+    override void A_TroopAttack()
+    {
+        A_CustomComboAttack ("PSXNightmareDoomImpBall", 32, random(1, 8)*3, "imp/melee", "", 1);
+    }
+}
+
+class PsxNightmareDoomImpBall : PsxDoomImpBall
+{
+    Default
+    {
+        Speed 16;
+	    RenderStyle "Translucent";
+	    Alpha 0.6;
+		PsxProjectile.NightmareMissileSpeedFactor 1.2;
+    }
+
+    States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            NMBL A 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            NMBL A 1 BRIGHT A_ZPTrail;
+            NMBL A 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            NMBL A 1 BRIGHT A_ZPTrail;
+            NMBL B 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            NMBL B 1 BRIGHT A_ZPTrail;
+            NMBL B 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            NMBL B 1 BRIGHT A_ZPTrail;
+            Loop;
+        SmoothSpawn:
+            NBMP A 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            NBMP A 1 BRIGHT A_ZPTrail;
+            NBMP B 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            NBMP B 1 BRIGHT A_ZPTrail;
+            NBMP C 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            NBMP C 1 BRIGHT A_ZPTrail;
+            NBMP D 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            NBMP D 1 BRIGHT A_ZPTrail;
+            NBMP E 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            NBMP E 1 BRIGHT A_ZPTrail;
+            NBMP F 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            NBMP F 1 BRIGHT A_ZPTrail;
+	        Loop;
+            
+        Death:
+            TNT1 A 0 A_StopAmbientSound;
+            TNT1 A 0 a_jumpif(zp_enabled && hq_enabled, "HQDeath");
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothDeath");
+            NMBL C 6 BRIGHT A_ZPExplosion;
+            NMBL DE 6 BRIGHT;
+            Stop;
+        SmoothDeath:
+            NPRD a 2 bright A_ZPExplosion;
+            NPRD bcdefgh 2 bright;
+            Stop;
+        HQDeath:
+            TNT1 C 6 Light("NIMPBALL_X1") A_ZPExplosion;
+            TNT1 D 6 Light("NIMPBALL_X2");
+            TNT1 E 6 Light("NIMPBALL_X3");
+            Stop;
+	}
+
+    void A_ZPFlare(String zp = "SmallBlueFlare", String hq = "BlueFlareSmall")
+    {
+        super.A_ZPFlare(zp, hq);
+    }
+
+    void A_ZPTrail(String zp = "NImpBallFlame", String hq = "NImpBallFlame")
+    {
+        super.A_ZPTrail(zp, hq);
+    }
+
+    void A_ZPExplosion(String zp1 = "NightmareImpBoom", String zp2 = "NightmareImpBoom", String hq = "NImpExplosionSprite")
+    {
+        super.A_ZPExplosion(zp1, zp2, hq);
+    }
+}
+
+class PsxUnseerSphere : CustomInventory
+{	
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+	
+	Default
+	{
+		//$Category "Powerups"
+		//$Title "Unseer"
+		//$Color 9
+		//$NotAngled
+	
+		+COUNTITEM
+		+INVENTORY.AUTOACTIVATE
+		+INVENTORY.FANCYPICKUPSOUND
+		+INVENTORY.ALWAYSPICKUP
+		+INVENTORY.BIGPOWERUP
+		Inventory.PickupSound "misc/p_pkup";
+		
+		RenderStyle "Translucent";
+		Alpha 0.4;
+		+MOVEWITHSECTOR;
+		Inventory.PickupMessage "$GOTUNSEE";
+		Tag "$CC_UNSEER";
+	}
+	
+	States
+	{
+	Spawn:
+		SINV ABCD 6 Bright;
+		Loop;
+	Pickup:
+		TNT1 A 0;
+		TNT1 A 0 A_GiveInventory("PowerUnseer",1);
+		Stop;
+	}
+	
+	virtual bool IsSmooth() { return smi_enabled; }
+}
+
+class PsxDoomsdaySphere : CustomInventory
+{	
+	mixin OverlapPickupSound;
+	mixin VarsCache;
+	mixin BlendFlags;
+	mixin ApplyBlendFlags;
+
+	Default
+	{
+		//$Category "Powerups"
+		//$Title "Doomsday"
+		//$Color 9
+		//$NotAngled
+		
+		+COUNTITEM
+		+INVENTORY.AUTOACTIVATE
+		+INVENTORY.FANCYPICKUPSOUND
+		+INVENTORY.ALWAYSPICKUP
+		+INVENTORY.BIGPOWERUP
+		Inventory.PickupSound "misc/p_pkup";
+		
+		+MOVEWITHSECTOR;
+		Inventory.PickupMessage "$ALLALONE";
+		Tag "$CC_DOOMSDAY";
+	}
+	
+	States
+	{
+	Spawn:
+		DOOM A 10 Bright;
+		DOOM B 15 Bright;
+		DOOM C 8 Bright;
+		DOOM D 6 Bright;
+		Loop;
+	Pickup:
+		TNT1 A 0;
+		TNT1 A 0 A_GiveInventory("PowerFrightener",1);
+		TNT1 A 0 A_GiveInventory("PowerDoomsday",1);
+		Stop;
+	}
+	
+	virtual bool IsSmooth() { return smi_enabled; }
+}
+
+class PowerUnseer : PowerGhost
+{
+	Default
+	{
+		Powerup.Duration -30;
+		Powerup.Mode "Translucent";
+		Powerup.Strength 90;
+	}
+
+	override void InitEffect ()
+	{
+		Super.InitEffect();
+		let Owner = self.Owner;
+		if (Owner != NULL)
+		{
+			Owner.bCANTSEEK = true;
+			Owner.bSHOOTABLE = false;
+			
+			let it = ThinkerIterator.Create("Actor", Thinker.STAT_DEFAULT);
+			Actor mo;
+			while(mo = Actor(it.Next()))
+			{
+				if (mo.bISMONSTER && mo.target == Owner) mo.target = null;
+			}
+		}
+	}
+
+	override void EndEffect()
+	{
+		let Owner = self.Owner;
+		if (Owner != NULL)
+		{
+			Owner.bCANTSEEK = false;
+			Owner.bSHOOTABLE = true;
+			Console.PrintfEx(PRINT_LOW, StringTable.Localize("$UNSEEOFF"));
+		}
+		super.EndEffect();
+	}
+}
+
+class PowerDoomsday : PowerDamage
+{
+	Default
+	{
+		Powerup.Duration -30;
+		DamageFactor "Normal", 4;
+		DamageFactor "Extreme", 4;
+		Powerup.Color "GoldMap";
+	}
+}
+
+class PsxCommanderKeen : PsxActor replaces CommanderKeen
+{
+	Default
+	{
+		//$Title "Commander Keen"
+		
+		Health 100;
+		Radius 16;
+		Height 72;
+		Mass 10000000;
+		PainChance 256;
+		+SOLID 
+		+SPAWNCEILING 
+		+NOGRAVITY 
+		+SHOOTABLE 
+		+COUNTKILL 
+		+NOICEDEATH
+		+ISMONSTER
+		PainSound "keen/pain";
+		DeathSound "keen/death";
+		Tag "$FN_KEEN";
+	}
+	States
+	{
+	Spawn:
+		KEEN A -1;
+		Loop;
+	Death:
+		KEEN AB	6;
+		KEEN C 6 A_Scream;
+		KEEN DEFGH	6;
+		KEEN I 6;
+		KEEN J 6;
+		KEEN K 6 A_KeenDie;
+		KEEN L -1;
+		Stop;
+	Pain:
+		KEEN M	4;
+		KEEN M	8 A_Pain;
+		Goto Spawn;
+	}
+}

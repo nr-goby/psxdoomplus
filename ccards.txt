@@ -1,0 +1,19 @@
+excludemap FUN00
+
+cleardeckmap MAP01
+cleardeckmap MAP31
+cleardeckmap SIG01
+cleardeckmap NRV01
+//cleardeckmap FUN00
+
+monstergroup "Former Human", PsxZombieMan, PsxShotgunGuy, PsxChaingunGuy
+monstergroup "Hell Nobles", PsxHellKnight, PsxBaronOfHell
+monstergroup "Demon", PsxDemon, PsxSpectre, PsxNightmareSpectre
+
+monstergroupsprite "Former Human", GRP_ZOMB
+monstergroupsprite "Hell Nobles", GRP_HELN
+monstergroupsprite "Demon", GRP_PINK
+
+monstercardsprite "PsxRevenant", CARD_REV
+
+excludeactor PsxCommanderKeen

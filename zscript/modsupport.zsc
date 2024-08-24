@@ -1,0 +1,42 @@
+class CEModSupportHandler : EventHandler
+{
+	mixin VarsCache;
+	PlayerInfo p;
+	
+	//hack that reuses the Score property to set custom flags, since there
+	//is no way to read custom user variables in replaced monsters
+	enum EScoreFlags
+	{
+		SCOREF_TRANSLUCENT 	= 1,
+		SCOREF_SUBTRACTIVE 	= 2,
+		SCOREF_ADDITIVE		= 4,
+	};
+	
+	override void OnRegister()
+	{
+		p = players[consoleplayer];
+		SetOrder(9999);
+	}
+
+	override void WorldLoaded(WorldEvent e)
+	{
+		if (!p.mo) return;
+		let a = PsxDoomPlayer(GetDefaultByType("PsxDoomPlayer"));
+		p.mo.ViewHeight = a.ViewHeight;
+		p.mo.AttackZOffset = a.AttackZOffset;
+	}
+	
+	override void WorldThingSpawned(WorldEvent e)
+	{
+		/* unsupported for now since all maps need to be updated to set the score
+		if (!e.Thing || e.Thing.Score <= 0 || e.Thing is "PlayerPawn") return;
+		bool translucent = e.Thing.Score & SCOREF_TRANSLUCENT;
+		bool subtractive = e.Thing.Score & SCOREF_SUBTRACTIVE;
+		bool additive = e.Thing.Score & SCOREF_ADDITIVE;
+		if (translucent || subtractive || additive)
+		{
+			PsxActor.MakeBlendable(e.Thing, translucent, subtractive, additive);
+		}
+		*/
+	}
+}

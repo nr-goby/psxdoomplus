@@ -1,0 +1,390 @@
+class UnlockableListMenu : StretchListMenu
+{
+	int lastUnlockedItem;
+	
+	void DisableLockedItems(ListMenuDescriptor desc)
+	{
+		for (int i=0;i<desc.mItems.Size();i++){
+			desc.mItems[i].Enable(i<=lastUnlockedItem);
+		}
+	}
+}
+
+class UnlockableAutoMoverMenu : UnlockableListMenu
+{
+	override void Ticker()
+	{
+		int q;
+		for (int i=0; i<mDesc.mItems.Size(); i++)
+		{
+			if (mDesc.mItems[i].Selectable()) q++;
+		}
+		if (q == 1) mDesc.mItems[1].Activate();
+		Super.Ticker();
+	}
+	
+	override void OnReturn()
+	{		int q;
+		for (int i=0; i<mDesc.mItems.Size(); i++)
+		{
+			if (mDesc.mItems[i].Selectable()) q++;
+		}
+		if (q == 1) Close();
+		Super.OnReturn();
+	}
+}
+
+class UnlockableEpisodesMenu : UnlockableAutoMoverMenu
+{
+	override void Init(Menu parent, ListMenuDescriptor desc)
+	{
+		let config = CEConfig.Get();
+		bool hideExtra = !config.isPwad && unl_episodes_original;
+		//lastUnlockedItem =  hideExtra ? 3 : CVar.GetCVar("unl_episodes", players[consoleplayer]).GetInt();
+		lastUnlockedItem =  hideExtra ? 2 : CVar.GetCVar("unl_episodes", players[consoleplayer]).GetInt();
+	
+		if (lastUnlockedItem > 0){
+			DisableLockedItems(desc);
+		}
+		
+		//hide sigil
+		//if (hideExtra) desc.mItems[2].Enable(0);
+
+		let bi = ListMenuItemTextItem(desc.mItems[desc.mItems.Size() - 1]);
+		if (config.hideBonusEpisode && bi && bi.mText == "$MNU_BONUS")
+		{			
+			bool enable = !hideExtra && CVar.GetCVar("unl_bonus", players[consoleplayer]).GetInt();
+			desc.mItems[desc.mItems.Size() - 1].Enable(enable);
+		}
+		Super.Init(parent,desc);
+	}
+}
+
+class UnlockableSkillsMenu : UnlockableAutoMoverMenu
+{
+	override void Init(Menu parent, ListMenuDescriptor desc)
+	{
+		bool hideExtra = !CEConfig.Get().isPwad && CVar.GetCVar("unl_skills_original", players[consoleplayer]).GetBool();
+		lastUnlockedItem =  hideExtra ? 4 : CVar.GetCVar("unl_skills", players[consoleplayer]).GetInt();
+		
+		if (lastUnlockedItem > 1)
+		{
+			DisableLockedItems(desc);
+		}
+		Super.Init(parent,desc);
+	}
+	
+	override bool MenuEvent (int mkey, bool fromcontroller)
+	{
+		if (mkey == MKEY_Enter){
+			int selectedSkill = mDesc.mSelectedItem - 1;
+			CVar.FindCVar("levelselect_skill").SetInt(selectedSkill);
+		}
+		return Super.MenuEvent(mkey, fromcontroller);
+	}
+}
+
+class OptionMenuItemUnlockableSkillsOption : OptionMenuItemOption
+{
+	Name mOriginalValues;
+	Name mAllValues;
+	
+	OptionMenuItemUnlockableSkillsOption Init(String label, Name command, Name values, Name originalValues, CVar graycheck = null, int center = 0)
+	{
+		mOriginalValues = originalValues;
+		mAllValues = values;
+		Super.Init(label, command, values, graycheck, center);
+		return self;
+	}
+	
+	override int GetSelection()
+	{
+		bool hideExtra = !CEConfig.Get().isPwad && CVar.GetCVar("unl_skills_original", players[consoleplayer]).GetBool();
+		mValues = hideExtra ? mOriginalValues : mAllValues;
+		return super.GetSelection();
+	}
+}
+
+class UnlockableEpisodesMenuNative : UnlockableEpisodesMenu
+{
+	override void Init(Menu parent, ListMenuDescriptor desc)
+	{
+		super.Init(parent, desc);
+		int diff = 0;
+		for (int i = 0; i < mDesc.mItems.Size(); i++)
+		{
+			if (oen_enabled && mDesc.mItems[i] is "ListMenuItemTextItem")
+			{
+				let ti = ListMenuItemTextItem(mDesc.mItems[i]);
+				let test = ti.mText.Mid(1, ti.mText.Length()).."_ORIGINAL";
+				if (StringTable.Localize(ti.mText.."_ORIGINAL") != test)
+				{
+					ti.mText = ti.mText.."_ORIGINAL";
+				}
+			}
+			if (mDesc.mItems[i].Selectable()) 
+			{
+				mDesc.mItems[i].SetX(mDesc.mXpos);
+				mDesc.mItems[i].OffsetPositionY(18 - diff);
+			}
+			else if (!mDesc.mItems[i].mEnabled)
+			{
+				diff += mDesc.mLinespacing;
+			}
+		}
+	}
+}
+
+class UnlockableSkillsMenuNative : UnlockableSkillsMenu
+{
+	override void Init(Menu parent, ListMenuDescriptor desc)
+	{
+		super.Init(parent, desc);
+		for (int i = 0; i < mDesc.mItems.Size(); i++)
+		{
+			if (mDesc.mItems[i].Selectable()) 
+			{ 
+				mDesc.mItems[i].SetX(mDesc.mXpos);
+				mDesc.mItems[i].OffsetPositionY(36);
+			}
+		}
+	}
+}
+
+class LevelSelectSetupMenu : OptionMenu
+{
+	override void Init(Menu parent, OptionMenuDescriptor desc)
+	{
+		OptionMenuDescriptor newDesc = new("OptionMenuDescriptor");
+		newDesc.mTitle = desc.mTitle;
+		newDesc.mSelectedItem = desc.mSelectedItem;
+		newDesc.mDrawTop = desc.mDrawTop;
+		newDesc.mScrollTop = desc.mScrollTop;
+		newDesc.mScrollPos = desc.mScrollPos;
+		newDesc.mIndent = desc.mIndent;
+		newDesc.mPosition = desc.mPosition;
+		newDesc.mDontDim = desc.mDontDim;
+		newDesc.mFont = desc.mFont;
+		
+		let config = CEConfig.Get();
+		
+		Array<OptionMenuItem> items;
+		bool hideExtra = !config.isPwad && unl_episodes_original;
+		int unlockedEpisodes =  hideExtra ? 2 : CVar.GetCVar("unl_episodes", players[consoleplayer]).GetInt();
+		int unlockedBonus = hideExtra ? 0 : config.hideBonusEpisode && CVar.GetCVar("unl_bonus", players[consoleplayer]).GetInt();
+		
+		Array<string> menus;
+		menus.Copy(config.unlockMenus);
+		Array<string> titles;
+		titles.Copy(config.unlockMenuTitles);
+		
+		/*if (hideExtra)
+		{
+			menus.Delete(1);
+			titles.Delete(1);
+		}*/
+		
+		if (oen_enabled)
+		{
+			for (int i = 0; i < titles.Size(); i++)
+			{
+				let test = titles[i].Mid(1, titles[i].Length()).."_ORIGINAL";
+				if (StringTable.Localize(titles[i].."_ORIGINAL") != test)
+				{
+					titles[i] = titles[i].."_ORIGINAL";
+				}
+			}
+		}
+		
+		OptionMenuItemSubmenu e;
+		for (int i= 0; i< desc.mItems.Size(); i++)
+		{
+			items.Push(desc.mItems[i]);
+			if (desc.mItems[i].mLabel == "$MNU_EPISODE")
+			{
+				for (int j=0; j<menus.Size(); j++)
+				{
+					if (j >= unlockedEpisodes) break;
+					e = new("OptionMenuItemSubmenu");
+					e.Init(titles[j], menus[j], 0, true);
+					items.Push(e);
+				}
+				if (unlockedBonus)
+				{
+					e = new("OptionMenuItemSubmenu");
+					e.Init("$MNU_BONUS", "LevelSelectEp9", 0, true);
+					items.Push(e);
+				}
+			}
+		}
+		newDesc.mItems.Move(items);
+		Super.Init(parent,newDesc);
+	}
+}
+
+class OptionMenuItemStartingMap : OptionMenuItemStaticText { }
+
+class LevelSelectDynamicMenu : OptionMenu
+{
+	Array<string> maps;
+	
+	override void Init(Menu parent, OptionMenuDescriptor desc)
+	{
+		string startingMap = "";
+		for (int i=0; i<desc.mItems.Size();i++)
+		{
+			if (desc.mItems[i] is "OptionMenuItemStartingMap")
+			{
+				startingMap = desc.mItems[i].mLabel;
+			}
+		}
+		if (startingMap != "")
+		{
+			let config = CEConfig.Get();
+			Array<string> menus;
+			menus.Copy(config.unlockMenus);
+			Array<string> titles;
+			titles.Copy(config.unlockMenuTitles);
+			
+			let menuname = (""..desc.mMenuName).MakeLower();
+			desc.mTitle = titles[menus.Find(menuname)];
+
+			TraverseMap(startingMap);
+			Array<OptionMenuItem> items;
+			let cvarname = config.unlockCVar;
+			for (int i=0; i<maps.Size(); i++)
+			{
+				let item = new("OptionMenuItemSelectLevel");
+				let info = LevelInfo.FindLevelInfo(maps[i]);
+				item.Init(info.levelName, "map "..info.MapName, info.levelNum, true);
+				if (i==0) item.forceEnabled = true;
+				items.Push(item);
+			}
+			desc.mItems.Move(items);
+		}
+		super.Init(parent, desc);
+	}
+	
+	override bool MenuEvent (int mkey, bool fromcontroller)
+	{
+		int selectedSkill = CVar.GetCVar("levelselect_skill", players[consoleplayer]).GetInt();
+		bool command = Super.MenuEvent(mkey, fromcontroller);
+		if (mkey == MKEY_Enter && mDesc.mItems[mDesc.mSelectedItem].mEnabled){
+			CVar.FindCVar("skill").SetInt(selectedSkill);
+			mParentMenu.mParentMenu.mParentMenu.Close();
+		}
+		return command;
+	}
+	
+	void TraverseMap(String map)
+	{
+		if (!map || !LevelInfo.MapExists(map) || maps.Find(map) != maps.Size()) return;
+		if (map != "" && !CEConfig.Get().IsExcluded(map) && maps.Find(map) == maps.Size()) maps.Push(map);
+		let i = level.info.FindLevelInfo(map);
+		if (!i) return;
+		TraverseMap(i.NextSecretMap);
+		TraverseMap(i.NextMap);
+	}
+}
+
+class OptionMenuItemSelectLevelBase : OptionMenuItemCommand
+{
+	override bool Activate()
+	{
+		CVar.GetCVar("levelselect_warping", players[consoleplayer]).SetBool(true);
+		return super.Activate();
+	}
+}
+
+class OptionMenuItemSelectLevel : OptionMenuItemCommand
+{
+	const TOTAL_LEVELS = 175;
+	const CONTAINER_CAPACITY = 31.0;
+	String cvarname;
+	String levelName;
+	int levelNum;
+	bool forceEnabled;
+	String format;
+	
+	OptionMenuItemSelectLevel Init(String label, Name command, int levelNum, bool centered = false, bool closeonselect = false, String format = "", bool forceEnabled = false)
+	{
+		self.levelName = label;
+		self.levelNum = levelNum;
+		self.cvarname = CEConfig.Get().unlockCVar;
+		self.format = format;
+		self.forceEnabled = forceEnabled;
+		Super.Init(label, command, centered, closeonselect);
+		return self;
+	}
+	
+	override bool Selectable()
+	{
+		return forceEnabled || IsEnabled(cvarname, levelNum);
+	}
+		
+	override int Draw(OptionMenuDescriptor desc, int y, int indent, bool selected)
+	{
+		let mapname = GetMapName(cvarname, levelName, levelNum);
+		mLabel = format ? String.Format(format, StringTable.Localize(mapname)) : mapname;
+		Enable(IsEnabled(cvarname, levelNum));
+		if (forceEnabled || mEnabled)
+		{
+			return super.Draw(desc, y, indent, selected);
+		}
+		else
+		{
+			mLabel = "$LEVELSELECT_LOCKED";
+			int x = drawLabel(indent, y, OptionMenuSettings.mFontColorMore, true);
+			if (mCentered) 
+			{
+				return x - 16*CleanXfac_1;
+			}
+			return indent;
+		}
+	}
+	
+	override bool Activate()
+	{
+		CVar.GetCVar("levelselect_warping", players[consoleplayer]).SetBool(true);
+		return super.Activate();
+	}
+	
+	string GetMapName(String cvarname, string levelName, int levelNum)
+	{
+		return levelName.Left(1) == "$" ? levelName : "$"..levelName;
+		/*
+		return String.Format("%s [%s%s%s%s%s%s]",
+			StringTable.Localize("$"..levelName), 
+			IsUnlocked(cvarname, levelNum, 0) ? "*" : "-", 
+			IsUnlocked(cvarname, levelNum, 1) ? "*" : "-", 
+			IsUnlocked(cvarname, levelNum, 2) ? "*" : "-", 
+			IsUnlocked(cvarname, levelNum, 3) ? "*" : "-", 
+			IsUnlocked(cvarname, levelNum, 4) ? "*" : "-", 
+			IsUnlocked(cvarname, levelNum, 5) ? "*" : "-");
+		*/
+	}
+	
+	bool IsEnabled(String cvarname, int selectedLevel)
+	{
+		for (int ss = 0; ss <= 5; ss++)
+		{
+			if (IsUnlocked(cvarname, selectedLevel, ss)) return true;
+		}
+		return false;
+	}
+	
+	bool IsUnlocked(string cvarname, int level, int skill)
+	{
+		int ordinal = (skill * TOTAL_LEVELS) + level;
+		float factor = ordinal / CONTAINER_CAPACITY;
+		int containerNumber = int(ceil(factor));
+		int containerPosition = int(ordinal - (floor(factor) * CONTAINER_CAPACITY));
+		CVar levelState = CVar.GetCVar(String.Format("%s_%i",cvarname,containerNumber), players[consoleplayer]);
+		return HasBit(levelState.GetInt(),containerPosition);
+	}
+	
+	bool HasBit(int number, int bit)
+	{
+		return (number &= 1 << bit) != 0;
+	}
+}

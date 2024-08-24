@@ -1,0 +1,74 @@
+ClearSkills
+Skill Baby
+{
+	SpawnFilter = Baby
+	Name = "$SKILL_BABY"
+	Key = "i"
+	EasyBossBrain
+	AutoUseHealth
+	EasyKey
+	AmmoFactor = 2
+	DamageFactor = 0.5
+}
+
+Skill Easy
+{
+	SpawnFilter = Easy
+	Name = "$SKILL_EASY"
+	Key = "n"
+	EasyBossBrain
+}
+
+Skill Normal
+{
+	SpawnFilter = Normal
+	Name = "$SKILL_NORMAL"
+	Key = "h"
+	DefaultSkill
+}
+
+Skill Hard
+{
+	SpawnFilter = Hard
+	Name = "$SKILL_HARD"
+	Key = "u"
+}
+
+skill HardPlus
+{
+	SpawnFilter = Hard
+	Name = "$SKILL_HARDPLUS"
+	Key = "g"
+	FastMonsters
+	AmmoFactor = 1.5
+	mustconfirm = "$SKILL_HARDCORE"
+}
+
+skill Nightmare
+{
+	name = "$SKILL_NIGHTMARE"
+	spawnfilter = Nightmare
+	//SpawnMulti
+	ammofactor = 3.0
+	damagefactor = 1.2
+	monsterhealth = 0.8
+	acsreturn = 5
+	key = "l"
+	//disablecheats
+	//nopain
+	//noinfighting
+	mustconfirm = "$SKILL_DSLAYR"
+	
+	//replaceactor = "ZombieMan", "ShotgunGuy"
+	//replaceactor = "Spectre", "PsxNightmareSpectre"
+	//replaceactor = "Demon", "Spectre"
+	
+	replaceactor = "ShellBox", "Shell"
+	replaceactor = "ClipBox", "Clip"
+	replaceactor = "RocketBox", "RocketAmmo"
+	replaceactor = "CellPack", "Cell"
+	
+	replaceactor = "Medikit", "Stimpack"
+	replaceactor = "BlurSphere", "ArmorBonus"
+	replaceactor = "InvulnerabilitySphere", "Soulsphere"
+}

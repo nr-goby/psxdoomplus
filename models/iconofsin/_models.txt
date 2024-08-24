@@ -1,0 +1,72 @@
+Model IconOfSin  //Name of actor in DECORATE
+{ 
+   Path "MODELS/IconOfSin" 			// Path to model in PK3
+   SKIN 0 "sin.png" 		// Model index, model file
+   MODEL 0 "iconofsin.MD3" 	// Model index, texture (can be in any format supported by GZDoom)
+   Scale 1.0 1.0 1.0		// Scale values
+   //PITCHFROMMOMENTUM 		// A flag that will fix the model pitch for projectiles
+   
+   FrameIndex SIN1 A 0 0 	// The sprite lump, sprite frame, model index, frame number
+}
+
+Model IconOfSin  //Name of actor in DECORATE
+{ 
+   Path "MODELS/IconOfSin" 			// Path to model in PK3
+   SKIN 0 "sin1.png" 		// Model index, model file
+   MODEL 0 "iconofsin.MD3" 	// Model index, texture (can be in any format supported by GZDoom)
+   Scale 1.0 1.0 1.0		// Scale values
+   //PITCHFROMMOMENTUM 		// A flag that will fix the model pitch for projectiles
+   
+   FrameIndex SIN1 B 0 0 	// The sprite lump, sprite frame, model index, frame number
+}
+
+Model IconOfSin  //Name of actor in DECORATE
+{ 
+   Path "MODELS/IconOfSin" 			// Path to model in PK3
+   SKIN 0 "sin2.png" 		// Model index, model file
+   MODEL 0 "iconofsin.MD3" 	// Model index, texture (can be in any format supported by GZDoom)
+   Scale 1.0 1.0 1.0		// Scale values
+   //PITCHFROMMOMENTUM 		// A flag that will fix the model pitch for projectiles
+   
+   FrameIndex SIN1 C 0 0 	// The sprite lump, sprite frame, model index, frame number
+}
+
+Model IconOfSin  //Name of actor in DECORATE
+{ 
+   Path "MODELS/IconOfSin" 			// Path to model in PK3
+   SKIN 0 "sin3.png" 		// Model index, model file
+   MODEL 0 "iconofsin.MD3" 	// Model index, texture (can be in any format supported by GZDoom)
+   Scale 1.0 1.0 1.0		// Scale values
+   //PITCHFROMMOMENTUM 		// A flag that will fix the model pitch for projectiles
+   
+   FrameIndex SIN1 D 0 0 	// The sprite lump, sprite frame, model index, frame number
+}
+
+Model IconOfSin  //Name of actor in DECORATE
+{ 
+   Path "MODELS/IconOfSin" 			// Path to model in PK3
+   SKIN 0 "sin4.png" 		// Model index, model file
+   MODEL 0 "iconofsin.MD3" 	// Model index, texture (can be in any format supported by GZDoom)
+   Scale 1.0 1.0 1.0		// Scale values
+   //PITCHFROMMOMENTUM 		// A flag that will fix the model pitch for projectiles
+   
+   FrameIndex SIN1 E 0 0 	// The sprite lump, sprite frame, model index, frame number
+}
+
+Model PsxSpawnShot  
+{ 
+   Path "MODELS/IconOfSin" 		
+   SKIN 0 "sin.png" 		
+   MODEL 0 "cube.MD3" 	
+   Scale 1.0 1.0 1.0		
+   //PITCHFROMMOMENTUM 		
+   
+   FrameIndex BSF3 A 0 0 
+   FrameIndex BSF3 B 0 1
+   FrameIndex BSF3 C 0 2
+   FrameIndex BSF3 D 0 3
+   FrameIndex BSF3 E 0 4
+   FrameIndex BSF3 F 0 5
+   FrameIndex BSF3 G 0 6
+   FrameIndex BSF3 H 0 7	
+}

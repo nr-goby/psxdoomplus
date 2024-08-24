@@ -1,0 +1,10 @@
+DoomEdNums
+{
+	64 = PSXBloodyChain
+	666 = PSXArchvile
+	3000 = PSXNightmareSpectre
+	3007 = PSXNightmareImp
+	3010 = PSXFocusSpectre
+	3011 = PSXCacoSpectre
+	8642 = IconOfSin
+}

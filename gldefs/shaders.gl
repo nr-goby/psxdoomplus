@@ -1,0 +1,38 @@
+HardwareShader PostProcess scene
+{
+	name "DPWipe"
+	shader "shaders/dpwipe.fp" 330
+	Uniform int timer
+}
+
+HardwareShader PostProcess scene
+{
+	Name "Brightness"
+	Shader "shaders/brightness.fp" 330
+	Uniform float strength
+	Uniform float infraredfactor
+}
+
+HardwareShader PostProcess scene
+{
+	Name "PsxLight"
+	Shader "shaders/psxlight.fp" 330
+	Uniform int mode
+	Uniform int banding
+}
+
+HardwareShader PostProcess beforebloom
+{
+	Name "LowRes"
+	Shader "shaders/lowres.fp" 330
+	Uniform vec2 upres
+	Uniform vec2 dnres
+	Uniform float smoothing
+}
+
+HardwareShader PostProcess beforebloom
+{
+	Name "PsxAspect"
+	Shader "Shaders/aspect.fp" 330
+	Uniform float pixelstretch
+}

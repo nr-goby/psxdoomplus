@@ -1,0 +1,121 @@
+class PsxTeleportFog : PsxProjectile replaces TeleportFog
+{
+    Default
+	{
+		+NOBLOCKMAP
+		+NOTELEPORT
+		+NOGRAVITY
+		+ZDOOMTRANS
+		RenderStyle "Add";
+
+        +NOTONAUTOMAP;
+	}
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            TNT1 A 0 { A_ZPFlare(); A_ZPParticles(); }
+            TFOG A 6 Bright A_ZPParticles;
+            TFOG B 6 Bright A_ZPSmog;
+            TFOG A 6 Bright A_ZPSmog2;
+            TFOG BCDEFGHIJ 6 Bright;
+            Stop;
+        SmoothSpawn:
+            TNT1 A 0 { A_ZPFlare(); A_ZPParticles(); }
+            SFOG abcd 2 bright;
+            SFOG e 2 bright A_ZPParticles;
+            SFOG fgh 2 bright;
+            SFOG i 2 bright A_ZPSmog;
+            SFOG jkl 2 bright;
+            SFOG m 2 bright A_ZPSmog2;
+            SFOG nopqrstrqpo 2 bright;
+	        stop;
+    }
+
+    void A_ZPFlare()
+    {
+        if (zp_enabled) A_SpawnItem("GreenTeleportFlare",0,32);
+    }
+
+    void A_ZPParticles()
+    {
+        if (zp_enabled)
+        {
+            for(int i=0;i<28;i++) A_SpawnItemEx("TeleportParticle", 0,0,24, (Random(-5,5)), (Random(-5,5)), (Random(-5,5)), 0, SXF_ABSOLUTEMOMENTUM|SXF_NOCHECKPOSITION);
+            for(int i=0;i<11;i++) A_SpawnItemEx("GreenElectroSmog", Random(-2, 2), Random(-2, 2), 24+Random(-2, 2), (0.05)*Random(-50, 50), (0.05)*Random(-50, 50), (0.05)*Random(-50, 50), 0, 0, 8);
+            A_SpawnItemEx("BoomGreenTele", 0,0,24,0,0,0,0);
+        }
+    }
+
+    void A_ZPSmog()
+    {
+        if (zp_enabled)
+        {
+            A_SpawnItemEx("BoomGreenTele", 0,0,24,0,0,0,0);
+	        for(int i=0;i<8;i++) A_SpawnItemEx("GreenElectroSmog", Random(-2, 2), Random(-2, 2), 24+Random(-2, 2), (0.05)*Random(-50, 50), (0.05)*Random(-50, 50), (0.05)*Random(-50, 50), 0, 0, 8);
+        }
+    }
+
+    void A_ZPSmog2()
+    {
+        if (zp_enabled)
+        {
+            for(int i=0;i<4;i++) A_SpawnItemEx("GreenElectroSmog", Random(-2, 2), Random(-2, 2), Random(-2, 2), (0.02)*Random(-50, 50), (0.02)*Random(-50, 50), (0.02)*Random(-50, 50), 0, 0, 8);
+        }
+    }
+
+    override void PostBeginPlay ()
+	{
+		Super.PostBeginPlay ();
+		if (target)
+			target.A_StartSound ("misc/teleport", CHAN_AUTO, CHANF_OVERLAP|CHANF_NOSTOP);
+	}
+}
+
+class PsxItemFog : PsxProjectile replaces ItemFog
+{
+    Default
+	{
+		+NOBLOCKMAP
+		+NOGRAVITY
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay A_ZPParticles;
+            IFOG ABA 6 BRIGHT;
+            IFOG B 6 BRIGHT A_ZPSmog;
+            IFOG C 6 BRIGHT;
+            IFOG D 5 BRIGHT A_ZPSmog2;
+            IFOG E 6 BRIGHT;
+            Stop;
+	}
+
+    void A_ZPParticles()
+    {
+        if (zp_enabled)
+        {
+            for(int i=0;i<28;i++) A_SpawnItemEx("BlueTeleportParticle", 0,0,2, (Random(-5,5)), (Random(-5,5)), (Random(-5,5)), 0, SXF_ABSOLUTEMOMENTUM|SXF_NOCHECKPOSITION);
+            for(int i=0;i<11;i++) A_SpawnItemEx("BlueElectroSmog", Random(-2, 2), Random(-2, 2), 2+Random(-2, 2), (0.05)*Random(-50, 50), (0.05)*Random(-50, 50), (0.05)*Random(-50, 50), 0, 0, 8);
+            A_SpawnItem("BlueTeleportFlare", 0,10);
+        }
+    }
+
+    void A_ZPSmog()
+    {
+        if (zp_enabled)
+        {
+            for(int i=0;i<28;i++) A_SpawnItemEx("BlueTeleportParticle", 0,0,2, (Random(-5,5)), (Random(-5,5)), (Random(-5,5)), 0, SXF_ABSOLUTEMOMENTUM|SXF_NOCHECKPOSITION);
+	        for(int i=0;i<11;i++) A_SpawnItemEx("BlueElectroSmog", Random(-2, 2), Random(-2, 2), 2+Random(-2, 2), (0.05)*Random(-50, 50), (0.05)*Random(-50, 50), (0.05)*Random(-50, 50), 0, 0, 8);
+        }
+    }
+
+    void A_ZPSmog2()
+    {
+        if (zp_enabled)
+        {
+            for(int i=0;i<8;i++) A_SpawnItemEx("BlueElectroSmog", Random(-2, 2), Random(-2, 2), Random(-2, 2), (0.02)*Random(-50, 50), (0.02)*Random(-50, 50), (0.02)*Random(-50, 50), 0, 0, 8);
+        }
+    }
+}

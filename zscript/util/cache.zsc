@@ -1,0 +1,9 @@
+class CECache : EventHandler
+{	
+	int particleCount;
+	
+	static clearscope CECache Get()
+	{
+		return CECache(Find("CECache"));
+	}
+}

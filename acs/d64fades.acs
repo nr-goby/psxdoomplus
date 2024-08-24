@@ -1,0 +1,66 @@
+#library "D64FADES"
+#include "zcommon.acs"
+
+script "Enterfade" ENTER
+{
+	if(GetCVar("d64_enterfade") == 1)
+	{
+		FadeTo(0, 0, 0, 1.0, 0.0);
+		Delay(10);
+		FadeTo(0, 0, 0, 0.0, 3.0);
+	}
+}
+
+// Exit level (normal exit)
+script "Exitfade_normal" (void)
+{
+	if(GetCVar("d64_exitfade") == 1)
+	{
+		//Delay(20);
+		Thing_Stop(0);
+		SetPlayerProperty(1, 1, PROP_TOTALLYFROZEN);
+		SetPlayerProperty(1, 2, PROP_INVULNERABILITY);
+		Delay(20);
+		FadeTo(255, 0, 0, 0.75, 2.0);
+		Delay(70);
+		FadeTo(0, 0, 0, 1.0, 2.0);
+		Delay(75);
+		
+		SetPlayerProperty(1, 0, PROP_TOTALLYFROZEN);
+		SetPlayerProperty(1, 0, PROP_INVULNERABILITY);
+		Delay(1);
+		Exit_Normal(0);
+	}
+	else
+	{
+		Exit_Normal(0);
+		Delay(1);
+	}
+}
+
+// Exit level (secret exit)
+script "Exitfade_secret" (void)
+{
+	if(GetCVar("d64_exitfade") == 1)
+	{
+		//Delay(20);
+		Thing_Stop(0);
+		SetPlayerProperty(1, 1, PROP_TOTALLYFROZEN);
+		SetPlayerProperty(1, 2, PROP_INVULNERABILITY);
+		Delay(20);
+		FadeTo(255, 0, 0, 0.75, 2.0);
+		Delay(70);
+		FadeTo(0, 0, 0, 1.0, 2.0);
+		Delay(75);
+		
+		SetPlayerProperty(1, 0, PROP_TOTALLYFROZEN);
+		SetPlayerProperty(1, 0, PROP_INVULNERABILITY);
+		Delay(1);
+		Exit_Secret(0);
+	}
+	else
+	{
+		Exit_Secret(0);
+		Delay(1);
+	}
+}

@@ -1,0 +1,105 @@
+class UnlockHandler : EventHandler
+{
+	void UnlockIfNew(int itemToUnlock, string cvarname)
+	{
+		CVar lastUnlocked = CVar.FindCVar(cvarname);
+		if (lastUnlocked.GetInt() <= itemToUnlock)
+			lastUnlocked.SetInt(itemToUnlock);
+	}
+}
+
+extend class CEEventHandler
+{
+	const TOTAL_LEVELS = 175;
+	const CONTAINER_CAPACITY = 31.0;
+	
+	void LevelUnlockerWorldLoaded(WorldEvent e)
+	{
+		if (!e.IsSaveGame && !e.IsReopen && level.levelnum > 0 && level.levelnum <= TOTAL_LEVELS)
+		{	
+			CVar levelState;
+			int containerPosition;
+			[levelState, containerPosition] = GetStateVar(skill);
+			if (!levelState) [levelState, containerPosition] = GetStateVar(0);
+			int newState = SetBit(levelState.GetInt(),containerPosition);
+			levelState.SetInt(newState);
+		}
+		CVar warping = CVar.GetCVar("levelselect_warping", players[consoleplayer]);
+		if (warping.GetBool())
+		{
+			warping.SetBool(false);
+			for (int i = 0; i < MAXPLAYERS; i++)
+			{
+				let player = players[i].mo;
+				if (player)
+				{
+					player.A_SetHealth(CVar.GetCVar("levelselect_health", players[consoleplayer]).GetInt());
+					int armor = CVar.GetCVar("levelselect_armor", players[consoleplayer]).GetInt();
+					bool megaarmor = CVar.GetCVar("levelselect_ma", players[consoleplayer]).GetBool();
+					for (int i = 0; i < armor; ++i)
+					{
+						megaarmor ? player.GiveInventoryType("LSMegaArmorBonus") : player.GiveInventoryType("LSArmorBonus");
+					}
+					player.A_SetInventory((class<Inventory>)(Actor.GetReplacement("Backpack")), CVar.GetCVar("levelselect_backpack", players[consoleplayer]).GetInt());
+					player.A_SetInventory((class<Inventory>)(Actor.GetReplacement("Chainsaw")), CVar.GetCVar("levelselect_chainsaw", players[consoleplayer]).GetInt());
+					player.A_SetInventory((class<Inventory>)(Actor.GetReplacement("Shotgun")), CVar.GetCVar("levelselect_shotgun", players[consoleplayer]).GetInt());
+					player.A_SetInventory((class<Inventory>)(Actor.GetReplacement("SuperShotgun")), CVar.GetCVar("levelselect_ssg", players[consoleplayer]).GetInt());
+					player.A_SetInventory((class<Inventory>)(Actor.GetReplacement("Chaingun")), CVar.GetCVar("levelselect_chaingun", players[consoleplayer]).GetInt());
+					player.A_SetInventory((class<Inventory>)(Actor.GetReplacement("RocketLauncher")), CVar.GetCVar("levelselect_rl", players[consoleplayer]).GetInt());
+					player.A_SetInventory((class<Inventory>)(Actor.GetReplacement("PlasmaRifle")), CVar.GetCVar("levelselect_plasma", players[consoleplayer]).GetInt());
+					player.A_SetInventory((class<Inventory>)(Actor.GetReplacement("BFG9000")), CVar.GetCVar("levelselect_bfg", players[consoleplayer]).GetInt());
+					player.A_SetInventory("Clip", CVar.GetCVar("levelselect_clip", players[consoleplayer]).GetInt());
+					player.A_SetInventory("Shell", CVar.GetCVar("levelselect_shell", players[consoleplayer]).GetInt());
+					player.A_SetInventory("RocketAmmo", CVar.GetCVar("levelselect_rocket", players[consoleplayer]).GetInt());
+					player.A_SetInventory("Cell", CVar.GetCVar("levelselect_cell", players[consoleplayer]).GetInt());
+					players[i].PendingWeapon = WP_NOCHANGE;
+				}
+			}
+		}
+	}
+	
+	private int SetBit(int number, int bit)
+	{
+		return number |= 1 << bit;
+	}
+	
+	private CVar, int GetStateVar(int skill)
+	{
+		//int skill = G_SkillPropertyInt(SKILLP_ACSReturn);
+		int ordinal = (skill * TOTAL_LEVELS) + level.levelnum;
+		float factor = ordinal / CONTAINER_CAPACITY;
+		int containerNumber = int(ceil(factor));
+		int containerPosition = int(ordinal - (floor(factor) * CONTAINER_CAPACITY));
+		
+		let cvarname = config.unlockCVar;
+		return CVar.FindCVar(String.Format("%s_%i",cvarname,containerNumber)), containerPosition;
+	}
+} 
+
+class LSArmorBonus : BasicArmorBonus
+{
+	default
+	{
+		Armor.SaveAmount    1;
+		Armor.MaxSaveAmount 200;
+		Armor.SavePercent 33.335;
+		Inventory.Icon "_AR1A0";
+	}
+}
+
+class LSMegaArmorBonus : LSArmorBonus
+{
+	default
+	{
+		Armor.SavePercent 50;
+		Inventory.Icon "_AR2A0";
+	}
+}
+
+class BonusUnlockerEventHandler : UnlockHandler
+{
+	override void WorldUnloaded(WorldEvent e)
+	{
+		CVar.GetCVar("unl_bonus", players[consoleplayer]).SetInt(1);
+	}
+}

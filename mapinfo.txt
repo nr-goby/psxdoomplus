@@ -1,0 +1,6 @@
+include "mapinfo/gameinfo.txt"
+include "mapinfo/automap.txt"
+include "mapinfo/defaults.txt"
+include "mapinfo/episodes.txt"
+include "mapinfo/skills.txt"
+include "mapinfo/nums.txt"

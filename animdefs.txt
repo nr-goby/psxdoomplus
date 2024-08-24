@@ -1,0 +1,345 @@
+//======PSX TC======
+
+texture ENERGY01
+pic 1 tics 9
+pic 2 tics 9
+pic 3 tics 9
+pic 4 tics 9
+
+texture FIRE01
+pic 1 tics 9
+pic 2 tics 9
+
+texture FLAME01
+pic 1 tics 9
+pic 2 tics 9
+pic 3 tics 9
+
+texture LAVWAL01
+pic 1 tics 9
+pic 2 tics 9
+pic 3 tics 9
+
+texture SFALL1
+pic 1 tics 9
+pic 2 tics 9
+pic 3 tics 9
+pic 4 tics 9
+
+texture SLIM01
+pic 1 tics 9
+pic 2 tics 9
+pic 3 tics 9
+pic 4 tics 9
+
+texture TVSNOW01
+pic 1 tics 9
+pic 2 tics 9
+pic 3 tics 9
+
+texture WARN01
+pic 1 tics 9
+pic 2 tics 9
+
+flat BSLIME01
+pic 1 tics 9
+pic 2 tics 9
+pic 3 tics 9
+pic 4 tics 9
+
+flat CSLIME01
+pic 1 tics 9
+pic 2 tics 9
+pic 3 tics 9
+pic 4 tics 9
+
+flat ENERG01
+pic 1 tics 9
+pic 2 tics 9
+pic 3 tics 9
+pic 4 tics 9
+
+flat GLOW01
+pic 2 tics 9
+pic 3 tics 9
+pic 4 tics 9
+pic 3 tics 9
+
+flat LAVA01
+pic 1 tics 9
+pic 2 tics 9
+pic 3 tics 9
+pic 4 tics 9
+
+flat SLIME01
+pic 1 tics 9
+pic 2 tics 9
+pic 3 tics 9
+
+flat WATER01
+pic 1 tics 9
+pic 2 tics 9
+pic 3 tics 9
+pic 4 tics 9
+
+switch SW1BMET on sound switch1 pic SW2BMET tics 0
+switch SW2BMET off sound switch2 pic SW1BMET tics 0
+
+switch SW1BRICK on sound switch1 pic SW2BRICK tics 0
+switch SW2BRICK off sound switch2 pic SW1BRICK tics 0
+
+switch SW1BRNZ on sound switch1 pic SW2BRNZ tics 0
+switch SW2BRNZ off sound switch2 pic SW1BRNZ tics 0
+
+switch SW1BROWN on sound switch1 pic SW2BROWN tics 0
+switch SW2BROWN off sound switch2 pic SW1BROWN tics 0
+
+switch SW1MARB on sound switch1 pic SW2MARB tics 0
+switch SW2MARB off sound switch2 pic SW1MARB tics 0
+
+switch SW1MET on sound switch1 pic SW2MET tics 0
+switch SW2MET off sound switch2 pic SW1MET tics 0
+
+switch SW1METAL on sound switch1 pic SW2METAL tics 0
+switch SW2METAL off sound switch2 pic SW1METAL tics 0
+
+switch SW1NEW02 on sound switch1 pic SW2NEW02 tics 0
+switch SW2NEW02 off sound switch2 pic SW1NEW02 tics 0
+
+switch SW1NEW03 on sound switch1 pic SW2NEW03 tics 0
+switch SW2NEW03 off sound switch2 pic SW1NEW03 tics 0
+
+switch SW1NEW04 on sound switch1 pic SW2NEW04 tics 0
+switch SW2NEW04 off sound switch2 pic SW1NEW04 tics 0
+
+switch SW1NEW05 on sound switch1 pic SW2NEW05 tics 0
+switch SW2NEW05 off sound switch2 pic SW1NEW05 tics 0
+
+switch SW1NEW06 on sound switch1 pic SW2NEW06 tics 0
+switch SW2NEW06 off sound switch2 pic SW1NEW06 tics 0
+
+switch SW1NEW10 on sound switch1 pic SW2NEW10 tics 0
+switch SW2NEW10 off sound switch2 pic SW1NEW10 tics 0
+
+switch SW1NEW11 on sound switch1 pic SW2NEW11 tics 0
+switch SW2NEW11 off sound switch2 pic SW1NEW11 tics 0
+
+switch SW1NEW13 on sound switch1 pic SW2NEW13 tics 0
+switch SW2NEW13 off sound switch2 pic SW1NEW13 tics 0
+
+switch SW1NEW14 on sound switch1 pic SW2NEW14 tics 0
+switch SW2NEW14 off sound switch2 pic SW1NEW14 tics 0
+
+switch SW1NEW20 on sound switch1 pic SW2NEW20 tics 0
+switch SW2NEW20 off sound switch2 pic SW1NEW20 tics 0
+
+switch SW1NEW25 on sound switch1 pic SW2NEW25 tics 0
+switch SW2NEW25 off sound switch2 pic SW1NEW25 tics 0
+
+switch SW1NEW26 on sound switch1 pic SW2NEW26 tics 0
+switch SW2NEW26 off sound switch2 pic SW1NEW26 tics 0
+
+switch SW1NEW28 on sound switch1 pic SW2NEW28 tics 0
+switch SW2NEW28 off sound switch2 pic SW1NEW28 tics 0
+
+switch SW1NEW29 on sound switch1 pic SW2NEW29 tics 0
+switch SW2NEW29 off sound switch2 pic SW1NEW29 tics 0
+
+switch SW1NEW30 on sound switch1 pic SW2NEW30 tics 0
+switch SW2NEW30 off sound switch2 pic SW1NEW30 tics 0
+
+switch SW1NEW31 on sound switch1 pic SW2NEW31 tics 0
+switch SW2NEW31 off sound switch2 pic SW1NEW31 tics 0
+
+switch SW1NEW32 on sound switch1 pic SW2NEW32 tics 0
+switch SW2NEW32 off sound switch2 pic SW1NEW32 tics 0
+
+switch SW1NEW33 on sound switch1 pic SW2NEW33 tics 0
+switch SW2NEW33 off sound switch2 pic SW1NEW33 tics 0
+
+switch SW1NEW34 on sound switch1 pic SW2NEW34 tics 0
+switch SW2NEW34 off sound switch2 pic SW1NEW34 tics 0
+
+switch SW1NEW35 on sound switch1 pic SW2NEW35 tics 0
+switch SW2NEW35 off sound switch2 pic SW1NEW35 tics 0
+
+switch SW1NEW36 on sound switch1 pic SW2NEW36 tics 0
+switch SW2NEW36 off sound switch2 pic SW1NEW36 tics 0
+
+switch SW1NEW39 on sound switch1 pic SW2NEW39 tics 0
+switch SW2NEW39 off sound switch2 pic SW1NEW39 tics 0
+
+switch SW1NEW40 on sound switch1 pic SW2NEW40 tics 0
+switch SW2NEW40 off sound switch2 pic SW1NEW40 tics 0
+
+switch SW1NEW41 on sound switch1 pic SW2NEW41 tics 0
+switch SW2NEW41 off sound switch2 pic SW1NEW41 tics 0
+
+switch SW1NEW42 on sound switch1 pic SW2NEW42 tics 0
+switch SW2NEW42 off sound switch2 pic SW1NEW42 tics 0
+
+switch SW1NEW45 on sound switch1 pic SW2NEW45 tics 0
+switch SW2NEW45 off sound switch2 pic SW1NEW45 tics 0
+
+switch SW1NEW46 on sound switch1 pic SW2NEW46 tics 0
+switch SW2NEW46 off sound switch2 pic SW1NEW46 tics 0
+
+switch SW1NEW47 on sound switch1 pic SW2NEW47 tics 0
+switch SW2NEW47 off sound switch2 pic SW1NEW47 tics 0
+
+switch SW1NEW51 on sound switch1 pic SW2NEW51 tics 0
+switch SW2NEW51 off sound switch2 pic SW1NEW51 tics 0
+
+switch SW1NEW57 on sound switch1 pic SW2NEW57 tics 0
+switch SW2NEW57 off sound switch2 pic SW1NEW57 tics 0
+
+switch SW1NEW60 on sound switch1 pic SW2NEW60 tics 0
+switch SW2NEW60 off sound switch2 pic SW1NEW60 tics 0
+
+switch SW1NEW63 on sound switch1 pic SW2NEW63 tics 0
+switch SW2NEW63 off sound switch2 pic SW1NEW63 tics 0
+
+switch SW1NEW65 on sound switch1 pic SW2NEW65 tics 0
+switch SW2NEW65 off sound switch2 pic SW1NEW65 tics 0
+
+switch SW1NEW66 on sound switch1 pic SW2NEW66 tics 0
+switch SW2NEW66 off sound switch2 pic SW1NEW66 tics 0
+
+switch SW1NEW68 on sound switch1 pic SW2NEW68 tics 0
+switch SW2NEW68 off sound switch2 pic SW1NEW68 tics 0
+
+switch SW1NEW69 on sound switch1 pic SW2NEW69 tics 0
+switch SW2NEW69 off sound switch2 pic SW1NEW69 tics 0
+
+switch SW1NEW70 on sound switch1 pic SW2NEW70 tics 0
+switch SW2NEW70 off sound switch2 pic SW1NEW70 tics 0
+
+switch SW1RED on sound switch1 pic SW2RED tics 0
+switch SW2RED off sound switch2 pic SW1RED tics 0
+
+switch SW1RUST on sound switch1 pic SW2RUST tics 0
+switch SW2RUST off sound switch2 pic SW1RUST tics 0
+
+switch SW1SKULL on sound switch1 pic SW2SKULL tics 0
+switch SW2SKULL off sound switch2 pic SW1SKULL tics 0
+
+switch SW1SKUL2 on sound switch1 pic SW2SKUL2 tics 0
+switch SW2SKUL2 off sound switch2 pic SW1SKUL2 tics 0
+
+switch SW1STAR on sound switch1 pic SW2STAR tics 0
+switch SW2STAR off sound switch2 pic SW1STAR tics 0
+
+switch SW1STEEL on sound switch1 pic SW2STEEL tics 0
+switch SW2STEEL off sound switch2 pic SW1STEEL tics 0
+
+flat	BLOOD1  	range	BLOOD3  	tics 9
+flat	FWATER1 	range	FWATER4 	tics 9
+flat	LAVA1   	range	LAVA4		tics 9
+flat	NUKAGE1 	range	NUKAGE3 	tics 9
+flat	SLIME01 	range	SLIME04 	tics 9
+flat	SLIME05 	range	SLIME08 	tics 9
+flat	SLIME09 	range	SLIME12 	tics 9
+
+texture	BFALL1  	range	BFALL4  	tics 9	
+texture	BLODRIP1	range	BLODRIP4	tics 9 allowdecals
+texture	DBRAIN1 	range	DBRAIN4 	tics 9
+texture	FIREBLU1	range	FIREBLU2	tics 9
+texture	FIRELAV3	range	FIRELAVA	tics 9
+texture	FIREMAG1	range	FIREMAG3	tics 8
+texture	FIREWALA	range	FIREWALL	tics 9
+texture	GSTFONT1	range	GSTFONT3	tics 9 allowdecals
+texture	ROCKRED1	range	ROCKRED3	tics 9 allowdecals
+texture	SFALL1  	range	SFALL4  	tics 9
+texture	WFALL1  	range	WFALL4  	tics 9
+
+//======TEXTURE REPLACEMENTS======
+
+switch doom 3 SW1SKULT on pic SW2SKULT tics 0
+
+texture optional SW1SKULT
+pic BLOD3 tics 8
+pic BLODGRT4 tics 8
+pic BLODGRT1 tics 8
+
+texture optional SW2SKULT
+pic FALL3 tics 8
+pic TWFALL4 tics 8
+pic TWFALL1 tics 8
+
+texture optional BLODGRT1
+pic SW1SKULT tics 8
+pic BLOD3 tics 8
+pic BLODGRT4 tics 8
+
+texture optional TWFALL1
+pic SW2SKULT tics 8
+pic FALL3 tics 8
+pic TWFALL4 tics 8
+
+texture optional FIREPLU1
+pic AROCK2 tics 8
+pic AROCK3 tics 8
+pic AROCK4 tics 8
+pic AROCK5 tics 8
+pic FIREPLU2 tics 8
+
+texture optional PWFALL1
+pic PWFALL2 tics 8
+pic PWFALL3 tics 8
+pic PWFALL4 tics 8
+
+texture optional PBRAIN1
+pic MC2 tics 8
+pic MC3 tics 8
+pic MC4 tics 8
+pic MC5 tics 8
+pic MC6 tics 8
+pic MC7 tics 8
+pic MC8 tics 8
+pic MC10 tics 8
+pic MC11 tics 8
+pic MC12 tics 8
+pic MC13 tics 8
+pic MC14 tics 8
+pic MC15 tics 8
+pic MC16 tics 8
+pic MC17 tics 8
+pic MC18 tics 8
+pic MC19 tics 8
+pic PBRAIN4 tics 8
+
+//======INTROS======
+
+FLAT optional D2INTR34
+pic D2I3050 tics 9
+pic D2I3060 tics 9
+pic D2I3070 tics 9
+pic D2I3080 tics 9
+
+FLAT optional D2INTR33
+pic D2I3050 tics 9
+pic D2I3060 tics 9
+pic D2I3070 tics 9
+pic D2I3080 tics 9
+
+FLAT optional D2INTR32
+pic D2I3050 tics 9
+pic D2I3060 tics 9
+pic D2I3070 tics 9
+pic D2I3080 tics 9
+
+FLAT optional D2INTR31
+pic D2I3050 tics 9
+pic D2I3060 tics 9
+pic D2I3070 tics 9
+pic D2I3080 tics 9
+
+//canvas
+
+canvastexture "CONBACK" 3840 2160
+
+canvastexture "FIRESK00" 64 128
+canvastexture "SKY09" 64 128
+
+canvastexture "FilterDummyCanvas" 1 1
+canvastexture "LightBoostDummyCanvas" 1 1

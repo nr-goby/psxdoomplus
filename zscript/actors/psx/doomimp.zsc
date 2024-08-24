@@ -1,0 +1,260 @@
+class PsxDoomImp : PsxActor replaces DoomImp
+{
+    Default
+    {
+		//$Title "Imp"
+		
+		Health 60;
+		Radius 20;
+		Height 56;
+		Mass 100;
+		Speed 8;
+		PainChance 200;
+		Monster;
+		+FLOORCLIP
+		SeeSound "imp/sight";
+		PainSound "imp/pain";
+		DeathSound "imp/death";
+		ActiveSound "imp/active";
+		HitObituary "$OB_IMPHIT";
+		Obituary "$OB_IMP";
+		Tag "$FN_IMP";
+
+        PsxActor.FootstepSound "monster/impstep";
+        PsxActor.DeathThudSound "monster/xbody";
+        MeleeRange 50;
+	    +MOVEWITHSECTOR;
+        +PsxActor.WAITLOOK;
+        +PsxActor.SEETARGET;
+    }
+
+    States
+	{
+        Spawn:
+            TROO A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            TROO AB 10 A_Look;
+            Loop;
+        SmoothSpawn:
+            IMID AB 10 A_Look;
+		    Loop;
+
+        See:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothSee");
+            TROO A 2 A_Chase;
+            TROO A 4 A_Chase;
+            TROO B 2 A_Chase;
+            TROO B 4 { A_Chase(); A_Footstep(); }
+            TROO C 2 A_Chase;
+            TROO C 4 A_Chase;
+            TROO D 2 A_Chase;
+            TROO D 4 { A_Chase(); A_Footstep(); }
+            Loop;
+        SmoothSee:
+            TRSO A 3 A_Chase;
+            TRSO B 3 A_Chase;
+            TRSO C 3 { A_Chase(); A_Footstep(); }
+			TRSO D 3 A_Chase;
+            TRSO E 3 A_Chase;
+            TRSO F 3 { A_Chase(); A_Footstep(); }
+            Loop;
+
+        Melee:
+        Missile:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothMissile");
+            TROO EF 8 A_FaceTarget;
+            TROO G 6 A_TroopAttack;
+            Goto See;
+        SmoothMissile:
+            TRSO I 1 a_facetarget;
+            TRSO IIJKL 3 A_FaceTarget;
+            TRSO M 3 A_TroopAttack;
+            TRSO LKJ 1;
+            Goto See;
+
+        Pain:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothPain");
+            TROO H 2;
+            TROO H 2 A_Pain;
+            Goto See;
+        SmoothPain:
+            TRAI a 2;
+            TRAI b 2 A_Pain;
+            Goto see;
+
+        Death:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothDeath");
+            TROO I 8;
+            TROO J 8 A_Scream;
+            TROO K 6;
+            TROO L 6 A_NoBlocking;
+            TNT1 A 0 A_DeathThud;
+            TROO M -1;
+            Stop;
+        SmoothDeath:
+            5OSS J 2 A_Scream;
+            5OSS K 2;
+            5OSS LMNO 3;
+            5OSS PQR 3;
+            5OSS S 3 { A_NoBlocking(); A_DeathThud(); }
+            5OSS T 3 A_NoBlocking;
+            5OSS U -1;
+            Stop;
+
+        XDeath:
+			TNT1 A 0 a_jumpif(IsSmooth(), "SmoothXDeath");
+            TROO N 4 A_GoreExplosion;
+            TROO O 6 A_XScream;
+            TROO P 4;
+            TROO Q 6 A_NoBlocking;
+            TROO R 4;
+            TROO S 6;
+            TROO T 4;
+            TROO U -1;
+            Stop;
+        SmoothXDeath:
+			TROX A 2 A_GoreExplosion;
+            TROX B 2;
+			TROX C 2 A_XScream;
+			TROX DE 2;
+			TROX F 2 A_NoBlocking;
+			TROX GHIJKLMN 2;
+			TROX O -1;
+		    Stop;
+
+        Raise:
+			TNT1 A 0 a_jumpif(IsSmooth(), "SmoothRaise");
+            TROO ML 8;
+            TROO KJI 6;
+            Goto See;
+        SmoothRaise:
+            5OSS UTSRQPONML 3;
+            5OSS KJ 2;
+            Goto See;
+	}
+}
+
+class PsxDoomImpBall : PsxProjectile replaces DoomImpBall
+{
+    Default
+	{
+		Radius 6;
+		Height 8;
+		Speed 10;
+		FastSpeed 20;
+		Damage 3;
+		Projectile;
+		+RANDOMIZE
+		+ZDOOMTRANS
+		RenderStyle "Add";
+		Alpha 1;
+		SeeSound "imp/attack";
+		DeathSound "imp/shotx";
+
+        PsxActor.AmbientSound "fireball/loop";
+		PsxProjectile.NightmareMissileSpeedFactor 1.5;
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay { if (zp_enabled && hq_enabled) A_SetRenderStyle(1.0, STYLE_Add); }
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothSpawn");
+            BAL1 A 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            BAL1 A 1 BRIGHT A_ZPTrail;
+            BAL1 A 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            BAL1 A 1 BRIGHT A_ZPTrail;
+            BAL1 B 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            BAL1 B 1 BRIGHT A_ZPTrail;
+            BAL1 B 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            BAL1 B 1 BRIGHT A_ZPTrail;
+            Loop;
+        SmoothSpawn:
+            BIMP A 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            BIMP A 1 BRIGHT A_ZPTrail;
+            BIMP B 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            BIMP B 1 BRIGHT A_ZPTrail;
+            BIMP C 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            BIMP C 1 BRIGHT A_ZPTrail;
+            BIMP D 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            BIMP D 1 BRIGHT A_ZPTrail;
+            BIMP E 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            BIMP E 1 BRIGHT A_ZPTrail;
+            BIMP F 1 BRIGHT { A_ZPFlare(); A_ZPTrail(); }
+            BIMP F 1 BRIGHT A_ZPTrail;
+	        Loop;
+            
+        Death:
+            TNT1 A 0 A_StopAmbientSound;
+            TNT1 A 0 a_jumpif(zp_enabled && hq_enabled, "HQDeath");
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothDeath");
+            BAL1 C 6 BRIGHT A_ZPExplosion;
+            BAL1 DE 6 BRIGHT;
+            Stop;
+        SmoothDeath:
+            IPRD a 2 bright A_ZPExplosion;
+            IPRD bcdefgh 2 bright;
+            Stop;
+        HQDeath:
+            TNT1 C 6 Light("IMPBALL_X1") A_ZPExplosion;
+            TNT1 D 6 Light("IMPBALL_X2");
+            TNT1 E 6 Light("IMPBALL_X3");
+            Stop;
+	}
+
+    void A_ZPFlare(String zp = "SmallRedFlare", String hq = "YellowFlareSmall")
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+                A_SpawnItemEx(hq);
+            }
+            else
+            {
+                A_SpawnItemEx(zp, 0, 0, 3, 0, 0, 0, 0, 0, 176);
+            }
+            
+        }
+    }
+
+    void A_ZPTrail(String zp = "Trail_DoomImpBall", String hq = "ImpBallFlame")
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+            	A_SpawnItemEx(hq,0,0,0,FRandom(0,0.5),0,FRandom(-0.5,0.5),Random(1,360));
+		        A_SpawnItemEx(hq,-Vel.X/2,-Vel.Y/2,-Vel.Z/2,FRandom(-0.5,0.5),FRandom(-0.5,0.5),FRandom(-0.5,0.5),0,SXF_ABSOLUTEPOSITION);
+            }
+            else
+            {
+                A_SpawnItemEx(zp,frandom(-5,-3),frandom(-1,1),frandom(-1,1),0,0,0,0,SXF_NOCHECKPOSITION);
+            }
+        }
+    }
+
+    void A_ZPExplosion(String zp1 = "ImpBoom", String zp2 = "DeathSpawner_DoomImpBall", String hq = "RandomExplosionSprite")
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+                A_SetScale(0.25);
+		        for(int i=0;i<5;i++) A_SpawnItemEx(hq,0,0,0,Random(0,1),0,FRandom(-1,1),Random(1,360),SXF_TRANSFERSCALE);
+            }
+            else
+            {
+                A_SpawnItem(zp1);
+                A_SpawnItemEx(zp2,0,0,0,0,0,0,0,SXF_NOCHECKPOSITION);
+            }
+        }
+    }
+}
+
+extend class PsxActor
+{
+	virtual void A_TroopAttack(string projectile = "DoomImpBall")
+    {
+        A_CustomComboAttack(projectile, 32, random(1, 8)*3, "imp/melee", "", 1);
+    }
+}

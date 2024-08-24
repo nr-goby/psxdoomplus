@@ -1,0 +1,11 @@
+//as a psxtc convention, use firesk00 instead of sky09
+Texture "FIRESK00", 64, 128
+{
+	Patch "SKY09", 0, 0
+}
+
+Graphic "FIRE_S", 128, 128
+{
+	Patch "BLACK", 0, 0
+	Patch "BLACK", 64, 0
+}

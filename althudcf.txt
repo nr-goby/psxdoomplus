@@ -1,0 +1,2 @@
+Health _MEDA0
+Berserk _PSTA0

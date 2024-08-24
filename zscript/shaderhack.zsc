@@ -1,0 +1,18 @@
+extend class CEEventHandler
+{
+	ui transient Canvas filterCanvas;
+	
+	ui void ShaderControlUiTick()
+	{
+		UpdateCanvas(filterCanvas, "FilterDummyCanvas", "ce_filter");
+		UpdateCanvas(filterCanvas, "LightBoostDummyCanvas", "ce_psxbrightness");
+	}
+	
+	ui void UpdateCanvas(Canvas canvas, string textureName, string cvarName)
+	{
+		if (!canvas) canvas = TexMan.GetCanvas(textureName);
+		let enabled = CVar.GetCVar(cvarName, players[consoleplayer]).GetBool();
+		let c = !enabled ? Color(0, 0, 0) : Color(255, 255, 255);
+		canvas.Clear(0, 0, 1, 1, c);
+	}
+}

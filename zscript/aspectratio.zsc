@@ -1,0 +1,43 @@
+extend class CEEventHandler
+{
+	bool aspectEnabled;
+	
+	void AspectRatioWorldTick()
+	{
+		bool prev = aspectEnabled;
+		aspectEnabled = CVar.GetCVar("ce_aspect", players[consoleplayer]).GetBool();
+		
+		if (prev == aspectEnabled || !(level.pixelstretch ~== 0.86)) return;
+		
+		let it = ThinkerIterator.Create();
+		Actor a;
+		while (a = Actor(it.Next()))
+		{
+			ScaleThing(a);
+		}
+	}
+
+	void AspectRatioWorldThingSpawned(WorldEvent e)
+	{
+		if (!e.Thing || !(level.pixelstretch ~== 0.86)) return;
+		if (aspectEnabled && e.Thing.Scale == e.Thing.default.Scale) ScaleThing(e.Thing);
+	}
+	
+	ui void AspectRatioUiTick()
+	{
+		let enabled = !CVar.GetCVar("ce_aspect", players[consoleplayer]).GetBool() && level.pixelstretch ~== 0.86;
+		if (enabled)
+		{
+			PPShader.SetUniform1f("PsxAspect", "pixelstretch", level.pixelstretch);
+		}
+		PPShader.SetEnabled("PsxAspect", enabled);
+	}
+	
+	void ScaleThing(Actor a)
+	{
+		if (!(a is "DSCcandlelabra") && !(a is "IconOfSin"))
+		{
+			a.Scale.X *= aspectEnabled ? 0.8 : 1 / 0.8;
+		}
+	}
+}

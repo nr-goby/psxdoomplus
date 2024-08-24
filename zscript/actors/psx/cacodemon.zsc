@@ -1,0 +1,252 @@
+class PsxCacodemon : PsxActor replaces Cacodemon
+{
+    Default
+    {
+		//$Title "Cacodemon"
+		
+        Health 400;
+		Radius 31;
+		Height 56;
+		Mass 400;
+		Speed 8;
+		PainChance 128;
+		Monster;
+		+FLOAT +NOGRAVITY
+		SeeSound "caco/sight";
+		PainSound "caco/pain";
+		DeathSound "caco/death";
+		ActiveSound "caco/active";
+		Obituary "$OB_CACO";
+		HitObituary "$OB_CACOHIT";
+		Tag "$FN_CACO";
+
+        MeleeRange 50;
+        +MOVEWITHSECTOR;
+	    BloodColor "Blue";
+        +PsxActor.WAITLOOK;
+        +PsxActor.SEETARGET;
+    }
+
+    States
+	{
+        Spawn:
+            HEAD A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            HEAD A 10 A_Look;
+            Loop;
+        SmoothSpawn:
+            SHEA A 10 A_Look;
+		    Loop;
+
+        See:
+		    HEAD A 4 { A_PCTics(3); A_Chase(); }
+		    Loop;
+
+        Melee:
+        Missile:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothMissile");
+            HEAD B 6 { A_PCTics(5); A_FaceTarget(); }
+            HEAD C 6 { A_PCTics(5); A_FaceTarget(); }
+            HEAD D 6 BRIGHT { A_PCTics(5); A_HeadAttack(); }
+            Goto See;
+        SmoothMissile:
+            HEAA AB 3 A_FaceTarget;
+			HEAA CD 3 { A_PCTics(2); A_FaceTarget(); }
+            HEAA E 2 BRIGHT A_HeadAttack;
+            HEAA C 2 BRIGHT A_FaceTarget;
+			HEAA A 2 BRIGHT { A_PCTics(1); A_FaceTarget(); }
+            Goto See;
+
+        Pain:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothPain");
+            HEAD E 2;
+            HEAD E 4 A_Pain;
+            HEAD F 6;
+            Goto See;
+        SmoothPain:
+            HEAA F 3;
+            HEAA G 3 A_Pain;
+            HEAA HGF 2;
+            Goto See;
+
+        Death:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothDeath");
+            HEAD G 8;
+            HEAD H 8 A_Scream;
+            HEAD I 8;
+            HEAD J 8;
+            HEAD K 8 A_NoBlocking;
+            HEAD L -1 A_SetFloorClip;
+            Stop;
+        SmoothDeath:
+            HDSD A 3;
+            HDSD B 3 A_Scream;
+            HDSD CD 3;
+            HDSD E 3;
+            HDSD F 3 A_NoBlocking;
+            HDSD GH 3  A_SetFloorClip;
+            HDSD I -1;
+            Stop;
+
+        XDeath:
+			TNT1 A 0 a_jumpif(IsSmooth(), "SmoothXDeath");
+            TNT1 A 0 A_JumpIf(!kch_enabled,"Death");
+            CACX A 4;
+			CACX C 4 { A_XScream(); A_GoreExplosion(10, PsxActor.GORE_Blue); }
+			CACX E 4;
+			CACX G 4 { A_NoBlocking(); A_SetFloorClip(); }
+			CACX IKMOQ 4;
+			CACX S -1;
+            Stop;
+        SmoothXDeath:
+			CACX AB 2;
+			CACX C 2 { A_XScream(); A_GoreExplosion(10, PsxActor.GORE_Blue); }
+			CACX DEF 2;
+			CACX G 2 A_NoBlocking;
+			CACX H 2 A_SetFloorClip;
+			CACX IJKLMNOPQR 2;
+			CACX S -1;
+            Stop;
+
+        Raise:
+			TNT1 A 0 a_jumpif(IsSmooth(), "SmoothRaise");
+            HEAD L 8 A_UnSetFloorClip;
+            HEAD KJIHG 8;
+            Goto See;
+        SmoothRaise:
+            HDSD IHG 3 A_UnSetFloorClip;
+            HDSD FEDCBA 3;
+            goto see;
+	}
+}
+
+class PsxCacodemonBall : PsxProjectile replaces CacodemonBall
+{
+    Default
+	{
+		Radius 6;
+		Height 8;
+		Speed 10;
+		FastSpeed 20;
+		Damage 5;
+		Projectile;
+		+RANDOMIZE
+		+ZDOOMTRANS
+		RenderStyle "Add";
+		Alpha 1;
+		SeeSound "caco/attack";
+		DeathSound "caco/shotx";
+
+        PsxActor.AmbientSound "caco/ballloop";
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            BAL2 A 1 Bright { A_ZPFlare(); A_ZPTrail(); }
+            BAL2 A 1 Bright A_ZPTrail;
+            BAL2 A 1 Bright { A_ZPFlare(); A_ZPTrail(); }
+            BAL2 A 1 Bright A_ZPTrail;
+            BAL2 B 1 Bright { A_ZPFlare(); A_ZPTrail(); }
+            BAL2 B 1 Bright A_ZPTrail;
+            BAL2 B 1 Bright { A_ZPFlare(); A_ZPTrail(); }
+            BAL2 B 1 Bright A_ZPTrail;
+            Loop;
+        SmoothSpawn:
+            CABA A 1 Bright { A_ZPFlare(); A_ZPTrail(); }
+            CABA A 1 Bright A_ZPTrail;
+            CABA B 1 Bright { A_ZPFlare(); A_ZPTrail(); }
+            CABA B 1 Bright A_ZPTrail;
+            CABA C 1 Bright { A_ZPFlare(); A_ZPTrail(); }
+            CABA C 1 Bright A_ZPTrail;
+            CABA D 1 Bright { A_ZPFlare(); A_ZPTrail(); }
+            CABA D 1 Bright A_ZPTrail;
+            Loop;
+
+        Death:
+            TNT1 A 0 A_StopAmbientSound;
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothDeath");
+            BAL2 C 6 BRIGHT A_ZPExplosion;
+            BAL2 DE 6 BRIGHT A_HQFade;
+            Stop;
+        SmoothDeath:
+            CABX a 4 bright A_ZPExplosion;
+	        CABX bcdef 2 bright A_HQFade;
+            Stop;
+	}
+
+    void A_ZPFlare()
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+                A_SpawnItemEx("RedFlareMedium");
+            }
+            else
+            {
+                A_SpawnItemEx("SmallBlueFlare", 0, 0, 4, 0, 0, 0, 0, 0 , 108);
+            }
+            
+        }
+    }
+
+    void A_ZPTrail()
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+            	A_SpawnItemEx("CacoDemonBallTrail",0,0,0,FRandom(0,0.5),0,FRandom(-0.5,0.5),Random(1,360));
+        		A_SpawnItemEx("CacoDemonBallTrail",-Vel.X/2,-Vel.Y/2,-Vel.Z/2,FRandom(-0.5,0.5),FRandom(-0.5,0.5),FRandom(-0.5,0.5),0,SXF_ABSOLUTEPOSITION);
+            }
+            else
+            {
+                A_SpawnItemEx("Trail_CacodemonBall",frandom(-1,1),frandom(-1,1),frandom(-1,1),0,0,0,0,SXF_NOCHECKPOSITION);
+            }
+        }
+    }
+
+    void A_ZPExplosion()
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+                for(int i=0;i<6;i++) A_SpawnItemEx("ShockSpark",0,0,0,FRandom(0,5),0,Random(-1,5),Random(1,360),128,128);
+		        for(int i=0;i<3;i++) A_SpawnItemEx("GenericBolt");
+		        for(int i=0;i<6;i++) A_SpawnItemEx("CacoBallExplosionSprite",0,0,0,FRandom(0,1),0,FRandom(-1,1),Random(1,360));
+            }
+            else
+            {
+                A_SpawnItem("CacoBoom");
+                A_SpawnItemEx("DeathSpawner_CacodemonBall",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION);
+            }
+        }
+    }
+
+    void A_HQFade()
+    {
+        if (zp_enabled && hq_enabled) A_FadeOut(0.08);
+    }
+}
+
+//for compatiblity with the old psx doom tc
+
+class PsxCacoSpectre : PsxCacodemon
+{
+    Default
+    {
+		//$Title "Cacodemon (translucent)"
+		
+        +PsxActor.TRANSLUCENT;
+    }
+}
+
+extend class PsxCacodemon
+{
+	void A_HeadAttack()
+    {
+        A_CustomComboAttack ("CacodemonBall", 32, random(1, 8)*8, "imp/melee", "", 1);
+    }
+}

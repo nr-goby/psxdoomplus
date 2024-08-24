@@ -1,0 +1,122 @@
+class PsxShotgun : PsxDoomWeapon replaces Shotgun
+{
+    Default
+    {
+		//$Title "Shotgun"
+	
+        Weapon.SelectionOrder 1300;
+		Weapon.AmmoUse 1;
+		Weapon.AmmoGive 8;
+		Weapon.AmmoType "Shell";
+		Inventory.PickupMessage "$GOTSHOTGUN";
+		Obituary "$OB_MPSHOTGUN";
+		Tag "$TAG_SHOTGUN";
+        
+	    Weapon.SlotNumber 3;
+	    Inventory.Icon "_SHTA0";
+        PsxDoomWeapon.VanillaSprite "SHTG";
+        PsxDoomWeapon.SmoothSprite "PKSG";
+        PsxDoomWeapon.BlackSprite "BLSG";
+        PsxDoomWeapon.ClassicSprite "3HTG";
+        PsxDoomWeapon.WeaponLight "WEAPLIGHT1";
+    }
+
+	States
+	{
+        SwapSprites:
+            SHTG A 0; PKSG A 0; BLSG A 0; 3HTG A 0;
+            Stop;
+
+        Ready:
+            TNT1 A 1 { A_SwapSprites(); A_WeaponReady(WRF_ALLOWUSER1); }
+            Loop;
+
+        Deselect:
+            TNT1 A 1 { A_SwapSprites(); A_FastLower(); }
+            Loop;
+        
+        Select:
+            TNT1 A 1 { A_SwapSprites(); A_FastRaise(); }
+            Loop;
+
+        Fire:
+            TNT1 A 0 A_SwapSprites;
+            "####" A 4 { A_FireShotgun(); A_RecoilPitch(); }
+            "####" B 6;
+            "####" C 4;
+            "####" D 4 A_Casing;
+            "####" CB 4;
+            "####" A 4;
+            "####" A 6 A_ReFire;
+            Goto Ready;
+        SmoothFire:
+            TNT1 A 0 A_SwapSprites;
+            "####" A 3 A_FireShotgun;
+            "####" A 3 A_RecoilPitch(6, 2);
+            "####" B 2;
+            "####" C 1;
+            "####" DEF 2;
+            "####" G 1;
+            "####" H 2;
+            "####" G 2 A_Casing;
+            "####" FEDCB 2;
+            "####" A 6 A_ReFire;
+            Goto Ready;
+        SmoothSlowFire:
+            TNT1 A 0 A_SwapSprites;
+		    "####" A 3 A_FireShotgun;
+            "####" A 7 A_RecoilPitch(6, 2);
+            "####" B 2;
+            "####" C 1;
+            "####" DE 2;
+            "####" F 3;
+            "####" G 1;
+            "####" H 3;
+            "####" G 2 A_Casing;
+            "####" FEDCB 2;
+            "####" A 1;
+            "####" A 7 A_ReFire;
+            Goto Ready;
+
+        Flash:
+            SHTF A 2 Bright A_Light1;
+            SHTF B 1 Bright A_Light2;
+            Goto LightDone;
+		ClassicFlash:
+            3HTF A 2 Bright A_Light1;
+            3HTF B 1 Bright A_Light2;
+            Goto LightDone;
+        SmoothFlash:
+            SSGF B 2 Bright A_Light2;
+            SSGF A 2 Bright A_Light1;
+            Goto LightDone;
+
+        Spawn:
+            SHOT A -1;
+            Stop;
+	}
+	
+	override void PostBeginPlay()
+	{
+		if (ce_gibrules) bEXTREMEDEATH = false;
+		super.PostBeginPlay();
+	}
+
+    action void A_Casing()
+    {
+        if (catoggle)
+        {
+            A_spawnitemex ("PsxShellCasing", 30, 0, 30, random(3,4), random(7,8), random(7,9), 0);
+        }
+    }
+}
+
+extend class PsxDoomWeapon
+{
+	action void A_FireShotgun()
+    {
+        A_GunFlash();
+        A_StartSound ("weapons/shotgf", CHAN_AUTO);
+        A_PsxBullets(SPREAD_XY, 0, 7);
+    }
+}

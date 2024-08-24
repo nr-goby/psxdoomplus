@@ -1,0 +1,43 @@
+extend class CEEventHandler
+{	
+	enum EPsxLightModes
+	{
+		LM_None,
+		LM_PsxSoftware,
+		LM_GLESCompatibility,
+	}
+	
+	void PsxLightWorldTick()
+	{
+		let mode = GetMode();
+		let banding = CVar.GetCVar("ce_bandedswlight", players[consoleplayer]).GetBool();
+		
+		if (mode > LM_None || banding)
+		{
+			PPShader.SetEnabled("PsxLight", true);
+			PPShader.SetUniform1i("PsxLight", "mode", mode);
+			PPShader.SetUniform1i("PsxLight", "banding", banding);
+		}
+		else
+		{
+			PPShader.SetEnabled("PsxLight", false);
+		}
+	}
+	
+	private int GetMode()
+	{
+		let psxbright = CVar.GetCVar("ce_psxbrightness", players[consoleplayer]).GetBool();
+		let gradients = CVar.GetCVar("d64_gradients", players[consoleplayer]).GetBool();
+		let backend = CVar.GetCVar("vid_preferbackend", players[consoleplayer]);
+		
+		if (psxbright)
+		{
+			return LM_PsxSoftware;
+		}
+		else if (gradients && backend && backend.GetInt() >= 2) //gles
+		{
+			return LM_GLESCompatibility;
+		}
+		return LM_None;
+	}
+}

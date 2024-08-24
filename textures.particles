@@ -1,0 +1,17 @@
+Sprite "FLXMB0", 128, 167
+{
+	Offset 85, 77
+	Patch "FLXMA0", 0, 0
+}
+
+Sprite "FLXMC0", 128, 167
+{
+	Offset 85, 77
+	Patch "FLXMA0", 0, 0
+}
+
+Sprite "FLXMD0", 128, 167
+{
+	Offset 85, 77
+	Patch "FLXMA0", 0, 0
+}

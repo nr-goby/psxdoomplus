@@ -1,0 +1,277 @@
+class ListMenuItemStretchTextItem : ListMenuItemTextItem
+{
+	override void Draw(bool selected, ListMenuDescriptor desc)
+	{
+		let font = menuDelegate.PickFont(mFont);
+		DrawText(desc, font, selected ? mColorSelected : mColor, mXpos, mYpos, mText, false);
+	}
+	
+	override void DrawSelector(double xofs, double yofs, TextureID tex, ListMenuDescriptor desc)
+	{
+		if (tex.isNull())
+		{
+			if ((Menu.MenuTime() % 8) < 6)
+			{
+				DrawText(desc, ConFont, OptionMenuSettings.mFontColorSelection, mXpos + xofs, mYpos + yofs + 8, "\xd");
+			}
+		}
+		else
+		{
+			DrawTexture(desc, tex, mXpos + xofs, mYpos + yofs, false);
+		}
+	}
+	
+
+	void DrawText(ListMenuDescriptor desc, Font fnt, int color, double x, double y, String text, bool ontop = false)
+	{
+		int w = desc ? desc.DisplayWidth() : ListMenuDescriptor.CleanScale;
+		int h = desc ? desc.DisplayHeight() : -1;
+		if (w == ListMenuDescriptor.CleanScale)
+		{
+			screen.DrawText(fnt, color, x, y, text, ontop? DTA_CleanTop : DTA_Clean, true);
+		}
+		else
+		{
+			screen.DrawText(fnt, color, x, y, text, DTA_VirtualWidth, w, DTA_VirtualHeight, h/*, DTA_FullscreenScale, FSMode_ScaleToFit43*/);
+		}
+	}
+	
+	void DrawTexture(ListMenuDescriptor desc, TextureID tex, double x, double y, bool ontop = false)
+	{
+		int w = desc ? desc.DisplayWidth() : ListMenuDescriptor.CleanScale;
+		int h = desc ? desc.DisplayHeight() : -1;
+		if (w == ListMenuDescriptor.CleanScale)
+		{
+			screen.DrawTexture(tex, true, x, y, ontop ? DTA_CleanTop : DTA_Clean, true);
+		}
+		else
+		{
+			screen.DrawTexture(tex, true, x, y, DTA_VirtualWidth, w, DTA_VirtualHeight, h/*, DTA_FullscreenScale, FSMode_ScaleToFit43*/);
+		}
+	}
+}
+
+class ListMenuItemStretchStaticText : ListMenuItemStaticText
+{		
+	override void Draw(bool selected, ListMenuDescriptor desc)
+	{
+		if (mText.Length() != 0)
+		{
+			let font = generic_ui? NewSmallFont : mFont;
+
+			String text = Stringtable.Localize(mText);
+
+			double x = mXpos;
+			if (mCentered) x -= font.StringWidth(text) / 2;
+			DrawText(desc, font, mColor, x, abs(mYpos), text, mYpos < 0);
+		}
+	}
+	
+
+	void DrawText(ListMenuDescriptor desc, Font fnt, int color, double x, double y, String text, bool ontop = false)
+	{
+		int w = desc ? desc.DisplayWidth() : ListMenuDescriptor.CleanScale;
+		int h = desc ? desc.DisplayHeight() : -1;
+		if (w == ListMenuDescriptor.CleanScale)
+		{
+			screen.DrawText(fnt, color, x, y, text, ontop? DTA_CleanTop : DTA_Clean, true);
+		}
+		else
+		{
+			screen.DrawText(fnt, color, x, y, text, DTA_VirtualWidth, w, DTA_VirtualHeight, h/*, DTA_FullscreenScale, FSMode_ScaleToFit43*/);
+		}
+	}
+}
+
+class ListMenuItemStretchStaticPatchCentered : ListMenuItemStaticPatchCentered
+{	
+	override void Draw(bool selected, ListMenuDescriptor desc)
+	{
+		if (!mTexture.Exists())
+		{
+			return;
+		}
+
+		double x = mXpos;
+		Vector2 vec = TexMan.GetScaledSize(mTexture);
+
+		if (mSubstitute == "" || TexMan.OkForLocalization(mTexture, mSubstitute))
+		{
+			if (mCentered) x -= vec.X / 2;
+			DrawTexture(desc, mTexture, x, abs(mYpos), mYpos < 0);
+		}
+		else
+		{
+			let font = generic_ui ? NewSmallFont : mFont;
+			if (mCentered) x -= font.StringWidth(mSubstitute) / 2;
+			DrawText(desc, font, mColor, x, abs(mYpos), mSubstitute, mYpos < 0);
+		}
+	}
+	
+	void DrawTexture(ListMenuDescriptor desc, TextureID tex, double x, double y, bool ontop = false)
+	{
+		int w = desc ? desc.DisplayWidth() : ListMenuDescriptor.CleanScale;
+		int h = desc ? desc.DisplayHeight() : -1;
+		if (w == ListMenuDescriptor.CleanScale)
+		{
+			screen.DrawTexture(tex, true, x, y, ontop ? DTA_CleanTop : DTA_Clean, true);
+		}
+		else
+		{
+			screen.DrawTexture(tex, true, x, y, DTA_VirtualWidth, w, DTA_VirtualHeight, h/*, DTA_FullscreenScale, FSMode_ScaleToFit43*/);
+		}
+	}
+}
+
+class StretchMenuDelegate : DoomMenuDelegate
+{
+	override int DrawCaption(String title, Font fnt, int y, bool drawit)
+	{
+		int factor = (title == "$MNU_LOADGAME" || title == "$MNU_SAVEGAME") ? 2 : 1;
+		if (drawit)
+		{
+			double aspectCorrection = 320.0/274.0;
+			screen.DrawText(fnt, OptionMenuSettings.mTitleColor, (screen.GetWidth() - fnt.StringWidth(title) * 1.2*factor*CleanXfac_1) / 2, 10 * factor*CleanYfac_1, title, DTA_CleanNoMove_1, false, DTA_ScaleY, factor*CleanYfac_1, DTA_ScaleX, aspectCorrection*factor*CleanXfac_1);
+		}
+		return (y + fnt.GetHeight() + 11) * factor * CleanYfac_1;
+	}
+}
+
+class StretchListMenu : ListMenu
+{
+	override void Init(Menu parent, ListMenuDescriptor desc)
+	{
+		for (int i = 0; i < desc.mItems.Size(); i++)
+		{
+			if (ListMenuItemTextItem(desc.mItems[i]))
+			{
+				let item = ListMenuItemTextItem(desc.mItems[i]);
+				let ni = new("ListMenuItemStretchTextItem");
+				ni.InitDirect(item.GetX(), item.GetY(), item.mHeight, String.format("%c",item.mHotKey), item.mText, item.mFont, item.mColor, item.mColor, item.GetAction(), item.mParam);
+				ni.Enable(item.mEnabled);
+				desc.mItems[i] = ni;
+			}
+			else if (ListMenuItemStaticText(desc.mItems[i]))
+			{
+				let item = ListMenuItemStaticText(desc.mItems[i]);
+				let ni = new("ListMenuItemStretchStaticText");
+				ni.InitDirect(item.GetX(), item.GetY(), item.mText, item.mFont, item.mColor, item.mCentered);
+				desc.mItems[i] = ni;
+			}
+			else if (ListMenuItemStaticPatchCentered(desc.mItems[i]))
+			{
+				let item = ListMenuItemStaticPatchCentered(desc.mItems[i]);
+				let ni = new("ListMenuItemStretchStaticPatchCentered");
+				ni.Init(desc, item.GetX(), item.GetY(), item.mTexture);
+				desc.mItems[i] = ni;
+			}
+		}
+		Super.Init(parent, desc);
+	}
+	
+	void CleanInit(Menu parent, ListMenuDescriptor desc)
+	{
+		Super.Init(parent, desc);
+	}
+}
+
+class ColoredMessageBoxMenu : MessageBoxMenu
+{
+	override void Drawer ()
+	{
+		int i;
+		double y;
+		let fontheight = textFont.GetHeight() * NotifyFontScale;
+
+		y = destHeight / 2;
+
+		int c = mMessage.Count();
+		y -= c * fontHeight / 2;
+
+		for (i = 0; i < c; i++)
+		{
+			screen.DrawText (textFont, Font.CR_GRAY, destWidth/2 - mMessage.StringWidth(i)*NotifyFontScale/2, y, mMessage.StringAt(i), DTA_VirtualWidth, destWidth, DTA_VirtualHeight, destHeight, DTA_KeepRatio, true, 
+				DTA_ScaleX, NotifyFontScale, DTA_ScaleY, NotifyFontScale);
+			y += fontheight;
+		}
+
+		if (mMessageMode == 0)
+		{
+			y += fontheight;
+			mMouseY = int(y);
+			screen.DrawText(textFont, messageSelection == 0? OptionMenuSettings.mFontColorSelection : OptionMenuSettings.mFontColor, destWidth / 2, y, Stringtable.Localize("$TXT_YES"), DTA_VirtualWidth, destWidth, DTA_VirtualHeight, destHeight, DTA_KeepRatio, 	true, DTA_ScaleX, NotifyFontScale, DTA_ScaleY, NotifyFontScale);
+			screen.DrawText(textFont, messageSelection == 1? OptionMenuSettings.mFontColorSelection : OptionMenuSettings.mFontColor, destWidth / 2, y + fontheight, Stringtable.Localize("$TXT_NO"), DTA_VirtualWidth, destWidth, DTA_VirtualHeight, destHeight, DTA_KeepRatio, true, DTA_ScaleX, NotifyFontScale, DTA_ScaleY, NotifyFontScale);
+
+			if (messageSelection >= 0)
+			{
+				if ((MenuTime() % 8) < 6)
+				{
+					screen.DrawText(arrowFont, OptionMenuSettings.mFontColorSelection,
+						destWidth/2 - 11, y + fontheight * messageSelection, selector, DTA_VirtualWidth, destWidth, DTA_VirtualHeight, destHeight, DTA_KeepRatio, true);
+				}
+			}
+		}
+	}
+}
+
+class ResetDefaultsMenu : CXNashGoreMenu
+{
+	override void Init(Menu parent, OptionMenuDescriptor desc)
+	{
+		super.Init(parent, desc);
+		mDesc.mSelectedItem = FirstSelectable() + 1;
+	}
+	
+	override void Drawer()
+	{
+		super.Drawer();
+		let s = mDesc.mSelectedItem;
+		if (s == FirstSelectable())
+		{
+			mToolTip = "$CEMNU_EXAGGERATEDPRESET_DESC";
+		}
+		else if (s == FirstSelectable() + 1)
+		{
+			mToolTip = "$CEMNU_DEFAULTPRESET_DESC";
+		}
+		else if (s == FirstSelectable() + 2)
+		{
+			mToolTip = "$CEMNU_ENHANCEDPRESET_DESC";
+		}
+		else if (s == FirstSelectable() + 3)
+		{
+			mToolTip = "$CEMNU_VANILLAPRESET_DESC";
+		}
+		else if (s == mDesc.mItems.Size() - 1)
+		{
+			mToolTip = "$CEMNU_FIRSTTIMESETUP_SKIP_DESC";
+		}
+		mToolTip = StringTable.Localize(mToolTip);
+		mToolTip.Replace("\n\n"," ");
+		mRequired = true;
+		DrawTooltip();
+	}
+}
+
+class FirstTimeSetupMenu : OptionMenu
+{
+	override void Init(Menu parent, OptionMenuDescriptor desc)
+	{
+		super.Init(parent, desc);
+		mDesc.mSelectedItem = FirstSelectable() + 1;
+		//yOffset = 95;
+	}
+	
+	override bool MenuEvent(int mkey, bool fromcontroller)
+	{
+		if (mKey == MKEY_Back)
+		{
+			mDesc.mItems[mDesc.mItems.Size() - 1].Activate();
+			return true;
+		}
+		else
+		{
+			return super.MenuEvent(mkey, fromcontroller);
+		}
+	}
+}

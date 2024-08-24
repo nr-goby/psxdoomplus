@@ -1,0 +1,192 @@
+
+
+class ProgressionHandler : EventHandler
+{
+  TallyTracker tallyTracker;
+  PlayerPawn plr;
+  int healthLevel;
+  int damageLevel;
+  int protectionLevel;
+  int bulletAmmoLevel;
+  int shellAmmoLevel;
+  int rocketAmmoLevel;
+  int cellAmmoLevel;
+
+  // give player powerups here
+  // call loop on inventory array and put items on player
+  override void PlayerEntered(PlayerEvent e)
+	{
+    plr = players[e.PlayerNumber].mo;
+    SetUpgradeInfo(plr);
+	}
+
+  override void WorldLoaded(WorldEvent e)
+	{
+    tallyTracker = TallyTracker.Get();
+		Console.Printf("World loaded, total currency: %i", tallyTracker.currency);
+	}
+
+  // enables communication with a menu
+  override void NetworkProcess(ConsoleEvent e)
+  {
+    super.NetworkProcess(e);
+    if (e.Name ~== "progression-open-menu")
+      {
+			  Menu.SetMenu("progression_menu");
+      }
+    
+    if (e.Name ~== "progression-purchase-health-upgrade")
+      {
+        PurchaseUpgrade("IncreaseMaxHealthInv");
+        
+        // Console.Printf("Current Currency: %i", tallyTracker.currency);
+        // Console.Printf("Purchased Health Upgrade, Max Health: %i", plr.MaxHealth);
+      }
+
+      if (e.Name ~== "progression-purchase-dr-upgrade")
+      {
+        PurchaseUpgrade("DecreaseDamageReceivedInv");
+
+        // Console.Printf("Current Currency: %i", tallyTracker.currency);
+        // Console.Printf("Purchased Damage Reduction Upgrade");
+      }
+
+      if (e.Name ~== "progression-purchase-bullet-upgrade")
+      {
+        PurchaseUpgrade("IncreaseBulletAmmoInv", 3);
+
+        // Console.Printf("Current Currency: %i", tallyTracker.currency);
+        // Console.Printf("Purchased Bullet Upgrade");
+      }
+
+      if (e.Name ~== "progression-purchase-shell-upgrade")
+      {
+        PurchaseUpgrade("IncreaseShellAmmoInv", 3);
+
+        // Console.Printf("Current Currency: %i", tallyTracker.currency);
+        // Console.Printf("Purchased Shell Upgrade");
+      }
+
+      if (e.Name ~== "progression-purchase-rocket-upgrade")
+      {
+        PurchaseUpgrade("IncreaseRocketAmmoInv", 3);
+
+        // Console.Printf("Current Currency: %i", tallyTracker.currency);
+        // Console.Printf("Purchased Rocket Upgrade");
+      }
+
+      if (e.Name ~== "progression-purchase-cell-upgrade")
+      {
+        PurchaseUpgrade("IncreaseCellAmmoInv", 3);
+
+        // Console.Printf("Current Currency: %i", tallyTracker.currency);
+        // Console.Printf("Purchased Cell Upgrade");
+      }
+
+      if (e.Name ~== "progression-purchase-di-upgrade")
+      {
+        PurchaseUpgrade("IncreaseMaxDamageInv");
+
+        // Console.Printf("Current Currency: %i", tallyTracker.currency);
+        // Console.Printf("Purchased Max Damage Upgrade");
+      }
+
+    SetUpgradeInfo(plr);
+    Console.Printf("NetworkProcess: %s", e.Name);
+  }
+
+  // 1% chance to spawn a super shotgun from a shotgun spawn
+  override void WorldThingSpawned (WorldEvent e)
+  {
+    let shotgun = Actor.GetReplacement("Shotgun");
+    if (e.thing is shotgun)
+    {
+      if(Random(0, 99) <= 0)
+      {
+        e.thing.A_SpawnItem("SuperShotgun");
+        e.thing.Destroy();
+      }
+    }
+
+  }
+
+  override void CheckReplacement(replaceEvent e)
+  {
+    if (e.Replacee is "DoomImp")
+    {
+      if(Random(0, 99) <= 9) e.Replacement = "PsxNightmareImp";
+    }
+  }
+
+  void SetUpgradeInfo(PlayerPawn player)
+  {
+    let health = player.FindInventory("IncreaseMaxHealthInv");
+    if (health) healthLevel = health.amount;
+    else healthLevel = 0;
+
+    let damage = player.FindInventory("IncreaseMaxDamageInv");
+    if (damage) damageLevel = damage.amount;
+    else damageLevel = 0;
+
+    let protection = player.FindInventory("DecreaseDamageReceivedInv");
+    if (protection) protectionLevel = protection.amount;
+    else protectionLevel = 0;
+
+    let bulletAmmo = player.FindInventory("IncreaseBulletAmmoInv");
+    if (bulletAmmo) bulletAmmoLevel = bulletAmmo.amount;
+    else bulletAmmoLevel = 0;
+
+    let shellAmmo = player.FindInventory("IncreaseShellAmmoInv");
+    if (shellAmmo) shellAmmoLevel = shellAmmo.amount;
+    else shellAmmoLevel = 0;
+
+    let rocketAmmo = player.FindInventory("IncreaseRocketAmmoInv");
+    if (rocketAmmo) rocketAmmoLevel = rocketAmmo.amount;
+    else rocketAmmoLevel = 0;
+ 
+    let cellAmmo = player.FindInventory("IncreaseCellAmmoInv");
+    if (cellAmmo) cellAmmoLevel = cellAmmo.amount;
+    else cellAmmoLevel = 0;
+
+  }
+
+  void PurchaseUpgrade(String inv, int padding = 1)
+  {
+    let item = plr.FindInventory(inv);
+        if (item)
+        {
+          Console.Printf("Item found, item amount %i", item.amount);
+          int level = item.amount;
+          int currencyRequired = (level + 1) * padding;
+          if (currencyRequired > tallyTracker.currency)
+          {
+            Console.Printf("Not enough currency to purchase upgrade");
+            Menu.SetMenu("insufficient_currency");
+            return;
+          }
+          if (level == item.maxamount)
+          {
+            Console.Printf("You reached max level in this upgrade");
+            Menu.SetMenu("max_upgrade_level");
+            return;
+          }
+
+          tallyTracker.currency -= currencyRequired;
+          plr.TakeInventory(inv, level);
+          plr.A_GiveInventory(inv, level + 1);
+        }
+        else
+        {
+          if (tallyTracker.currency < (1 * padding))
+          {
+            Console.Printf("Not enough currency to purchase upgrade");
+            Menu.SetMenu("insufficient_currency");
+            return;
+          }
+          tallyTracker.currency -= 1 * padding;
+          plr.A_GiveInventory(inv, 1);
+        }
+  }
+
+  
+}

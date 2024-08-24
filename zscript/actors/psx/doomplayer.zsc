@@ -1,0 +1,338 @@
+class PsxPlayerPawn : DoomPlayer
+{
+	const BASE_ANGLE = 180 / 4096.0;
+	
+	mixin VarsCache;
+	mixin DoubleThrust;
+	
+	double recoilPitch;
+	double lastRecoilPitch;
+	int recoilSteps;
+	int lastTic;
+
+	TallyTracker tallyTracker;
+
+	int PlayerFlags;
+
+	flagdef MOVEONLYONGROUND : PlayerFlags, 0;
+
+	Default
+	{
+		Friction PsxActor.SCALE_FRICTION;
+	}
+
+	void A_GoreExplosion(int spurts = 6)
+    {
+        if (kch_enabled)
+        {
+            for (int i = 0; i < 8; i++) A_SpawnProjectile("SuperWallRedBlood", random(40,80), 0, random (0, 360), CMF_AIMDIRECTION|CMF_BADPITCH, random (0, 5));
+            for (int i = 0; i < 4; i++) A_SpawnItemEx("Blood", frandom(radius*-1, radius), frandom(radius*-1, radius), height,cos(random (-5, 5))*(cos(random (0, 360))*frandom(-2.0, 2.0)), cos(random (-5, 5))*(sin(random (0, 360))*frandom(-2.0, 2.0)), sin(random (-5, 5))*frandom(0, 4.0), random (0, 360), SXF_USEBLOODCOLOR);
+            for (int i = 0; i < spurts; i++) A_SpawnProjectile ("SuperGoreSpawner", 32, 0, random (0, 360), CMF_AIMDIRECTION|CMF_BADPITCH, random (50, 130));
+        }
+    }
+
+	void SetRecoilPitch(int steps, double recoil)
+	{
+		recoilSteps = steps;
+		recoilPitch = recoil;
+	}
+
+	double GetSpeedScale()
+	{
+		switch(ce_playertics)
+		{
+			case 2:
+				return PsxActor.SCALE_TICRATE_SLOWEST;
+			case 1:
+				return PsxActor.SCALE_TICRATE_SLOW;
+			case 0:
+			default:
+				return PsxActor.SCALE_TICRATE;
+		}
+		return 1;
+	}
+
+	void ResetSpeed()
+	{
+		speed = default.speed * GetSpeedScale();
+	}
+
+	override void PostBeginPlay()
+	{
+		tallyTracker = TallyTracker.Get();
+		double speedscale = GetSpeedScale();
+		speed *= speedscale;
+		gravity *= speedscale;
+		ViewBob *= speedscale;
+		super.PostBeginPlay();
+	}
+
+	virtual int getCurrency() {
+		return 1;
+	}
+
+	override void TickPSprites()
+	{
+		int pspTics;
+		let psp = player.GetPSprite(PSP_WEAPON);
+		if (psp != null)
+		{
+			if (lastTic < psp.tics && ce_weapontics && !smw_enabled)
+				psp.tics = int(Round(psp.tics * PsxActor.SCALE_FRAME));
+			pspTics = psp.tics;
+		}
+		lastTic = pspTics;
+		super.TickPSprites();
+	}
+
+	override void MovePlayer()
+	{
+		let player = self.player;
+		UserCmd cmd = player.cmd;
+
+		if (player.turnticks)
+		{
+			player.turnticks--;
+			Angle += (180. / TURN180_TICKS);
+		}
+		else
+		{
+			Angle += cmd.yaw * (360./65536.);
+		}
+
+		player.onground = (pos.z <= floorz) || bOnMobj || bMBFBouncer || (player.cheats & CF_NOCLIP2);
+
+		if (cmd.forwardmove | cmd.sidemove)
+		{
+			if(bMOVEONLYONGROUND && !(player.mo.bNOGRAVITY | player.mo.bFly))//[GEC]
+				if (!player.onground) return;
+
+			double forwardmove, sidemove;
+			double bobfactor;
+			double friction, movefactor;
+			double fm, sm;
+
+			[friction, movefactor] = GetFriction();
+
+			movefactor = (friction == ORIG_FRICTION * PsxActor.SCALE_FRICTION) ? ORIG_FRICTION_FACTOR : movefactor * 8;
+			bobfactor = friction < ORIG_FRICTION * PsxActor.SCALE_FRICTION ? movefactor : ORIG_FRICTION_FACTOR;
+			if (!player.onground && !bNoGravity && !waterlevel)
+			{
+				movefactor *= level.aircontrol;
+				bobfactor*= level.aircontrol;
+			}
+
+			fm = cmd.forwardmove;
+			sm = cmd.sidemove;
+			[fm, sm] = TweakSpeeds (fm, sm);
+			fm *= Speed / 256;
+			sm *= Speed / 256;
+
+			if (CanCrouch() && player.crouchfactor != 1)
+			{
+				fm *= player.crouchfactor;
+				sm *= player.crouchfactor;
+				bobfactor *= player.crouchfactor;
+			}
+
+			forwardmove = fm * movefactor;
+			sidemove = sm * movefactor;
+			
+			if (forwardmove)
+			{
+				Bob(Angle, cmd.forwardmove * bobfactor / 256., true);
+				ForwardThrust(forwardmove, Angle);
+			}
+			if (sidemove)
+			{
+				let a = Angle - 90;
+				Bob(a, cmd.sidemove * bobfactor / 256., false);
+				Thrust(sidemove, a);
+			}
+
+			if (!(player.cheats & CF_PREDICTING) && (forwardmove != 0 || sidemove != 0))
+			{
+				PlayRunning ();
+			}
+
+			if (player.cheats & CF_REVERTPLEASE)
+			{
+				player.cheats &= ~CF_REVERTPLEASE;
+				player.camera = player.mo;
+			}
+		}
+	}
+	
+	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
+	{
+		int result = super.DamageMobj(inflictor, source, damage, mod, flags, angle);
+		
+		// [psx/d64]: clamp thrust for players only
+		double maxMove = 16;
+		
+		if (vel.x > maxMove)
+		{
+			vel.x = maxMove;
+		}
+		else if (vel.x < -maxMove)
+		{
+			vel.x = -maxMove;
+		}
+		
+		if (vel.y > maxMove)
+		{
+			vel.y = maxMove;
+		}
+		else if (vel.y < -maxMove)
+		{
+			vel.y = -maxMove;
+		}
+		
+		return result;
+	}
+
+	override void PlayerThink()
+	{
+		super.PlayerThink();
+		HandleRecoilPitch();
+	}
+
+	private void HandleRecoilPitch()
+	{
+		if (recoilPitch == 0)
+		{
+			if (lastRecoilPitch != 0)
+			{
+				//final correction
+				A_SetPitch(pitch+lastRecoilPitch, SPF_INTERPOLATE);
+				lastRecoilPitch = 0;
+			}
+			return;
+		}
+
+		//previous pitch correction
+		if (lastRecoilPitch) pitch += lastRecoilPitch;
+		lastRecoilPitch = recoilPitch;
+
+		A_SetPitch(pitch-recoilPitch, SPF_INTERPOLATE);
+		
+		// [GEC][d64] - recoil pitch from weapons
+		if (recoilPitch >= BASE_ANGLE)
+		{
+			recoilPitch -= recoilPitch/recoilSteps * PsxActor.SCALE_TICRATE;
+		}
+		else
+		{
+			recoilPitch = 0;
+		}
+	}
+}
+
+class PsxDoomPlayer : PsxPlayerPawn replaces DoomPlayer
+{
+
+	Default
+	{	
+		//Speed 1;
+		Health 100;
+		Radius 16;
+		Height 56;
+		Mass 100;
+		PainChance 255;
+
+		Player.DisplayName "Marine";
+		//Player.CrouchSprite "PLYC";
+		Player.CrouchSprite "";
+		Player.StartItem "PsxPistol";
+		Player.StartItem "PsxFist";
+		Player.StartItem "Clip", 50;
+		Player.WeaponSlot 1, "PsxFist", "PsxChainsaw";
+		Player.WeaponSlot 2, "PsxPistol";
+		Player.WeaponSlot 3, "PsxShotgun", "PsxSuperShotgun";
+		Player.WeaponSlot 4, "PsxChaingun";
+		Player.WeaponSlot 5, "PsxRocketLauncher";
+		Player.WeaponSlot 6, "PsxPlasmaRifle";
+		Player.WeaponSlot 7, "PsxBFG9000";
+
+		Player.ColorRange 112, 127;
+		Player.Colorset 0, "$TXT_COLOR_GREEN",		0x70, 0x7F,  0x72;
+		Player.Colorset 1, "$TXT_COLOR_GRAY",		0x60, 0x6F,  0x62;
+		Player.Colorset 2, "$TXT_COLOR_BROWN",		0x40, 0x4F,  0x42;
+		Player.Colorset 3, "$TXT_COLOR_RED",		0x20, 0x2F,  0x22;
+		Player.Colorset 4, "$TXT_COLOR_LIGHTGRAY",	0x58, 0x67,  0x5A;
+		Player.Colorset 5, "$TXT_COLOR_LIGHTBROWN",	0x38, 0x47,  0x3A;
+		Player.Colorset 6, "$TXT_COLOR_LIGHTRED",	0xB0, 0xBF,  0xB2;
+		Player.Colorset 7, "$TXT_COLOR_LIGHTBLUE",	0xC0, 0xCF,  0xC2;
+
+		Speed 2;
+		Player.ForwardMove 1.28005, 0.96005;
+		Player.SideMove 1.1668, 1.10005;
+		Player.UseRange 70;
+        +MOVEWITHSECTOR;
+		-PLAYERPAWN.NOTHRUSTWHENINVUL;
+		+PsxPlayerPawn.MOVEONLYONGROUND;
+		Player.MaxHealth 100;
+	}
+
+	States
+	{
+		Spawn:
+			PLAY A -1;
+			Loop;
+
+		See:
+			PLAY ABCD 4;
+			Loop;
+
+		Missile:
+			//PLAY E 4;
+			PLAY E 11; //less accurate but looks better
+			Goto Spawn;
+
+		Melee:
+			PLAY F 8 BRIGHT;
+			Goto Missile;
+
+		Pain:
+			PLAY G 4;
+			PLAY G 4 A_Pain;
+			Goto Spawn;
+		
+		Death:
+			PLAY H 0 A_PlayerSkinCheck("AltSkinDeath");
+		Death1:
+			PLAY H 10;
+			PLAY I 10 A_PlayerScream;
+			PLAY J 10 A_NoBlocking;
+			PLAY K 10;
+			PLAY LM 10;
+			PLAY N -1;
+			Stop;
+		AltSkinDeath:
+			PLAY H 5;
+			PLAY I 5 A_PlayerScream;
+			PLAY JK 5;
+			PLAY L 5 A_NoBlocking;
+			PLAY M 5;
+			PLAY NO 5;
+			PLAY P -1;
+			Stop;
+
+		XDeath:
+			PLAY O 0 A_PlayerSkinCheck("AltSkinXDeath");
+		XDeath1:
+			PLAY O 4 A_GoreExplosion;
+			PLAY P 4 A_XScream;
+			PLAY Q 4 A_NoBlocking;
+			PLAY RSTUV 4;
+			PLAY W -1;
+			Stop;
+		AltSkinXDeath:
+			PLAY Q 4 { A_PlayerScream(); A_GoreExplosion(); }
+			PLAY R 0 A_NoBlocking;
+			PLAY R 4 A_SkullPop;
+			PLAY STUVWX 4;
+			PLAY Y -1;
+			Stop;
+	}
+}

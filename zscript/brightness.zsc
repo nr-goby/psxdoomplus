@@ -1,0 +1,9 @@
+extend class CEEventHandler
+{
+	ui void BrightnessUiTick()
+	{
+		PPShader.SetUniform1f("Brightness", "strength", (Cvar.GetCVar("ce_brightness", players[consoleplayer]).GetFloat() + 100.0) * 0.01);
+		PPShader.SetUniform1f("Brightness", "infraredfactor", 1.0);
+		PPShader.SetEnabled("Brightness", true);
+	}
+}	

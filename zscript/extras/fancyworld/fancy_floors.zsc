@@ -1,0 +1,115 @@
+// Acid/Nukage
+class FancySectorNukage : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/acidloop";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		FancyWorldBase.RandomSound "world/acid";
+	}
+}
+
+// Water
+class FancySectorWater : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/waterflow";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+	}
+}
+
+// Slime
+class FancySectorSlime : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/gooflow";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+	}
+}
+
+// Blood
+class FancySectorBlood : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/gooflow";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+	}
+}
+
+// Lava
+class FancySectorLava : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/lavaflow";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+		FancyWorldBase.RandomSound "world/lava";
+	}
+}
+
+// Hot Surfaces
+class FancySectorHot : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.RandomSound "world/hotsurface";
+		FancyWorldBase.RandomSoundChance 0.05;
+	}
+}
+
+// XWater from ObAddon
+class FancySectorXWater : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/xwater";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+	}
+}
+
+// Floor Teleporter
+class FancySectorTeleporter : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/floortele";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+	}
+}
+
+// Floor Fan
+class FancySectorFan : FancyWorldBase
+{
+	default
+	{
+		FancyWorldBase.AmbientSound "world/fan";
+		FancyWorldBase.MinPitch 0.98;
+		FancyWorldBase.MaxPitch 1.02;
+		FancyWorldBase.MinStartTime 0.0;
+		FancyWorldBase.MaxStartTime 1.0;
+	}
+}

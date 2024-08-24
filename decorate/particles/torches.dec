@@ -1,0 +1,10 @@
+Actor SHTorchSpawner : SwitchableDecoration
+{
+  +NoBlockMap
+  +NoGravity
+  +NoInteraction
+  +NoClip
+  +ClientSideOnly
+  +MoveWithSector
+	+NOTONAUTOMAP
+}

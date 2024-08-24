@@ -1,0 +1,34 @@
+Actor Sparky
+{
+  +Doombounce
+  +NoTeleport
+  +ForceXYBillboard
+  +missile
+  +dontsplash
+	+NOTONAUTOMAP
+  Health 4
+  Radius 3
+  Height 6
+  Speed 0.1
+  RenderStyle Add
+  Alpha 0.85
+  Scale 0.04
+  Mass 0
+  States
+  {
+  Spawn:
+    BPUF ABCD 1 bright Light("SparkLight") A_FadeOut(0.05)
+    loop
+  }
+}
+
+Actor GreenPlasmaSpark : Sparky
+{
+  Alpha 1
+  States
+  {
+  Spawn:
+    APLX A 1 bright Light("ArachSparkLight") A_FadeOut(0.05)
+    loop
+  }
+}

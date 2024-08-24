@@ -1,0 +1,76 @@
+class CEExtrasHandler : EventHandler
+{
+	CEConfig config;
+	
+	override void OnRegister()
+	{
+		config = CEConfig.Get();
+		
+		LowResOnRegister();
+	}
+
+	override void WorldLoaded(WorldEvent e)
+	{
+		DamageIndicatorWorldLoaded(e);
+		FancyWorldLoaded(e);
+		FootstepsWorldLoaded(e);
+		TallyWorldLoaded(e);
+	}
+	
+	override void WorldUnloaded(WorldEvent e)
+	{
+		TallyWorldUnloaded(e);
+	}
+	
+	override void WorldThingDamaged(WorldEvent e)
+	{
+		DamageIndicatorWorldThingDamaged(e);
+	}
+	
+	override void ConsoleProcess(ConsoleEvent e)
+	{
+		TallyConsoleProcess(e);
+	}
+	
+	override void NetworkProcess(ConsoleEvent e)
+	{
+		ResurrectNetworkProcess(e);
+	}
+
+	override void PlayerEntered(PlayerEvent e)
+	{
+		FootstepsPlayerEntered(e);
+	}
+	
+	override void PlayerRespawned(PlayerEvent e)
+	{
+		FootstepsPlayerRespawned(e);
+	}
+	
+	override void PlayerDied(PlayerEvent e)
+	{
+		TallyPlayerDied(e);
+	}
+	
+	override void RenderOverlay(RenderEvent e)
+	{
+		TallyRenderOverlay(e);
+	}
+	
+	override void RenderUnderlay(RenderEvent e)
+	{
+		DamageIndicatorRenderUnderlay(e);
+	}
+	
+	override void WorldTick()
+	{
+		DamageIndicatorWorldTick();
+		FootstepsWorldTick();
+		ResurrectWorldTick();
+	}
+	
+	override void UITick()
+	{
+		LowResUITick();
+	}
+}

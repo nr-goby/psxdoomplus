@@ -1,0 +1,97 @@
+ClearLocks
+
+Lock 1 Doom
+{
+   RedCard
+   Message "$PD_REDC"
+   RemoteMessage "$PD_REDCO"
+   Mapcolor 255 0 0
+}
+
+Lock 2 Doom
+{
+   BlueCard
+   Message "$PD_BLUEC"
+   RemoteMessage "$PD_BLUECO"
+   Mapcolor 0 0 255
+}
+
+Lock 3 Doom
+{
+   YellowCard
+   Message "$PD_YELLOWC"
+   RemoteMessage "$PD_YELLOWCO"
+   Mapcolor 255 255 0
+}
+
+Lock 4 Doom
+{
+   RedSkull
+   Message "$PD_REDS"
+   RemoteMessage "$PD_REDSO"
+   Mapcolor 255 0 0
+}
+
+Lock 5 Doom
+{
+   BlueSkull
+   Message "$PD_BLUES"
+   RemoteMessage "$PD_BLUESO"
+   Mapcolor 0 0 255
+}
+
+Lock 6 Doom
+{
+   YellowSkull
+   Message "$PD_YELLOWS"
+   RemoteMessage "$PD_YELLOWSO"
+   Mapcolor 255 255 0
+}
+
+Lock 129 Doom
+{
+   Any { RedCard RedSkull }
+   Message "$PD_REDK"
+   RemoteMessage "$PD_REDO"
+   Mapcolor 255 0 0
+}
+
+Lock 130 Doom
+{
+   Any { BlueCard BlueSkull }
+   Message "$PD_BLUEK"
+   RemoteMessage "$PD_BLUEO"
+   Mapcolor 0 0 255
+}
+
+Lock 131 Doom
+{
+   Any { YellowCard YellowSkull }
+   Message "$PD_YELLOWK"
+   RemoteMessage "$PD_YELLOWO"
+   Mapcolor 255 255 0
+}
+
+Lock 132 Doom
+{
+   Any { RedCard RedSkull }
+   Message "$PD_REDK"
+   RemoteMessage "$PD_REDO"
+   Mapcolor 255 0 0
+}
+
+Lock 133 Doom
+{
+   Any { BlueCard BlueSkull }
+   Message "$PD_BLUEK"
+   RemoteMessage "$PD_BLUEO"
+   Mapcolor 0 0 255
+}
+
+Lock 134 Doom
+{
+   Any { YellowCard YellowSkull }
+   Message "$PD_YELLOWK"
+   RemoteMessage "$PD_YELLOWO"
+   Mapcolor 255 255 0
+}

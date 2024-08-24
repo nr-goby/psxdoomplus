@@ -1,0 +1,12 @@
+extend class CEEventHandler
+{	
+	void FirstTimeSetupNewGame()
+	{
+		let enabled = CVar.GetCVar("ce_firstsetup", players[consoleplayer]);
+		if (enabled.GetBool())
+		{
+			enabled.SetBool(false);
+			Menu.SetMenu("FirstTimeSetup");
+		}
+	}
+}

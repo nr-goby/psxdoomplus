@@ -1,0 +1,185 @@
+class ColorUtils
+{
+	static Color AdjustColor(Color original, float weight, float adjust = 1.0)
+	{
+		float factor;
+		int h, s, v;
+		[h, s, v, factor] = GetAdjustFactor(original, weight, adjust);
+		v = clamp(int(Round(255 * factor)), 0, 255);
+		int r, g, b;
+		[r, g, b] = HSVtoRGB((int)(h), (int)(s), (int)(v));
+		return Color(255, r, g, b);
+	}
+	
+	static int, int, int, double GetAdjustFactor(Color original, float weight, float adjust = 1.0)
+	{
+		int h, s, v;
+		[h, s, v] = RGBtoHSV(original.r, original.g, original.b);
+		return h, s, v, weight > 0 ? (v / weight * adjust) : 0;
+	}
+	
+	static Color Blend(Color original, Color target, float weight)
+	{	
+		return Color(255,
+			(int)(Round((target.r - original.r) * weight + original.r)),
+			(int)(Round((target.g - original.g) * weight + original.g)),
+			(int)(Round((target.b - original.b) * weight + original.b)));
+	}
+	
+	static Color AdjustHSV(Color original, float hfactor = 1.0, float sfactor = 1.0, float vfactor = 1.0)
+	{
+		int h, s, v;
+		[h, s, v] = RGBtoHSV(original.r, original.g, original.b);
+		h = clamp(int(Round(h * hfactor)), 0, 255);
+		s = clamp(int(Round(s * sfactor)), 0, 255);
+		v = clamp(int(Round(v * vfactor)), 0, 255);
+		int r, g, b;
+		[r, g, b] = HSVtoRGB((int)(h), (int)(s), (int)(v));
+		return Color(255, r, g, b);
+	}
+	
+	static int, int, int RGBtoHSV(int r, int g, int b){
+		int min = r;
+		int max = r;
+		float delta = 0.0f;
+		float j = 0.0f;
+		float x = 0.0f;
+		float xr = 0.0f;
+		float xg = 0.0f;
+		float xb = 0.0f;
+		float sum = 0.0f;
+
+		if(g < min) {
+			min = g;
+		}
+		if(b < min) {
+			min = b;
+		}
+
+		if(g > max) {
+			max = g;
+		}
+		if(b > max) {
+			max = b;
+		}
+
+		delta = ((float)(max) / 255.0f);
+
+		if(dfcmp(delta, 0.0f)) {
+			delta = 0;
+		}
+		else {
+			j = ((delta - ((float)(min) / 255.0f)) / delta);
+		}
+
+		if(!dfcmp(j, 0.0f)) {
+			xr = ((float)(r) / 255.0f);
+
+			if(!dfcmp(xr, delta)) {
+				xg = ((float)(g) / 255.0f);
+
+				if(!dfcmp(xg, delta)) {
+					xb = ((float)(b) / 255.0f);
+
+					if(dfcmp(xb, delta)) {
+						sum = ((((delta - xg) / (delta - (min / 255.0f))) + 4.0f) -
+							   ((delta - xr) / (delta - (min / 255.0f))));
+					}
+				}
+				else {
+					sum = ((((delta - xr) / (delta - (min / 255.0f))) + 2.0f) -
+						   ((delta - (b / 255.0f)) /(delta - (min / 255.0f))));
+				}
+			}
+			else {
+				sum = (((delta - (b / 255.0f))) / (delta - (min / 255.0f))) -
+					  ((delta - (g / 255.0f)) / (delta - (min / 255.0f)));
+			}
+
+			x = (sum * 60.0f);
+
+			if(x < 0) {
+				x += 360.0f;
+			}
+		}
+		else {
+			j = 0.0f;
+		}
+
+		return (int)((x / 360.0f) * 255.0f), (int)(j * 255.0f), (int)(delta * 255.0f);		
+	}
+	
+	static int, int, int HSVtoRGB(int h, int s, int v) {
+		float x = 0.0f;
+		float j = 0.0f;
+		float i = 0.0f;
+		int table = 0;
+		float xr = 0.0f;
+		float xg = 0.0f;
+		float xb = 0.0f;
+
+		j = (h / 255.0f) * 360.0f;
+
+		if(360.0f <= j) {
+			j -= 360.0f;
+		}
+
+		x = (s / 255.0f);
+		i = (v / 255.0f);
+
+		if(!dfcmp(x, 0.0f)) {
+			table = (int)(j / 60.0f);
+			if(table < 6) {
+				float t = (j / 60.0f);
+				switch(table) {
+				case 0:
+					xr = i;
+					xg = ((1.0f - ((1.0f - (t - (float)(table))) * x)) * i);
+					xb = ((1.0f - x) * i);
+					break;
+				case 1:
+					xr = ((1.0f - (x * (t - (float)(table)))) * i);
+					xg = i;
+					xb = ((1.0f - x) * i);
+					break;
+				case 2:
+					xr = ((1.0f - x) * i);
+					xg = i;
+					xb = ((1.0f - ((1.0f - (t - (float)(table))) * x)) * i);
+					break;
+				case 3:
+					xr = ((1.0f - x) * i);
+					xg = ((1.0f - (x * (t - (float)(table)))) * i);
+					xb = i;
+					break;
+				case 4:
+					xr = ((1.0f - ((1.0f - (t - (float)(table))) * x)) * i);
+					xg = ((1.0f - x) * i);
+					xb = i;
+					break;
+				case 5:
+					xr = i;
+					xg = ((1.0f - x) * i);
+					xb = ((1.0f - (x * (t - (float)(table)))) * i);
+					break;
+				}
+			}
+		}
+		else {
+			xr = xg = xb = i;
+		}
+
+		return (int)(xr * 255.0f), (int)(xg * 255.0f), (int)(xb * 255.0f);
+	}
+	
+	static bool dfcmp(float f1, float f2) {
+		float precision = 0.00001f;
+		if(((f1 - precision) < f2) &&
+				((f1 + precision) > f2)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+}

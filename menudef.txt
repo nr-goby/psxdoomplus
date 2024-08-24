@@ -1,0 +1,708 @@
+DefaultListMenu
+{
+	Size 274, 240
+	Font "BigFont", "Untranslated"
+	Selector "M_SKULL1", -24, -2
+	//Selector "M_SKULL1", -34, -2
+	Linespacing 25
+}
+
+ListMenu "MainMenu"
+{
+	Class StretchListMenu
+	Size 274, 240
+	StaticPatchCentered 137, 20, "M_DOOM"
+	Position 90, 91
+	TextItem "$MNU_NEWGAME", "n", "PlayerclassMenu"
+	TextItem "$MNU_OPTIONS","o", "OptionsMenu"
+	TextItem "$MNU_LOADGAME", "l", "LoadGameMenu"
+	TextItem "$MNU_SAVEGAME", "s", "SaveGameMenu"
+	TextItem "$CEMNU_FEATURES", "e", "FeaturesMenu"
+	TextItem "$MNU_QUITGAME", "q", "QuitMenu"
+}
+
+ListMenu "MainMenuTextOnly"
+{
+	Class StretchListMenu
+	Size 274, 240
+	StaticPatchCentered 137, 20, "M_DOOM"
+	Position 90, 91
+	TextItem "$MNU_NEWGAME", "n", "PlayerclassMenu"
+	TextItem "$MNU_OPTIONS","o", "OptionsMenu"
+	TextItem "$MNU_LOADGAME", "l", "LoadGameMenu"
+	TextItem "$MNU_SAVEGAME", "s", "SaveGameMenu"
+	TextItem "$CEMNU_FEATURES", "e", "FeaturesMenu"
+	TextItem "$MNU_QUITGAME", "q", "QuitMenu"
+}
+
+ListMenu "LoadGameMenu"
+{
+	NetgameMessage "$LOADNET"
+	CaptionItem "$MNU_LOADGAME"
+	Position 80,40
+	Class "LoadMenu"
+}
+
+ListMenu "SaveGameMenu"
+{
+	CaptionItem "$MNU_SAVEGAME"
+	Position 80,40
+	Class "SaveMenu"
+}
+
+AddOptionMenu "OptionsMenu"
+{
+	Submenu "$CEMNU_FEATURES_MENU", "FeaturesMenu"
+}
+
+AddOptionMenu "os_Menu"
+{
+	Class "os_MenuHidable"
+}
+
+OptionMenu "FeaturesMenu"
+{
+	Class "CXNashGoreMenu"
+	Title "$CEMNU_FEATURES"
+	Position -55
+	StaticText 	"$CEMNU_BRIGHTNESS_CORRECTION_TITLE", "Gold"
+	NashGoreSliderCX "$CEMNU_CONTRAST", "$CEMNU_CONTRAST_DESC", "ce_brightness", -100, 200, 1, 0
+	NashGoreOptionCX "$CEMNU_LOWRES", "$CEMNU_LOWRES_DESC", "cx_ve_lowres_enabled", "OnOff"
+	StaticText 	""
+	StaticText 	"$CEMNU_PSXLIGHT", "Gold"
+	NashGoreOptionCX "$CEMNU_PSXBRIGHT", "$CEMNU_PSXBRIGHT_DESC", "ce_psxbrightness", "OnOff"
+	NashGoreOptionCX "$CEMNU_PSXBANDING", "$CEMNU_PSXBANDING_DESC", "ce_bandedswlight", "OnOff"
+	NashGoreOptionCX "$CEMNU_PSXASPECT", "$CEMNU_PSXASPECT_DESC", "ce_aspect", "OnOff"
+	StaticText 	""
+	StaticText 	"$CEMNU_D64LIGHT", "Gold"
+	NashGoreOptionCX "$CEMNU_D64GRADIENTS", "$CEMNU_D64GRADIENTS_DESC", "d64_gradients", "OnOff"
+	NashGoreOptionCX "$CEMNU_D64FILTER", "$CEMNU_D64FILTER_DESC", "ce_filter", "OnOff"
+	NashGoreOptionCX "$CEMNU_D64ADDITIVE", "$CEMNU_D64ADDITIVE_DESC", "d64_additiveblend", "OnOff"
+	StaticText ""
+	NashGoreSubMenuCX "$CEMNU_FEATURES_GAMEPLAY", "$CEMNU_FEATURES_GAMEPLAY_DESC", "GameplayFeatures", "1", "1"
+	NashGoreSubMenuCX "$CEMNU_FEATURES_INTERFACE", "$CEMNU_FEATURES_INTERFACE_DESC", "InterfaceFeatures", "1", "1"
+	NashGoreSubMenuCX "$CEMNU_FEATURES_AUDIO", "$CEMNU_FEATURES_AUDIO_DESC", "AudioFeatures", "1", "1"
+	NashGoreSubMenuCX "$CEMNU_FEATURES_GRAPHICS", "$CEMNU_FEATURES_GRAPHICS_DESC", "GraphicsFeatures", "1", "1"
+	NashGoreSubMenuCX "$CEMNU_FEATURES_EFFECTS", "$CEMNU_FEATURES_EFFECTS_DESC", "EffectsFeatures", "1", "1"
+	StaticText ""
+	NashGoreSubMenuCX "$CEMNU_CHOOSEPRESET", "$CEMNU_CHOOSEPRESET_DESC", "ResetDefaults", "1", "1"
+	NashGoreSubMenuCX "$CEMNU_PASSWORD", "$CEMNU_PASSWORD_DESC", "PasswordMenu", "1", "1"
+	NashGoreSubMenuCX "$CEMNU_LEVELSELECT", "$CEMNU_LEVELSELECT_DESC", "LevelSelectMenu", "1", "1"
+	NashGoreSubMenuCX "$CEMNU_MUSICPLAYER", "$CEMNU_MUSICPLAYER_DESC", "MusicSelectMenu", "1", "1"	
+	NashGoreSubMenuCX "$CEMNU_CREDITS", "$CEMNU_CREDITS_DESC", "Credits", "1", "1"
+}
+
+OptionMenu "ResetDefaults"
+{
+	Class "ResetDefaultsMenu"
+	Title "$CEMNU_CHOOSEPRESET"
+	Position -55
+	SafeCommand "$CEMNU_EXAGGERATEDPRESET", "event ResetDefaultsHigh::0", "$CEMNU_EXAGGERATEDPRESET_DESC"
+	SafeCommand "$CEMNU_DEFAULTPRESET", "event ResetDefaults::0", "$CEMNU_DEFAULTPRESET_DESC"
+	SafeCommand "$CEMNU_ENHANCEDPRESET", "event ResetDefaultsMid::0", "$CEMNU_ENHANCEDPRESET_DESC"
+	SafeCommand "$CEMNU_VANILLAPRESET", "event ResetDefaultsLow::0", "$CEMNU_VANILLAPRESET_DESC"
+	StaticText ""
+}
+
+OptionMenu "GameplayFeatures"
+{
+	Class "CXNashGoreMenu"
+	Title "$CEMNU_FEATURES_GAMEPLAY"
+	Position -55
+	StaticText 	"$CEMNU_GENERAL", "Gold"
+	NashGoreOptionCX "$CEMNU_SLOWSWITCH", "$CEMNU_SLOWSWITCH_DESC", "slw_enabled", "OnOff"
+	NashGoreOptionCX "$CEMNU_WEAPONRECOIL", "$CEMNU_WEAPONRECOIL_DESC", "retoggle", "OnOff"
+	NashGoreSliderCX "$CEMNU_WEAPONRECOIL_STRENGTH", "$CEMNU_WEAPONRECOIL_STRENGTH_DESC", "restrength", 0.0, 2.0, 0.1, 1, "retoggle"
+	NashGoreOptionCX "$CEMNU_ACTORTHRUST", "$CEMNU_ACTORTHRUST_DESC", "ce_actorthrust", "OnOff"
+	NashGoreOptionCX "$CEMNU_GIB_RULES", "$CEMNU_GIB_RULES_DESC", "ce_gibrules","OnOff"	
+	NashGoreOptionCX "$CEMNU_SKULLLIMIT", "$CEMNU_SKULLLIMIT_DESC", "ce_lostsoullimit", "LostSoulLimitOptions", "compat_LIMITPAIN"
+	NashGoreOptionCX "$CEMNU_AUTOSTART", "$CEMNU_AUTOSTART_DESC", "cop_enabled", "OnOff"
+	StaticText 	""
+	StaticText 	"$CEMNU_SPEED", "Gold"
+	NashGoreOptionCX "$CEMNU_SPEED_PLAYER", "$CEMNU_SPEED_PLAYER_DESC", "ce_playertics", "PlayerSpeedToggler"
+	NashGoreOptionCX "$CEMNU_SPEED_WEAPON", "$CEMNU_SPEED_WEAPON_DESC", "ce_weapontics", "WeaponSpeedToggler"
+	NashGoreOptionCX "$CEMNU_SPEED_ACTOR", "$CEMNU_SPEED_ACTOR_DESC", "ce_actortics", "ActorSpeedToggler"
+	NashGoreOptionCX "$CEMNU_SPEED_SSG", "$CEMNU_SPEED_SSG_DESC", "ce_ssgtics", "OnOff"
+	NashGoreOptionCX "$CEMNU_SPEED_PC", "$CEMNU_SPEED_PC_DESC", "ce_pcspeed", "OnOff"
+	StaticText 	""
+	StaticText 	"$CEMNU_MAPALTERATIONS", "Gold"
+	//NashGoreOptionCX "$CEMNU_REPLACE_FATSO", "$CEMNU_REPLACE_FATSO_DESC", "rep_enabled", "OnOff"
+	NashGoreOptionCX "$CEMNU_ADD_ARCHVILE", "$CEMNU_ADD_ARCHVILE_DESC", "vil_enabled", "OnOff"
+	NashGoreOptionCX "$CEMNU_ADD_SPIDER", "$CEMNU_ADD_SPIDER_DESC", "spd_enabled", "OnOff"
+	NashGoreOptionCX "$CEMNU_ADD_WOLF", "$CEMNU_ADD_WOLF_DESC", "wol_enabled", "OnOff"
+	StaticText 	""
+	StaticText 	"$CEMNU_COOPERATIVE", "Gold"
+	NashGoreSliderCX "$CEMNU_COOPERATIVE_HEALTH", "$CEMNU_COOPERATIVE_HEALTH_DESC", "resurrect_life", 1, 100, 1
+	NashGoreSliderCX "$CEMNU_COOPERATIVE_TIME", "$CEMNU_COOPERATIVE_TIME_DESC", "resurrect_seconds", 0, 10, 1
+	StaticText 	""
+	StaticText 	"$CEMNU_GZDOOM", "Gold"	
+	NashGoreOptionCX "$MOUSEMNU_ALWAYSMOUSELOOK", "$MOUSEMNU_ALWAYSMOUSELOOK_DESC", "freelook", "OnOff"
+	NashGoreOptionCX "$CMPTMNU_LIMITPAIN", "$CMPTMNU_LIMITPAIN_DESC", "compat_LIMITPAIN", "YesNo"
+	NashGoreOptionCX "$CMPTMNU_EXPLODE1", "$CMPTMNU_EXPLODE1_DESC", "compat_explode1", "YesNo"
+	StaticText 	""
+}
+
+OptionMenu "InterfaceFeatures"
+{
+	Class "CXNashGoreMenu"
+	Title "$CEMNU_FEATURES_INTERFACE"
+	Position -55
+	StaticText 	"$CEMNU_HUD", "Gold"
+	NashGoreOptionCX "$CEMNU_HUDTYPE", "$CEMNU_HUDTYPE_DESC", "hud_legacy", "LegacyHudToggler"
+	NashGoreOptionCX "$CEMNU_HUDCOLOR", "$CEMNU_HUDCOLOR_DESC", "hud_color", "HudColors"
+	NashGoreSliderCX "$CEMNU_HUDALPHA", "$CEMNU_HUDALPHA_DESC", "hud_alpha", 0.0, 2.0, 0.1, 1
+	NashGoreOptionCX "$CEMNU_HUDSTYLE", "$CEMNU_HUDSTYLE_DESC", "hud_messagestyle", "HudStyleToggler"
+	NashGoreOptionCX "$CEMNU_HUDBERSERK", "$CEMNU_HUDBERSERK_DESC", "hud_berserk", "OnOff"
+	NashGoreOptionCX "$CEMNU_LEVELNAME", "$CEMNU_LEVELNAME_DESC", "smn_enabled", "OnOff"
+	NashGoreOptionCX "$CEMNU_AUTHORNAME", "$CEMNU_AUTHORNAME_DESC", "sma_enabled", "OnOff"
+	NashGoreOptionCX "$CEMNU_DAMAGEDIRECTION", "$CEMNU_DAMAGEDIRECTION_DESC", "DI_DamageIndicators", "yesno"
+	NashGoreSliderCX "$CEMNU_DAMAGEDIRECTION_SCALE", "$CEMNU_DAMAGEDIRECTION_SCALE_DESC", "DI_DIScale", 0, 1, 0.1, 1, "DI_DamageIndicators"
+	NashGoreSliderCX "$CEMNU_DAMAGEDIRECTION_ALPHA", "$CEMNU_DAMAGEDIRECTION_ALPHA_DESC", "DI_DIAlpha", 0, 1, 0.1, 1, "DI_DamageIndicators"
+	StaticText ""
+	StaticText 	"$CEMNU_CUTSCENES", "Gold"
+	NashGoreOptionCX "$CEMNU_SKIPCOPYRIGHT", "$CEMNU_SKIPCOPYRIGHT_DESC", "ce_skipcopyright", "OnOff"
+	NashGoreOptionCX "$CEMNU_SHOWMOVIE", "$CEMNU_SHOWMOVIE_DESC", "mov_enabled", "OnOff"
+	NashGoreOptionCX "$CEMNU_TITLEPIC", "$CEMNU_TITLEPIC_DESC", "itt_enabled", "OnOff"
+	NashGoreOptionCX "$CEMNU_SKIPINTRO", "$CEMNU_SKIPINTRO_DESC", "isk_disabled", "OnOff"
+	NashGoreOptionCX "$CEMNU_SKIPTALLY", "$CEMNU_SKIPTALLY_DESC", "stl_enabled", "OnOff"
+	StaticText ""
+	StaticText 	"$CEMNU_INTERMISSIONS", "Gold"
+	NashGoreOptionCX "$CEMNU_ORIGINALINTER", "$CEMNU_ORIGINALINTER_DESC", "oip_enabled", "OnOff"
+	NashGoreOptionCX "$CEMNU_SINGLEINTER", "$CEMNU_SINGLEINTER_DESC", "ois_enabled", "OnOff"
+	NashGoreOptionCX "$CEMNU_PARTIMES", "$CEMNU_PARTIMES_DESC", "hpt_enabled", "OnOff"
+	NashGoreOptionCX "$CEMNU_PASSWORDINTER", "$CEMNU_PASSWORDINTER_DESC", "psw_enabled", "OnOff"
+	StaticText 	""
+	StaticText "$CEMNU_EFFECTS", "Gold"
+	NashGoreOptionCX "$CEMNU_FADEIN", "$CEMNU_FADEIN_DESC", "d64_enterfade", "OnOff"
+	NashGoreOptionCX "$CEMNU_FADEOUT", "$CEMNU_FADEOUT_DESC", "d64_exitfade", "OnOff"
+	NashGoreOptionCX "$CEMNU_WIPE", "$CEMNU_WIPE_DESC", "d64_wipeeffect", "OnOff"
+	StaticText 	""
+	StaticText 	"$CEMNU_MENUS", "Gold"
+	NashGoreOptionCX "$CEMNU_EPISODENAME", "$CEMNU_EPISODENAME_DESC", "oen_enabled", "OnOff"
+	NashGoreOptionCX "$CEMNU_ORIGINALEPISODES", "$CEMNU_ORIGINALEPISODES_DESC", "unl_episodes_original", "OnOff"
+	NashGoreOptionCX "$CEMNU_ORIGINALSKILLS", "$CEMNU_ORIGINALSKILLS_DESC", "unl_skills_original", "OnOff"
+	StaticText 	""
+	StaticText 	"$CEMNU_GZDOOM", "Gold"	
+	NashGoreSliderCX "$CEMNU_NOTIFYLINES", "$CEMNU_NOTIFYLINES_DESC", "con_notifylines", 1, 10, 1, 0
+	NashGoreOptionCX "$MSGMNU_SHOWSECRETS", "$MSGMNU_SHOWSECRETS_DESC", "cl_showsecretmessage", "OnOff"
+	NashGoreOptionCX "$MSGMNU_SHOWOBITUARIES", "$MSGMNU_SHOWOBITUARIES_DESC", "show_obituaries", "OnOff"
+	StaticText 	""
+}
+
+OptionMenu "AudioFeatures"
+{
+	Class "CXNashGoreMenu"
+	Title "$CEMNU_FEATURES_AUDIO"
+	Position -55
+	StaticText 	"$CEMNU_SOUND", "Gold"
+	NashGoreOptionCX "$CEMNU_WORLDAMBIENT", "$CEMNU_WORLDAMBIENT_DESC", "cx_fw_enabled","OnOff"
+	NashGoreSliderCX "$CEMNU_WORLDAMBIENT_VOLUME", "$CEMNU_WORLDAMBIENT_VOLUME_DESC", "cx_fw_volume_mul",0.0,2.0,0.1,1,"cx_fw_enabled"
+	NashGoreOptionCX "$CEMNU_DECORATIONAMBIENT", "$CEMNU_DECORATIONAMBIENT_DESC", "amb_enabled","OnOff"
+	NashGoreSliderCX "$CEMNU_DECORATIONAMBIENT_VOLUME", "$CEMNU_DECORATIONAMBIENT_VOLUME_DESC", "amb_volume_mul",0.0,2.0,0.1,1,"amb_enabled"
+	StaticText 	""
+	StaticText 	"$CEMNU_MUSIC", "Gold"
+	NashGoreOptionCX "$CEMNU_MUSIC_AUTHOR", "$CEMNU_MUSIC_AUTHOR_DESC", "mus_trackname", YesNo
+	NashGoreOptionCX "$CEMNU_MUSIC_STYLE", "$CEMNU_MUSIC_STYLE_DESC", "mus_original", "mus_original_types"
+	NashGoreOptionCX "$CEMNU_MUSIC_STYLE_BOTH", "$CEMNU_MUSIC_STYLE_BOTH_DESC", "mus_dynamic", YesNo
+	NashGoreSliderCX "$CEMNU_MUSIC_STYLE_TIME", "$CEMNU_MUSIC_STYLE_TIME_DESC", "mus_minlength", 10.0, 3600.0, 10.0, 0, "mus_dynamic"
+	Command "$CEMNU_MUSIC_STYLE_CHANGE", "interfaceevent ForcePlayMusic", 1, 1
+	StaticText 	""
+}
+
+OptionMenu "GraphicsFeatures"
+{
+	Class "CXNashGoreMenu"
+	Title "$CEMNU_FEATURES_GRAPHICS"
+	Position -55
+	StaticText 	"$CEMNU_GENERAL", "Gold"
+	NashGoreOptionCX "$CEMNU_EJECTCASINGS", "$CEMNU_EJECTCASINGS_DESC", "catoggle", "DropCasingsToggler"
+	NashGoreOptionCX "$CEMNU_PSXMUGSHOT", "$CEMNU_PSXMUGSHOT_DESC", "hud_mugshot_original", "OnOff"
+	NashGoreOptionCX "$CEMNU_PSXWEAPONS", "$CEMNU_PSXWEAPONS_DESC", "hud_weapons_original", "OnOff"
+	NashGoreOptionCX "$CEMNU_ALTSSG", "$CEMNU_ALTSSG_DESC", "ce_altssg", "OnOff"
+	NashGoreOptionCX "$CEMNU_PCTEXTURES", "$CEMNU_PCTEXTURES_DESC", "rtx_enabled", "OnOff"
+	NashGoreOptionCX "$CEMNU_WOLFTEXTURES", "$CEMNU_WOLFTEXTURES_DESC", "rtw_enabled", "OnOff"
+	NashGoreOptionCX "$CEMNU_ICONOFSIN_MODEL", "$CEMNU_ICONOFSIN_MODEL_DESC", "ios_enabled", "OnOff"
+	NashGoreOptionCX "$CEMNU_NIGHTMARESTYLE", "$CEMNU_NIGHTMARESTYLE_DESC", "ce_nightmarestyle", "NightmareStyleOptions"
+	NashGoreColorPickerCX "$CEMNU_NIGHTMARECOLOR", "$CEMNU_NIGHTMARECOLOR_DESC", "ce_nightmarecolor", "ce_nightmarestyle"
+	StaticText 	""
+	StaticText 	"$CEMNU_SMOOTHANIMATIONS", "Gold"
+	NashGoreOptionCX "$CEMNU_SMOOTHWEAPONS", "$CEMNU_SMOOTHWEAPONS_DESC", "smw_enabled", "onoff"
+	NashGoreOptionCX "$CEMNU_BLACKGLOVES",	"$CEMNU_BLACKGLOVES_DESC", "gltoggle","OnOff","smw_enabled"
+	NashGoreOptionCX "$CEMNU_SMOOTHPROJECTILES", "$CEMNU_SMOOTHPROJECTILES_DESC", "smp_enabled", "onoff"
+	NashGoreOptionCX "$CEMNU_SMOOTHMONSTERS", "$CEMNU_SMOOTHMONSTERS_DESC", "smm_enabled", "onoff"
+	NashGoreOptionCX "$CEMNU_SMOOTHDECORATIONS", "$CEMNU_SMOOTHDECORATIONS_DESC", "smd_enabled", "onoff"
+	NashGoreOptionCX "$CEMNU_SMOOTHITEMS", "$CEMNU_SMOOTHITEMS_DESC", "smi_enabled", "onoff"
+	StaticText 	""
+	StaticText 	"$CEMNU_GZDOOM", "Gold"	
+	NashGoreOptionCX "$GLLIGHTMNU_LIGHTSENABLED", "$GLLIGHTMNU_LIGHTSENABLED_DESC", "gl_lights", "OnOff"
+	NashGoreSliderCX "$CEMNU_MAXDECALS", "$CEMNU_MAXDECALS_DESC", "cl_maxdecals", 0, 1024, 1, 0
+	NashGoreOptionCX "$DSPLYMNU_OLDTRANS", "$DSPLYMNU_OLDTRANS_DESC", "r_vanillatrans", "VanillaTrans"
+	NashGoreOptionCX "$DSPLYMNU_SPRITESHADOW", "$DSPLYMNU_SPRITESHADOW_DESC", "r_actorspriteshadow", "SpriteShadowModes"
+	StaticText	""
+}
+
+OptionMenu "EffectsFeatures"
+{
+	Class "CXNashGoreMenu"
+	Title "$CEMNU_FEATURES_EFFECTS"
+	Position -55
+	StaticText 	"$CEMNU_GENERAL", "Gold"
+	NashGoreOptionCX "$CEMNU_TRACERS_MONSTER", "$CEMNU_TRACERS_MONSTER_DESC", "trc_enabled","OnOff"
+	NashGoreOptionCX "$CEMNU_TRACERS_PLAYER", "$CEMNU_TRACERS_PLAYER_DESC", "trw_enabled","OnOff"
+	StaticText 	""
+	StaticText  "$CEMNU_SKYBOXES", "Gold"
+	NashGoreOptionCX "$CEMNU_SKYBOX_PCTEXTURES", "$CEMNU_SKYBOX_PCTEXTURES_DESC", "alt_skies", "onoff"
+	NashGoreOptionCX "$CEMNU_SKYBOX_CUBEMAP", "$CEMNU_SKYBOX_CUBEMAP_DESC", "alt_skybox", "onoff"
+	NashGoreOptionCX "$CEMNU_SKYBOX_NEWFIRE", "$CEMNU_SKYBOX_NEWFIRE_DESC", "hq_firesky", "onoff"
+	StaticText 	""
+	StaticText 	"$CEMNU_ENHANCEDPARTICLES", "Gold"
+	NashGoreOptionCX "$CEMNU_ENHANCEDPARTICLES", "$CEMNU_ENHANCEDPARTICLES_DESC", "zp_enabled", "onoff"
+	NashGoreOptionCX "$CEMNU_EXAGGERATEDEXPLOSIONS", "$CEMNU_EXAGGERATEDEXPLOSIONS_DESC", "hq_enabled", "onoff", "zp_enabled"
+	NashGoreOptionCX "$CEMNU_EXAGGERATEDFIRE", "$CEMNU_EXAGGERATEDFIRE_DESC", "hq_torches", "onoff"
+	NashGoreOptionCX "$CEMNU_EXAGGERATEDLOSTSOUL", "$CEMNU_EXAGGERATEDLOSTSOUL_DESC", "hq_soul", "onoff"
+	NashGoreSliderCX "$CEMNU_TRANSSOUL", "$CEMNU_TRANSSOUL_DESC", "transsouls", 0.25, 1.0, 0.05, 2
+	NashGoreSliderCX "$CEMNU_PARTICLELIMIT", "$CEMNU_PARTICLELIMIT_DESC", "ce_particlelimit", 1, 5000, 1, 0
+	StaticText 	""
+	StaticText 	"$NASHGOREMNU_BLOOD_TITLE", "Gold"
+	NashGoreOptionCX "$NASHGOREMNU_BLOOD_TYPE", "$NASHGOREMNU_HELPTEXT_BLOOD_TYPE", "cx_nashgore_bloodtype", "CXNashGoreBloodTypes"
+	NashGoreSliderCX "$NASHGOREMNU_BLOOD_AMOUNT", "$NASHGOREMNU_HELPTEXT_BLOOD_AMOUNT", "cx_nashgore_bloodamount", 0, 255, 1
+	NashGoreOptionCX "$NASHGOREMNU_BLOOD_SPRITES", "$NASHGOREMNU_HELPTEXT_BLOOD_SPRITES", "cx_nashgore_spriteblood", "CXNashGoreBloodSpriteValues"
+	NashGoreOptionCX "$NASHGOREMNU_BLOOD_SPURTS", "$NASHGOREMNU_HELPTEXT_BLOOD_SPURTS", "cx_nashgore_bloodspurt", "OnOff"
+	NashGoreOptionCX "$NASHGOREMNU_MISC_CORPSEBLOOD", "$NASHGOREMNU_HELPTEXT_MISC_CORPSEBLOOD", "cx_nashgore_corpseblood",	"OnOff"
+	NashGoreOptionCX "$NASHGOREMNU_MISC_FOOTPRINTS", "$NASHGOREMNU_HELPTEXT_MISC_FOOTPRINTS", "cx_nashgore_footprints",	"OnOff"
+	NashGoreOptionCX "$NASHGOREMNU_MISC_DEATHFLIP", "$NASHGOREMNU_HELPTEXT_MISC_DEATHFLIP", "cx_nashgore_deathflip",	"OnOff"
+	NashGoreOptionCX "$NASHGOREMNU_MISC_SQUISH", "$NASHGOREMNU_HELPTEXT_MISC_SQUISH", "cx_nashgore_squish", "OnOff"
+	NashGoreOptionCX "$NASHGOREMNU_MISC_SPLAT", "$NASHGOREMNU_HELPTEXT_MISC_SPLAT", "cx_nashgore_splat", "OnOff"
+	NashGoreOptionCX "$NASHGOREMNU_GIB_TYPE", "$NASHGOREMNU_HELPTEXT_GIB_TYPE", "cx_nashgore_gibtype", "NashGoreGibTypes"
+	NashGoreSliderCX "$NASHGOREMNU_GIB_AMOUNT", "$NASHGOREMNU_HELPTEXT_GIB_AMOUNT", "cx_nashgore_gibamount",	0, 255, 1, 0
+	NashGoreOptionCX "$CEMNU_GORE_EXPLOSION", "$CEMNU_GORE_EXPLOSION_DESC", "kch_enabled", "onoff"
+	NashGoreSliderCX "$NASHGOREMNU_MISC_MAXGORE", "$NASHGOREMNU_HELPTEXT_MISC_MAXGORE", "cx_nashgore_maxgore",		0, 5000, 1, 0
+	Command "$NASHGOREMNU_MISC_CLEARGORENOW", "netevent EV_ClearGore", 1, 1
+	StaticText 	""
+	StaticText 	"$CEMNU_FOOTSTEPS_TITLE", "Gold"
+	NashGoreOptionCX "$CEMNU_FOOTSTEPS_PLAYER", "$CEMNU_FOOTSTEPS_PLAYER_DESC", "cx_fs_enabled","OnOff"
+	NashGoreSliderCX "$CEMNU_FOOTSTEPS_PLAYER_DELAY", "$CEMNU_FOOTSTEPS_PLAYER_DELAY_DESC", "cx_fs_delay_mul",0.0,1.0,0.1,1,"cx_fs_enabled"
+	NashGoreSliderCX "$CEMNU_FOOTSTEPS_PLAYER_VOLUME", "$CEMNU_FOOTSTEPS_PLAYER_VOLUME_DESC", "cx_fs_volume_mul",0.0,1.0,0.1,1,"cx_fs_enabled"
+	NashGoreOptionCX "$CEMNU_FOOTSTEPS_MONSTER", "$CEMNU_FOOTSTEPS_MONSTER_DESC", "cx_mfs_enabled","OnOff"
+	NashGoreSliderCX "$CEMNU_FOOTSTEPS_MONSTER_VOLUME", "$CEMNU_FOOTSTEPS_MONSTER_VOLUME_DESC", "cx_mfs_volume_mul",0.0,1.0,0.1,1,"cx_mfs_enabled"
+	StaticText 	""
+}
+
+OptionMenu "FirstTimeSetup"
+{
+	Class "FirstTimeSetupMenu"
+	Title "$CEMNU_FIRSTTIMESETUP"
+	//Position -40
+	StaticText "$CEMNU_FIRSTTIMESETUP_DESC", Gold
+	StaticText "$CEMNU_FIRSTTIMESETUP_DESC2", Gold
+	StaticText ""
+	//StaticText ""
+	SafeCommand "$CEMNU_EXAGGERATEDPRESET", "event ResetDefaultsHigh::1", "$CEMNU_EXAGGERATEDPRESET_DESC"
+	SafeCommand "$CEMNU_DEFAULTPRESET", "event ResetDefaults::1", "$CEMNU_DEFAULTPRESET_DESC"
+	SafeCommand "$CEMNU_ENHANCEDPRESET", "event ResetDefaultsMid::1", "$CEMNU_ENHANCEDPRESET_DESC"
+	SafeCommand "$CEMNU_VANILLAPRESET", "event ResetDefaultsLow::1", "$CEMNU_VANILLAPRESET_DESC"
+	StaticText ""
+	SafeCommand "$CEMNU_FIRSTTIMESETUP_SKIP", "event ResetDefaultsNone::1", "$CEMNU_CONFIRM"
+}
+
+OptionValue "DropCasingsToggler"
+{
+	0.0, "$CEMNU_CASINGS_DISABLED"
+	1.0, "$CEMNU_CASINGS_PLAYER"
+	2.0, "$CEMNU_CASINGS_BOTH"
+}
+
+OptionValue "LegacyHudToggler"
+{
+	0.0, "$CEMNU_HUD_WIDE"
+	1.0, "$CEMNU_HUD_CENTERED"
+	2.0, "$CEMNU_HUD_GZDOOM"
+	3.0, "$CEMNU_HUD_LEGACY"
+}
+
+OptionValue "HudStyleToggler"
+{
+	0.0, "$CEMNU_HUDSTYLE_GZDOOM"
+	1.0, "$CEMNU_HUDSTYLE_PSXDOOM_WIDE"
+	2.0, "$CEMNU_HUDSTYLE_DOOM64_WIDE"
+	3.0, "$CEMNU_HUDSTYLE_PSXDOOM"
+	4.0, "$CEMNU_HUDSTYLE_DOOM64"
+}
+
+OptionValue "PSXLightMode"
+{
+	0.0, "$CEMNU_LIGHTMODE_STANDARD"
+	1.0, "$CEMNU_LIGHTMODE_PSX"
+	//3.0, "$CEMNU_LIGHTMODE_DARK"
+}
+
+OptionValue "PlayerSpeedToggler"
+{
+	0.0, "$CEMNU_PLAYERSPEED_VANILLA"
+	1.0, "$CEMNU_PLAYERSPEED_FASTER"
+	2.0, "$CEMNU_PLAYERSPEED_SLOW"
+}
+
+OptionValue "WeaponSpeedToggler"
+{
+	1.0, "$CEMNU_SPEED_VANILLA"
+	0.0, "$CEMNU_SPEED_FASTER"
+}
+
+OptionValue "ActorSpeedToggler"
+{
+	1.0, "$CEMNU_SPEED_VANILLA"
+	0.0, "$CEMNU_SPEED_FASTER"
+}
+
+OptionValue "CXNashGoreBloodTypes"
+{
+	0, "$NASHGOREMNU_DEFAULT"
+	1, "$NASHGOREMNU_BLOOD_TYPE_CLASSIC"
+	2, "$NASHGOREMNU_VANILLA"
+}
+
+OptionValue "CXNashGoreBloodSpriteValues"
+{
+	0, "$NASHGOREMNU_BLOOD_SPRITE_DECALS"
+	1, "$NASHGOREMNU_BLOOD_SPRITE_SPRITES"
+}
+
+OptionValue "NashGoreGibTypes"
+{
+	0, "$NASHGOREMNU_DEFAULT"
+	1, "$NASHGOREMNU_GIB_TYPE_NOSTICKYGIBS"
+	2, "$NASHGOREMNU_VANILLA"
+}
+
+OptionValue "HudColors"
+{
+	-1, "$CEMNU_HUDCOLOR_DEFAULT"
+	0, "$C_BRICK"
+	1, "$C_TAN"
+	2, "$C_GRAY"
+	3, "$C_GREEN"
+	4, "$C_BROWN"
+	5, "$C_GOLD"
+	6, "$C_RED"
+	7, "$C_BLUE"
+	8, "$C_ORANGE"
+	9, "$C_WHITE"
+	10, "$C_YELLOW"
+	11, "$C_DEFAULT"
+	12, "$C_BLACK"
+	13, "$C_LIGHTBLUE"
+	14, "$C_CREAM"
+	15, "$C_OLIVE"
+	16, "$C_DARKGREEN"
+	17, "$C_DARKRED"
+	18, "$C_DARKBROWN"
+	19, "$C_PURPLE"
+	20, "$C_DARKGRAY"
+	21, "$C_CYAN"
+	22, "$C_ICE"
+	23, "$C_FIRE"
+	24, "$C_SAPPHIRE"
+	25, "$C_TEAL"
+}
+
+OptionValue "LostSoulLimitOptions"
+{
+	21, "$CEMNU_SKULLLIMIT_PC"
+	17, "$CEMNU_SKULLLIMIT_CONSOLE"
+}
+
+OptionValue "NightmareStyleOptions"
+{
+	0, "$CEMNU_NIGHTMARESTYLE_PSX"
+	1, "$CEMNU_NIGHTMARESTYLE_D64"
+}
+
+OptionMenu "MusicSelectMenu"
+{
+	Title "$CEMNU_MUSICPLAYER"
+	StaticText 	"$CEMNU_MUSIC_PSX", GOLD
+	Command "$MS_TITLE", "interfaceevent PlayMusEx:D_TITLE", "1"
+	Command "$MS_INTER", "interfaceevent PlayMusEx:D_INTER", "1"
+	Command "$MS_CRDTS", "interfaceevent PlayMusEx:D_CRDTS", "1"
+	Command "$MS_FINEND", "interfaceevent PlayMusEx:D_FINEND", "1"
+	Command "$MS_CLUBD", "interfaceevent PlayMusEx:D_CLUBD", "1"
+	Command "$MS_PSX01", "interfaceevent PlayMusEx:D_PSX01", "1"
+	Command "$MS_PSX02", "interfaceevent PlayMusEx:D_PSX02", "1"
+	Command "$MS_PSX03", "interfaceevent PlayMusEx:D_PSX03", "1"
+	Command "$MS_PSX04", "interfaceevent PlayMusEx:D_PSX04", "1"
+	Command "$MS_PSX05", "interfaceevent PlayMusEx:D_PSX05", "1"
+	Command "$MS_PSX06", "interfaceevent PlayMusEx:D_PSX06", "1"
+	Command "$MS_PSX07", "interfaceevent PlayMusEx:D_PSX07", "1"
+	Command "$MS_PSX08", "interfaceevent PlayMusEx:D_PSX08", "1"
+	Command "$MS_PSX09", "interfaceevent PlayMusEx:D_PSX09", "1"
+	Command "$MS_PSX10", "interfaceevent PlayMusEx:D_PSX10", "1"
+	Command "$MS_PSX11", "interfaceevent PlayMusEx:D_PSX11", "1"
+	Command "$MS_PSX12", "interfaceevent PlayMusEx:D_PSX12", "1"
+	Command "$MS_PSX13", "interfaceevent PlayMusEx:D_PSX13", "1"
+	Command "$MS_PSX14", "interfaceevent PlayMusEx:D_PSX14", "1"
+	Command "$MS_PSX15", "interfaceevent PlayMusEx:D_PSX15", "1"
+	Command "$MS_PSX16", "interfaceevent PlayMusEx:D_PSX16", "1"
+	Command "$MS_PSX17", "interfaceevent PlayMusEx:D_PSX17", "1"
+	Command "$MS_PSX18", "interfaceevent PlayMusEx:D_PSX18", "1"
+	Command "$MS_PSX19", "interfaceevent PlayMusEx:D_PSX19", "1"
+	Command "$MS_PSX20", "interfaceevent PlayMusEx:D_PSX20", "1"
+	StaticText ""
+	StaticText 	"$CEMNU_MUSIC_DOOM", GOLD
+	Command "$MS_INTRO", "interfaceevent PlayMusEx:D_INTRO", "1"
+	Command "$MS_INTERD", "interfaceevent PlayMusEx:D_INTERD", "1"
+	Command "$MS_VICTOR", "interfaceevent PlayMusEx:D_VICTOR", "1"
+	Command "$MS_BUNNY", "interfaceevent PlayMusEx:D_BUNNY", "1"
+	Command "$MS_E1M1", "interfaceevent PlayMusEx:D_E1M1", "1"
+	Command "$MS_E1M2", "interfaceevent PlayMusEx:D_E1M2", "1"
+	Command "$MS_E1M3", "interfaceevent PlayMusEx:D_E1M3", "1"
+	Command "$MS_E1M4", "interfaceevent PlayMusEx:D_E1M4", "1"
+	Command "$MS_E1M5", "interfaceevent PlayMusEx:D_E1M5", "1"
+	Command "$MS_E1M6", "interfaceevent PlayMusEx:D_E1M6", "1"
+	Command "$MS_E1M7", "interfaceevent PlayMusEx:D_E1M7", "1"
+	Command "$MS_E1M8", "interfaceevent PlayMusEx:D_E1M8", "1"
+	Command "$MS_E1M9", "interfaceevent PlayMusEx:D_E1M9", "1"
+	Command "$MS_E2M1", "interfaceevent PlayMusEx:D_E2M1", "1"
+	Command "$MS_E2M2", "interfaceevent PlayMusEx:D_E2M2", "1"
+	Command "$MS_E2M4", "interfaceevent PlayMusEx:D_E2M4", "1"
+	Command "$MS_E2M6", "interfaceevent PlayMusEx:D_E2M6", "1"
+	Command "$MS_E2M7", "interfaceevent PlayMusEx:D_E2M7", "1"
+	Command "$MS_E2M8", "interfaceevent PlayMusEx:D_E2M8", "1"
+	Command "$MS_E2M9", "interfaceevent PlayMusEx:D_E2M9", "1"
+	Command "$MS_E3M2", "interfaceevent PlayMusEx:D_E3M2", "1"
+	Command "$MS_E3M3", "interfaceevent PlayMusEx:D_E3M3", "1"
+	Command "$MS_E3M8", "interfaceevent PlayMusEx:D_E3M8", "1"
+	StaticText ""
+	StaticText 	"$CEMNU_MUSIC_SIGIL", GOLD
+	Command "$MS_SINTRO", "interfaceevent PlayMusEx:D_SINTRO", "1"
+	Command "$MS_INTERS", "interfaceevent PlayMusEx:D_INTERS", "1"
+	Command "$MS_E5M1", "interfaceevent PlayMusEx:D_E5M1", "1"
+	Command "$MS_E5M2", "interfaceevent PlayMusEx:D_E5M2", "1"
+	Command "$MS_E5M3", "interfaceevent PlayMusEx:D_E5M3", "1"
+	Command "$MS_E5M4", "interfaceevent PlayMusEx:D_E5M4", "1"
+	Command "$MS_E5M5", "interfaceevent PlayMusEx:D_E5M5", "1"
+	Command "$MS_E5M6", "interfaceevent PlayMusEx:D_E5M6", "1"
+	Command "$MS_E5M7", "interfaceevent PlayMusEx:D_E5M7", "1"
+	Command "$MS_E5M8", "interfaceevent PlayMusEx:D_E5M8", "1"
+	Command "$MS_E5M9", "interfaceevent PlayMusEx:D_E5M9", "1"
+	StaticText ""
+	StaticText 	"$CEMNU_MUSIC_DOOM2", GOLD
+	Command "$MS_DM2TTL", "interfaceevent PlayMusEx:D_DM2TTL", "1"
+	Command "$MS_DM2INT", "interfaceevent PlayMusEx:D_DM2INT", "1"
+	Command "$MS_READ_M", "interfaceevent PlayMusEx:D_READ_M", "1"
+	Command "$MS_RUNNIN", "interfaceevent PlayMusEx:D_RUNNIN", "1"
+	Command "$MS_STALKS", "interfaceevent PlayMusEx:D_STALKS", "1"
+	Command "$MS_COUNTD", "interfaceevent PlayMusEx:D_COUNTD", "1"
+	Command "$MS_BETWEE", "interfaceevent PlayMusEx:D_BETWEE", "1"
+	Command "$MS_DOOM", "interfaceevent PlayMusEx:D_DOOM", "1"
+	Command "$MS_THE_DA", "interfaceevent PlayMusEx:D_THE_DA", "1"
+	Command "$MS_SHAWN", "interfaceevent PlayMusEx:D_SHAWN", "1"
+	Command "$MS_DDTBLU", "interfaceevent PlayMusEx:D_DDTBLU", "1"
+	Command "$MS_IN_CIT", "interfaceevent PlayMusEx:D_IN_CIT", "1"
+	Command "$MS_DEAD", "interfaceevent PlayMusEx:D_DEAD", "1"
+	Command "$MS_ROMERO", "interfaceevent PlayMusEx:D_ROMERO", "1"
+	Command "$MS_MESSAG", "interfaceevent PlayMusEx:D_MESSAG", "1"
+	Command "$MS_AMPIE", "interfaceevent PlayMusEx:D_AMPIE", "1"
+	Command "$MS_ADRIAN", "interfaceevent PlayMusEx:D_ADRIAN", "1"
+	Command "$MS_TENSE", "interfaceevent PlayMusEx:D_TENSE", "1"
+	Command "$MS_OPENIN", "interfaceevent PlayMusEx:D_OPENIN", "1"
+	Command "$MS_EVIL", "interfaceevent PlayMusEx:D_EVIL", "1"
+	Command "$MS_ULTIMA", "interfaceevent PlayMusEx:D_ULTIMA", "1"
+	StaticText ""
+	StaticText 	"$CEMNU_MUSIC_NRFTL", GOLD
+	Command "$MS_NRVTTL", "interfaceevent PlayMusEx:D_NRVTTL", "1"
+	Command "$MS_NRVINT", "interfaceevent PlayMusEx:D_NRVINT", "1"
+	Command "$MS_NRVTXT", "interfaceevent PlayMusEx:D_NRVTXT", "1"
+	Command "$MS_NRFTL1", "interfaceevent PlayMusEx:D_NRFTL1", "1"
+	Command "$MS_NRFTL2", "interfaceevent PlayMusEx:D_NRFTL2", "1"
+	Command "$MS_NRFTL3", "interfaceevent PlayMusEx:D_NRFTL3", "1"
+	Command "$MS_NRFTL4", "interfaceevent PlayMusEx:D_NRFTL4", "1"
+	Command "$MS_NRFTL5", "interfaceevent PlayMusEx:D_NRFTL5", "1"
+	Command "$MS_NRFTL6", "interfaceevent PlayMusEx:D_NRFTL6", "1"
+	Command "$MS_NRFTL7", "interfaceevent PlayMusEx:D_NRFTL7", "1"
+	Command "$MS_NRFTL8", "interfaceevent PlayMusEx:D_NRFTL8", "1"
+	Command "$MS_NRFTL9", "interfaceevent PlayMusEx:D_NRFTL9", "1"
+}
+
+OptionValue Mus_Original_Types
+{
+	0, "$CEMNU_MUSIC_CONSOLE"
+	1, "$CEMNU_MUSIC_COMPUTER"
+}
+
+//Unlockables
+
+ListMenu "EpisodeMenu"
+{
+	Size 274, 240
+	Class "UnlockableEpisodesMenuNative"
+	NetgameMessage "$NEWGAME"
+	StaticTextCentered 137, 20, "$MNU_EPISODE"
+	Position 50, 48
+}
+
+ListMenu "SkillMenu"
+{
+	Size 274, 240
+	Class "UnlockableSkillsMenuNative"
+	NetgameMessage "$NEWGAME"
+	StaticTextCentered 137, 20, "$MNU_CHOOSESKILL"
+	Position 63, 30
+}
+
+OptionMenu "PasswordMenu"
+{
+	Title "$CEMNU_PASSWORD"
+	TextField "$CEMNU_ENTERPASSWORD", "levelselect_password"
+	StaticText ""
+	PasswordCommand "$CEMNU_CONFIRMPASSWORD", ""
+}
+
+OptionMenu "PasswordResultMenu"
+{
+	Title "$CEMNU_PASSWORD"
+	Class "PasswordResultMenu"
+}
+
+OptionMenu "PasswordDemoMenu"
+{
+	Title "$CEMNU_PASSWORD"
+	SafeCommand  "Demo 1", "playdemo demo1", "$CEMNU_DEMO_WARNING"
+	SafeCommand  "Demo 2", "playdemo demo2", "$CEMNU_DEMO_WARNING"
+}
+
+OptionMenu "LevelSelectMenu"
+{
+	Class "LevelSelectSetupMenu"
+	Title "$CEMNU_LEVELSELECT"
+	StaticText 	"$CEMNU_SETUP", "Gold"
+	UnlockableSkillsOption "$MNU_CHOOSESKILL", "levelselect_skill", "SkillsOption", "SkillsOptionOriginal"
+	Slider "$CEMNU_HEALTH", "levelselect_health", 1, 200, 1, 0	
+	Slider "$CEMNU_ARMOR", "levelselect_armor", 0, 200, 1, 0
+	StaticText ""
+	StaticText 	"$CEMNU_LOADOUT", "Gold"
+	Option "$CC_BLUEARMOR", "levelselect_ma", "YesNo"
+	Option "$TAG_CHAINSAW", "levelselect_chainsaw", "YesNo"
+	Option "$TAG_SHOTGUN", "levelselect_shotgun", "YesNo"
+	Option "$TAG_SUPERSHOTGUN", "levelselect_ssg", "YesNo"
+	Option "$TAG_CHAINGUN", "levelselect_chaingun", "YesNo"
+	Option "$TAG_ROCKETLAUNCHER", "levelselect_rl", "YesNo"
+	Option "$TAG_PLASMARIFLE", "levelselect_plasma", "YesNo"
+	Option "$TAG_BFG9000", "levelselect_bfg", "YesNo"
+	Slider  "$AMMO_CLIP", "levelselect_clip", 0, 400, 1, 0
+	Slider  "$AMMO_SHELLS", "levelselect_shell", 0, 100, 1, 0
+	Slider  "$AMMO_ROCKETS", "levelselect_rocket", 0, 100, 1, 0
+	Slider  "$AMMO_CELLS", "levelselect_cell", 0, 600, 1, 0
+	Option "$CC_BACKPACK", "levelselect_backpack", "YesNo"
+	StaticText ""
+	StaticText "$MNU_EPISODE", "Gold"
+	StaticText ""
+	StaticText "$CEMNU_RESET_TITLE", "Gold"
+	SafeCommand "$CEMNU_RESET", "event ResetDefaultProgress::0", "$CEMNU_RESET_DESC"
+	StaticText ""
+}
+
+OptionValue "SkillsOption"
+{
+	0.0, "$SKILL_BABY"
+	1.0, "$SKILL_EASY"
+	2.0, "$SKILL_NORMAL"
+	3.0, "$SKILL_HARD"
+	4.0, "$SKILL_HARDPLUS"
+	5.0, "$SKILL_NIGHTMARE"
+}
+
+OptionValue "SkillsOptionOriginal"
+{
+	0.0, "$SKILL_BABY"
+	1.0, "$SKILL_EASY"
+	2.0, "$SKILL_NORMAL"
+	3.0, "$SKILL_HARD"
+}
+
+OptionMenu "LevelSelectEp1"
+{
+	Class "LevelSelectDynamicMenu"
+	StartingMap "map01"
+}
+
+OptionMenu "LevelSelectEp2"
+{
+	Class "LevelSelectDynamicMenu"
+	StartingMap "map31"
+}
+
+OptionMenu "LevelSelectEp3"
+{
+	Class "LevelSelectDynamicMenu"
+	StartingMap "nrv01"
+}
+
+OptionMenu "LevelSelectEp8"
+{
+	Class "LevelSelectDynamicMenu"
+	StartingMap "sig01"
+}
+
+OptionMenu "LevelSelectEp9"
+{
+	Class "LevelSelectDynamicMenu"
+	Title "$MNU_BONUS"
+	SelectLevelBase "$HUSTR_FUN", "map FUN00", "1"
+	SelectLevelBase "$HUSTR_4B", "map MAP04B", "1"
+	SelectLevelBase "$HUSTR_8B", "map MAP08B", "1"
+}
+
+OptionMenu "Credits"
+{
+	Class "OptionMenuCredits"
+	Title "$CEMNU_CREDITS"
+}
+
+AddOptionMenu "OptionsMenu"
+{
+	SubMenu "Progression Menu", "progression_menu"
+}
+
+OptionMenu "progression_menu"
+{
+	Class "ProgressionDynamicMenu"
+  Title "Upgrade Menu"
+	StaticText "Currency:"
+	StaticText ""
+	StaticText "Health Upgrades", FIRE
+	StaticText ""
+	SafeCommand "Purchase Max Health Upgrade (+10HP)", "progression-purchase-health-upgrade", "Are You sure you want to purchase this upgrade?"
+	StaticText ""
+	StaticText "Damage Reduction Upgrades", FIRE
+	StaticText ""
+	SafeCommand "Purchase Damage Reduction Upgrade (+5%)", "progression-purchase-dr-upgrade", "Are You sure you want to purchase this upgrade?"
+	StaticText ""
+	StaticText "Ammo Upgrades (Ammo Capacity doubled when carrying Backpack)", FIRE
+	StaticText ""
+	SafeCommand "Purchase Bullet Ammo Capacity Upgrade (+50)", "progression-purchase-bullet-upgrade", "Are You sure you want to purchase this upgrade?"
+	StaticText ""
+	SafeCommand "Purchase Shotgun Ammo Capacity Upgrade (+10)", "progression-purchase-shell-upgrade", "Are You sure you want to purchase this upgrade?"
+	StaticText ""
+	SafeCommand "Purchase Rocket Ammo Capacity Upgrade (+10)", "progression-purchase-rocket-upgrade", "Are You sure you want to purchase this upgrade?"
+	StaticText ""
+	SafeCommand "Purchase Cell Ammo Capacity Upgrade (+50)", "progression-purchase-cell-upgrade", "Are You sure you want to purchase this upgrade?"
+	StaticText ""
+	StaticText "Damage Increase Upgrades", FIRE
+	StaticText ""
+	SafeCommand "Purchase Damage Increase Upgrade (+5%)", "progression-purchase-di-upgrade", "Are You sure you want to purchase this upgrade?"
+	StaticText ""
+
+}
+
+OptionMenu "insufficient_currency"
+{
+  Title "Upgrade Menu"
+	StaticText "Not Enough Currency!"
+}
+
+OptionMenu "max_upgrade_level"
+{
+  Title "Upgrade Menu"
+	StaticText "You reached the maximum upgrade level for that!"
+}

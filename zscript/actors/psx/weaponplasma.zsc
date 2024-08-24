@@ -1,0 +1,225 @@
+class PsxPlasmaRifle : PsxDoomWeapon replaces PlasmaRifle
+{
+    Default
+    {
+		//$Title "Plasma gun"
+		
+        Weapon.SelectionOrder 100;
+		Weapon.AmmoUse 1;
+		Weapon.AmmoGive 40;
+		Weapon.AmmoType "Cell";
+		Inventory.PickupMessage "$GOTPLASMA";
+		Tag "$TAG_PLASMARIFLE";
+
+	    Weapon.SlotNumber 6;
+        Inventory.Icon "_PLSA0";
+        PsxDoomWeapon.VanillaSprite "PLSG";
+        PsxDoomWeapon.SmoothSprite "PKPL";
+        PsxDoomWeapon.BlackSprite "BKPL";
+        PsxDoomWeapon.ClassicSprite "7LSG";
+        PsxDoomWeapon.WeaponLight "WEAPLIGHT2";
+		PsxDoomWeapon.WeaponLightDuration 3;
+    }
+
+    States
+	{
+		SwapSprites:
+            PLSG A 0; PKPL A 0; BKPL A 0; 7LSG A 0;
+            Stop;
+
+        Ready:
+            TNT1 A 1 { A_SwapSprites(); A_WeaponReady(WRF_ALLOWUSER1); }
+            Loop;
+
+        Deselect:
+            TNT1 A 1 { A_SwapSprites(); A_FastLower(); }
+            Loop;
+        
+        Select:
+            TNT1 A 1 { A_SwapSprites(); A_FastRaise(); }
+            Loop;
+        
+        Fire:
+		    TNT1 A 0 A_SwapSprites;
+            "####" A 4 A_FirePlasma;
+            "####" B 20 A_ReFire;
+            Goto Ready;
+        SmoothFire:
+            SPRX F 2 Bright A_FirePlasma;
+            SPRX E 1 Bright;
+            SPRX E 1 Bright;
+            TNT1 A 0 A_ReFire("SmoothFire2");
+        SmoothReload:
+            TNT1 A 0 A_SwapSprites;
+            "####" bcd 1;
+            "####" e 14;
+            "####" dcb 1;
+            Goto Ready;
+        SmoothFire2:
+            SPRX C 2 Bright A_FirePlasma;
+            SPRX D 1 bright;
+            SPRX C 1 bright;
+            TNT1 a 0 a_refire("SmoothFire3");
+            goto SmoothReload;
+        SmoothFire3:
+            SPRX D 2 Bright A_FirePlasma;
+            SPRX E 1 bright;
+            SPRX F 1 bright;
+            TNT1 a 0 a_refire("SmoothFire");
+            goto SmoothReload;
+        SmoothSlowFire:
+            SPRX F 2 Bright A_FirePlasma;
+            SPRX E 2 Bright;
+            SPRX E 1 Bright;
+            TNT1 A 0 A_ReFire("SmoothSlowFire2");
+        SmoothSlowReload:
+            TNT1 A 0 A_SwapSprites;
+            "####" bcd 1;
+            "####" e 17;
+            "####" dcb 1;
+            Goto Ready;
+        SmoothSlowFire2:
+            SPRX C 2 Bright A_FirePlasma;
+            SPRX D 2 bright;
+            SPRX C 1 bright;
+            TNT1 a 0 a_refire("SmoothSlowFire3");
+            goto SmoothSlowReload;
+        SmoothSlowFire3:
+            SPRX D 2 Bright A_FirePlasma;
+            SPRX E 2 bright;
+            SPRX F 1 bright;
+            TNT1 a 0 a_refire("SmoothSlowFire");
+            goto SmoothSlowReload;
+        
+        Flash:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothFlash");
+            Goto Flash1;
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothFlash");
+            Goto Flash2;
+        Flash1:
+			TNT1 A 0 a_jumpif(invoker.previousWeaponType, "ClassicFlash1");
+            PLSF A 2 Bright A_Light1;
+            Goto LightDone;
+        Flash2:
+			TNT1 A 0 a_jumpif(invoker.previousWeaponType, "ClassicFlash2");
+            PLSF B 2 Bright A_Light1;
+            Goto LightDone;
+        ClassicFlash1:
+            7LSF A 2 Bright A_Light1;
+            Goto LightDone;
+        ClassicFlash2:
+            7LSF B 2 Bright A_Light1;
+            Goto LightDone;
+        SmoothFlash:
+            TNT1 A 1 A_Light1;
+            Goto LightDone;
+
+        Spawn:
+            PLAS A -1;
+            Stop;
+	}
+}
+
+class PsxPlasmaBall : PsxProjectile replaces PlasmaBall
+{
+    Default
+    {
+        Radius 13;
+		Height 8;
+		Speed 25;
+		Damage 5;
+		Projectile;
+		//+RANDOMIZE
+		+ZDOOMTRANS
+		RenderStyle "Add";
+		Alpha 0.75;
+		SeeSound "weapons/plasmaf";
+		DeathSound "weapons/plasmax";
+		Obituary "$OB_MPPLASMARIFLE";
+
+        +FORCEXYBILLBOARD;
+        PsxActor.AmbientSound "weapons/plasmaloop";
+    }
+
+    States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(zp_enabled && hq_enabled, "HQSpawn");
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothSpawn");
+            PLSS AB 6 Bright A_ZPTrail;
+            Loop;
+        SmoothSpawn:
+            BLPL a 2 bright A_ZPTrail;
+            BLPL bc 2 bright;
+            BLPL d 2 bright A_ZPTrail;
+            BLPL ab 2 bright;
+            BLPL c 2 bright A_ZPTrail;
+            BLPL da 2 bright;
+            BLPL b 2 bright A_ZPTrail;
+            BLPL cd 2 bright;
+            loop;
+        HQSpawn:
+        	TNT1 A 0 { A_SetScale(0.085); A_SetTranslation("ZPPlasma"); }
+        HQLoop:
+            PLS1 ABCDEFGHIJKLMNOPQRSUVWXYZ 1 Bright A_ZPTrail;
+            PLS1 ABCDEF 1 Bright A_ZPTrail;
+            Loop;
+
+        Death:
+            TNT1 A 0 A_StopAmbientSound;
+            TNT1 A 0 a_jumpif(zp_enabled && hq_enabled, "HQDeath");
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothDeath");
+            PLSE A 4 Bright A_ZPExplosion;
+            PLSE BCDE 4 Bright;
+            Stop;
+        SmoothDeath:
+		    SPLS a 2 bright A_ZPExplosion;
+            SPLS bcdefghijkl 2 bright;
+		    Stop;
+        HQDeath:
+            TNT1 A 4 Light("PLASMA_X1") A_ZPExplosion;
+            TNT1 A 4 Light("PLASMA_X2");
+            TNT1 A 4 Light("PLASMA_X3");
+            TNT1 A 4 Light("PLASMA_X4");
+            Stop;
+	}
+
+    void A_ZPTrail()
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+                A_SpawnItemEx("PlasmaBallTail",-Vel.X,-Vel.Y,-Vel.Z,Vel.X,Vel.Y,Vel.Z,Angle,SXF_CLIENTSIDE|SXF_ABSOLUTEMOMENTUM|SXF_ABSOLUTEANGLE|SXF_ABSOLUTEPOSITION);
+            }
+            else
+            {
+                A_SpawnItem("PlasmaTrail");
+            }
+        }
+    }
+
+    void A_ZPExplosion()
+    {
+        if (zp_enabled)
+        {
+            if (hq_enabled)
+            {
+                A_SetScale(0.075);
+                A_SetTranslation("ZPPlasma");
+                A_SpawnProjectile("BlueFlare3", 0, 0, random (0, 360), CMF_AIMDIRECTION|CMF_BADPITCH, random (0, 360));
+                A_SpawnItem("PlasmaBallImpactShockWave");
+                A_SpawnItem("BoomBlue");
+                if (Random(0,3) == 0) A_SpawnItem("GenericBolt");
+                if (Random(0,3) == 0) A_SpawnItem("GenericBolt");
+                if (Random(0,3) == 0) for(int i=0;i<6;i++) A_SpawnItemEx("ShockSpark",0,0,0,FRandom(0,5),0,Random(-1,5),Random(1,360),128,128);
+            }
+            else
+            {
+                A_SpawnItem("PlasmaSmoke");
+                A_SpawnItem("BoomBlue");
+                A_SpawnItem("BlueExplosionFlare");
+            }
+        }
+    }
+}

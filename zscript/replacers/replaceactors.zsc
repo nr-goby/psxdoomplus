@@ -1,0 +1,257 @@
+class ActorReplacerPostProcessor : LevelPostProcessor
+{
+	const DEN_SPIDERMASTERMIND = 7;
+	const DEN_SHOTGUNGUY = 9;
+	const DEN_PSXBLOODYCHAIN = 64;
+	const DEN_CHAINGUNGUY = 65;
+	const DEN_FATSO = 67;
+	const DEN_ARACHNOTRON = 68;
+	const DEN_HELLKNIGHT = 69;
+	const DEN_PAINELEMENTAL = 71;
+	const DEN_COMMANDERKEEN = 72;
+	const DEN_WOLFENSTEINSS = 84;
+	const DEN_ARCHVILE = 666;
+	const DEN_SOULSPHERE = 2013;
+	const DEN_DOOMIMP = 3001;
+	const DEN_BARONOFHELL = 3003;
+	const DEN_ZOMBIEMAN = 3004;
+	const DEN_CACODEMON = 3005;
+	const DEN_LOSTSOUL = 3006;
+	
+	void Apply(Name checksum, String mapname)
+	{
+		if (CEConfig.Get().isPwad) return;
+		mapname = mapname.MakeLower();
+		int thingCount = GetThingCount();
+		if (mapname == "map23")
+		{
+			//tower of babel
+			for (int i = 0; i < thingCount; i++)
+			{
+				SubstituteByType(i, "rep_enabled", DEN_HELLKNIGHT, DEN_FATSO);
+			} 
+		} else if (mapname == "lost66") {
+			//the castle
+			for (int i = 0; i < thingCount; i++)
+			{
+				SubstituteByType(i, wol_enabled, DEN_ZOMBIEMAN, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_SHOTGUNGUY, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_DOOMIMP, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_CHAINGUNGUY, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_LOSTSOUL, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_PAINELEMENTAL, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_CACODEMON, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_HELLKNIGHT, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_BARONOFHELL, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_FATSO, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_ARACHNOTRON, DEN_WOLFENSTEINSS);
+			} 
+		} else if (mapname == "lost67") {
+			//the escape
+			for (int i = 0; i < thingCount; i++)
+			{
+				SubstituteByType(i, wol_enabled, DEN_Zombieman, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_Shotgunguy, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_DoomImp, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_Chaingunguy, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_LostSoul, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_PainElemental, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_Cacodemon, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_HellKnight, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_BaronOfHell, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_FATSO, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_Arachnotron, DEN_WOLFENSTEINSS);
+				SubstituteByType(i, wol_enabled, DEN_PSXBloodyChain, DEN_COMMANDERKEEN);
+			}
+		} else if (mapname == "map28") {
+			//unto the cruel
+			for (int i = 0; i < thingCount; i++)
+			{
+				RemoveByLocation(i, spd_enabled, -2800,24);
+				RemoveByLocation(i, spd_enabled, -2720,64);
+				RemoveByLocation(i, spd_enabled, -2720,-16);
+				RemoveByLocation(i, spd_enabled, -2648,96);
+				RemoveByLocation(i, spd_enabled, -2648,-48);
+				SubstituteByLocation(i, spd_enabled, -2648,24,DEN_SpiderMastermind);
+			}
+		} else if (mapname == "map36" && skill >= 3) {
+			//the crusher
+			for (int i = 0; i < thingCount; i++)
+			{
+				RemoveByLocation(i, spd_enabled, -248,1136);
+				RemoveByLocation(i, spd_enabled, -160,1096);
+				RemoveByLocation(i, spd_enabled, -64,1136);
+				RemoveByLocation(i, spd_enabled, -56,952);
+				RemoveByLocation(i, spd_enabled, -144,1008);
+				RemoveByLocation(i, spd_enabled, -248,984);
+			}
+			Spawn(DEN_SpiderMastermind, (-160,1056,0), spd_enabled);
+		} else if (mapname == "map41") {
+			//o of destruction
+			for (int i = 0; i < thingCount; i++)
+			{
+				SubstituteByLocation(i, vil_enabled, 2336,1312,DEN_ARCHVILE);
+			}
+		} else if (mapname == "map43" && skill >= 3) {
+			//the inmost dens
+			for (int i = 0; i < thingCount; i++)
+			{
+				SubstituteByLocation(i, vil_enabled, 352,-1328, DEN_ARCHVILE);
+			}
+		} else if (mapname == "map44") {
+			//the suburbs
+			for (int i = 0; i < thingCount; i++)
+			{
+				SubstituteByLocation(i, vil_enabled, 200,128, DEN_ARCHVILE,2);
+				SubstituteByLocation(i, vil_enabled, -1920,192, DEN_ARCHVILE,3);
+			}
+		} else if (mapname == "map45") {
+			//tenemets
+			for (int i = 0; i < thingCount; i++)
+			{
+				SubstituteByLocation(i, vil_enabled, -2512,-1472,DEN_ARCHVILE);
+			}
+		} else if (mapname == "lost09") {
+			//gotcha
+			for (int i = 0; i < thingCount; i++)
+			{
+				SubstituteByLocation(i, vil_enabled, 63,352, DEN_ARCHVILE);
+			}
+			SetThingXY(9, 272, -749.753);
+			AddThing(DEN_SpiderMastermind, (-96,-768,0), 270);
+			AddThing(DEN_Soulsphere, (64,-768,0), 0);
+		} else if (mapname == "map50") {
+			//barrels o fun
+			for (int i = 0; i < thingCount; i++)
+			{
+				RemoveByLocation(i, spd_enabled, 656,1840,2);
+				SubstituteByLocation(i, spd_enabled, 808,1664,DEN_SpiderMastermind,2);
+				SubstituteByLocation(i, vil_enabled, -1456,3008,DEN_Archvile,3);
+				SubstituteByLocation(i, vil_enabled, -224,2880,DEN_Archvile,3);
+			}
+		} else if (mapname == "map51") {
+			//bloodfalls
+			for (int i = 0; i < thingCount; i++)
+			{
+				SubstituteByLocation(i, vil_enabled, 1808,-2912,DEN_Archvile);
+			}
+		} else if (mapname == "map53" && skill >= 3) {
+			//monster condo
+			for (int i = 0; i < thingCount; i++)
+			{
+				SubstituteByLocation(i, vil_enabled, 1360,-2008,DEN_Archvile);
+			}
+		} else if (mapname == "lost12") {
+			//the living end
+			for (int i = 0; i < thingCount; i++)
+			{
+				SubstituteByLocation(i, vil_enabled, 464,4320,DEN_Archvile);
+			}
+		} else if (mapname == "lost11") {
+			//the spirit world
+			for (int i = 0; i < thingCount; i++)
+			{
+				SubstituteByLocation(i, vil_enabled, -2304,-912,DEN_Archvile);
+				SubstituteByLocation(i, spd_enabled, 1504,-1024,DEN_SpiderMastermind);
+				RemoveByLocation(i, spd_enabled, 1632,-672);
+				RemoveByLocation(i, spd_enabled, 1696,-1056);
+				SubstituteByLocation(i, spd_enabled,192,-832,DEN_SpiderMastermind,2);
+				RemoveByLocation(i, spd_enabled,96,-672,2);
+				RemoveByLocation(i, spd_enabled,288,-672,2);
+			}
+		} else if (mapname == "nrv06") {
+			//inferno of blood
+			for (int i = 0; i < thingCount; i++)
+			{
+				SubstituteByLocation(i,vil_enabled,1664,1088,DEN_ARCHVILE);
+				SubstituteByLocation(i,vil_enabled,992,608,DEN_ARCHVILE,3);
+			}
+		} else if (mapname == "nrv07") {
+			//baron's banquet
+			for (int i = 0; i < thingCount; i++)
+			{
+				RemoveByLocation(i, vil_enabled, 1536,-336, 3);
+				RemoveByLocation(i, vil_enabled, 1536,848, 3);
+			}
+			Spawn(DEN_ARCHVILE, (1524, 245,0), vil_enabled, 3);
+		} else if (mapname == "nrv09") {
+			//march of the demons
+			for (int i = 0; i < thingCount; i++)
+			{
+				SubstituteByLocation(i, vil_enabled, -416,1728,DEN_Archvile);
+				RemoveByLocation(i, spd_enabled, -1408,2576);
+				RemoveByLocation(i, spd_enabled, -1568,1984);
+				RemoveByLocation(i, spd_enabled, -1504,1984);
+				RemoveByLocation(i, spd_enabled, -1440,1984);
+				RemoveByLocation(i, spd_enabled, -1376,1984);
+				RemoveByLocation(i, spd_enabled, -1312,1984);
+				RemoveByLocation(i, spd_enabled, -1248,1984);
+			}
+			Spawn(DEN_SPIDERMASTERMIND, (-1408,2240,0), spd_enabled);
+		}
+	}
+	
+	private void SubstituteByType(int i, bool cvar, int original, int new, int targetskill = 0)
+	{
+		if (GetThingEdNum(i) == original && skill >= targetskill && cvar)
+		{
+			SetThingEdNum(i, new);
+			/*
+			int nt = AddThing(new, GetThingPos(i), GetThingAngle(i), GetThingSkills(i), GetThingFlags(i));
+			SetThingSpecial(nt, GetThingSpecial(i));
+			SetThingStringArgument(nt, GetThingStringArgument(i));
+			for (int j = 0; j < 5; j++)
+			{
+				SetThingArgument(nt, j, GetThingArgument(i, j));
+			}
+			SetThingSkills(i, 0);
+			*/
+		}
+	}
+
+	private void RemoveByLocation(int i, bool cvar, double x, double y, int targetskill = 0)
+	{
+		int num = GetThingEdNum(i);
+		let pos = GetThingPos(i);
+		if (skill >= targetskill && pos.X == x && pos.Y == y 
+			&& IsDoomEdNumMonster(num)
+			&& cvar)
+		{
+			SetThingSkills(i, 0);
+		}
+	}
+	
+	private void SubstituteByLocation(int i, bool cvar, double x, double y, int new, int targetskill = 0)
+	{
+		int num = GetThingEdNum(i);
+		let pos = GetThingPos(i);
+		if (skill >= targetskill && pos.X == x && pos.Y == y 
+			&& IsDoomEdNumMonster(num)
+			&& cvar)
+		{
+			SetThingEdNum(i, new);
+			/*int nt = AddThing(new, pos, GetThingAngle(i), GetThingSkills(i), GetThingFlags(i));
+			SetThingSpecial(nt, GetThingSpecial(i));
+			SetThingStringArgument(nt, GetThingStringArgument(i));
+			for (int j = 0; j < 5; j++)
+			{
+				SetThingArgument(nt, j, GetThingArgument(i, j));
+			}
+			SetThingSkills(i, 0);
+			*/
+		}
+	}
+
+	private bool IsDoomEdNumMonster(int num)
+	{
+		return (num == 7 || num == 9 || num == 16 || num == 58 || num == 71 || num == 84 || (num >= 64 && num <= 69) || (num >= 3001 && num <= 3006));
+	}
+
+	private void Spawn(int new, Vector3 pos, bool cvar, int targetskill = 0)
+	{
+		if (skill >= targetskill && cvar)
+		{
+			AddThing(new, pos, 0, SKILLS_ALL, MODES_ALL);
+		}
+	}
+}

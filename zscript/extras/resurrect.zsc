@@ -1,0 +1,103 @@
+extend class CEExtrasHandler
+{
+	bool isFrozen[MAXPLAYERS];
+	int frozenTime[MAXPLAYERS];
+	int resurrectTarget[MAXPLAYERS];
+	int resurrectTime;
+
+	void ResurrectNetworkProcess(ConsoleEvent e)
+	{
+		if (!multiplayer) return;
+		Actor player = getTriggerer(e.Player);
+		if (!deathmatch && !isFrozen[player.PlayerNumber()] && e.Name == "DoResurrect")
+		{
+			resurrectBestTarget(player);
+		}
+	}
+	
+	void ResurrectWorldTick()
+	{
+		if (!multiplayer) return;
+		for (int i=0; i<MAXPLAYERS; i++)
+		{
+			if (isFrozen[i]) countdownFreeze(i);
+		}
+	}
+	
+	private Actor getTriggerer(int playerNumber)
+	{
+		int pn = playerNumber >= 0 ? playerNumber : consoleplayer;
+		Actor player = players[playerNumber].mo;
+		return player;
+	}
+	
+	private void resurrectBestTarget(Actor player)
+	{
+		for (int i=0; i<MAXPLAYERS;i++)
+		{
+			
+			Actor target = player.GetPointer(AAPTR_PLAYER1<<i);
+			resurrectIfValid(player,target);
+		}
+	}
+	
+	private void resurrectIfValid(Actor player, Actor target)
+	{
+		if (target && player.PlayerNumber() != target.PlayerNumber() && player.Distance3D(target) <= 55)
+		{
+			beginResurrection(player,target);
+		}
+	}
+	
+	private void beginResurrection(Actor player, Actor target)
+	{
+		resurrectTime = resurrect_seconds * TICRATE;
+		printNotification("$MSG_STARTED_RESURRECT",player,target.Player.getUserName());
+		freezePlayer(player,target);
+	}
+	
+	private void freezePlayer(Actor player, Actor target)
+	{
+		player.Player.cheats += CF_FROZEN;
+		resurrectTarget[player.PlayerNumber()] = target.PlayerNumber();
+		isFrozen[player.PlayerNumber()] = true;
+	}
+	
+	private void countdownFreeze(int playerNumber)
+	{
+		if (frozenTime[playerNumber] == resurrectTime)
+		{
+			Actor player = players[playerNumber].mo;
+			Actor target = players[resurrectTarget[playerNumber]].mo;
+			finishResurrection(player,target);
+		}
+		frozenTime[playerNumber]++;
+	}
+	
+	private void finishResurrection(Actor player, Actor target)
+	{
+		unfreezePlayer(player);
+		performResurrection(target);
+		printNotification("$MSG_FINISHED_RESURRECT",player,target.Player.getUserName());
+	}
+	
+	private void unfreezePlayer(Actor player)
+	{
+		frozenTime[player.PlayerNumber()] = 0;
+		isFrozen[player.PlayerNumber()] = false;
+		player.Player.cheats -= CF_FROZEN;
+	}
+	
+	private void performResurrection(Actor target)
+	{
+		target.Player.Resurrect();
+		target.A_Pain();
+		target.A_SetHealth(resurrect_life);
+	}
+	
+	private void printNotification(String localString, Actor player, String targetName)
+	{
+		String msg = StringTable.Localize(localString);
+		player.A_Log("\cl"..targetName..msg..player.Player.GetUserName()..".");
+	}
+}

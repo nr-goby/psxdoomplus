@@ -1,0 +1,58 @@
+class PsxBlood : Blood replaces Blood
+{
+	Default
+	{
+		Mass 5;
+		+NOBLOCKMAP
+		+NOTELEPORT
+		+ALLOWPARTICLES
+	}
+	States
+	{
+        Spawn:
+            BLUD CBA 8;
+            Stop;
+        Spray:
+            SPRY ABCDEF 3;
+            SPRY G 2;
+            Stop;
+	}
+    
+	mixin VarsCache;
+	
+	int lastTic;
+	
+	override void Tick()
+    {
+        if (lastTic < tics && ce_actortics)
+            tics = int(Round(tics * PsxActor.SCALE_FRAME));
+        lastTic = tics;
+        super.Tick();
+    }
+}
+
+class PsxRealGibs : PsxActor replaces RealGibs
+{
+	Default
+	{
+		+DROPOFF
+		+CORPSE
+		+NOTELEPORT
+		+DONTGIB
+
+        +MOVEWITHSECTOR;
+	}
+	States
+	{
+        Spawn:
+            goto GenericCrush;
+	}
+}
+
+class PsxGibs : RealGibs replaces Gibs
+{
+    Default
+    {
+        ClearFlags;
+    }
+}

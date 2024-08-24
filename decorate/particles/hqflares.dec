@@ -1,0 +1,111 @@
+
+Actor Flare_General : EffectBase
+{
+alpha 0.2
+scale 0.3
+}
+
+Actor BlueFlare3 : Flare_General
+{
+states
+	{
+	Spawn:
+		TNT1 AA 0 A_CheckSight("Null")
+		TNT1 A 0 A_Jump(128,4)
+		LENB AAB 1 bright
+		stop
+		TNT1 A 0
+		LENB BAB 1 bright
+		stop
+	}
+}
+
+Actor GreenFlare3 : Flare_General
+{
+states
+	{
+	Spawn:
+		TNT1 AA 0 A_CheckSight("Null")
+	    TNT1 A 0 A_Jump(128,4)
+		LENG AAB 1 bright
+		stop
+		TNT1 A 0
+		LENG BAB 1 bright
+		stop
+	}
+}
+
+Actor YellowFlare : Flare_General
+{
+states
+	{
+	Spawn:
+		TNT1 AA 0 A_CheckSight("Null")
+		TNT1 A 0 A_Jump(128,2)
+		LENY A 2 bright
+		stop
+		TNT1 A 0
+		LENY B 2 bright
+		stop
+	}
+}
+
+Actor YellowFlareSmall : YellowFlare
+{
+scale 0.15
+}
+
+Actor RedFlare : Flare_General
+{
+states
+	{
+	Spawn:
+		TNT1 AA 0 A_CheckSight("Null")
+		TNT1 A 0 A_Jump(128,2)
+		LENR A 2 bright
+		stop
+		TNT1 A 0
+		LENR B 2 bright
+		stop
+	}
+}
+
+Actor RedFlareMedium : RedFlare
+{
+scale 0.25
+}
+
+Actor BlueFlare : Flare_General
+{
+states
+	{
+	Spawn:
+		TNT1 AA 0 A_CheckSight("Null")
+		TNT1 A 0 A_Jump(128,2)
+		LENB A 2 bright
+		stop
+		TNT1 A 0
+		LENB B 2 bright
+		stop
+	}
+}
+
+Actor BlueFlareSmall : BlueFlare
+{
+alpha 0.3
+scale 0.15
+}
+
+Actor RocketFlare : Flare_General
+{
+	Alpha 0.3
+	Scale 0.66
+	states
+	{
+	Spawn:
+		TNT1 AA 0 A_CheckSight("Null")
+		LEYS O 1 BRIGHT A_SetScale(ScaleX*FRandom(0.5,1))
+		Stop
+	}
+}
+Actor MicroMissileFlare : RocketFlare { Scale 0.33}

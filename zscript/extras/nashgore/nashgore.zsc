@@ -1,0 +1,2 @@
+// global constants
+const STAT_NashGore_Gore = Thinker.STAT_USER + 1;

@@ -1,0 +1,236 @@
+class PsxSpiderMastermind : PsxActor replaces SpiderMastermind
+{
+    Default
+    {
+		//$Title "Spider Mastermind"
+		
+        Health 3000;
+		Radius 128;
+		Height 100;
+		Mass 1000;
+		Speed 12;
+		PainChance 40;
+		Monster;
+		+BOSS
+		+MISSILEMORE
+		+FLOORCLIP
+		+NORADIUSDMG
+		+DONTMORPH
+		+BOSSDEATH
+		SeeSound "spider/sight";
+		AttackSound "spider/attack";
+		PainSound "spider/pain";
+		DeathSound "spider/death";
+		ActiveSound "spider/active";
+		Obituary "$OB_SPIDER";
+		Tag "$FN_SPIDER";
+
+        +MOVEWITHSECTOR;
+        MinMissileChance 160;
+        +PsxActor.WAITLOOK;
+        +PsxActor.SEETARGET;
+		PsxActor.NightmareMissileChanceFactor 1.0;
+		PsxActor.NightmareTicFactor 0.8;
+    }
+
+    States
+	{
+        Spawn:
+            SPID A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            SPID AB 10 A_Look;
+            Loop;
+        SmoothSpawn:
+            SZMA AB 10 A_Look;
+            Loop;
+
+        See:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothSee");
+            SPID A 4 { A_PCTics(3); A_Metal(); }
+            SPID ABB 4 { A_PCTics(3); A_Chase(); }
+            SPID C 4 { A_PCTics(3); A_Metal(); }
+            SPID CDD 4 { A_PCTics(3); A_Chase(); }
+            SPID E 4 { A_PCTics(3); A_Metal(); }
+            SPID EFF 4 { A_PCTics(3); A_Chase(); }
+            Loop;
+        SmoothSee:
+            SMMA a 4 { A_PCTics(3); A_Metal(); }
+            SMMA abc 4 { A_PCTics(3); A_Chase(); }
+            SMMA d 4 { A_PCTics(3); A_Metal(); }
+            SMMA eef 4 { A_PCTics(3); A_Chase(); }
+            SMMA g 4 { A_PCTics(3); A_Metal(); }
+            SMMA hij 4 { A_PCTics(3); A_Chase(); }
+            Loop;
+
+        Missile:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothMissile");
+            SPID A 20 Bright A_FaceTarget;
+            SPID G 4 Bright A_SpidAttack;
+            SPID H 4 Bright A_SpidAttack;
+            SPID H 2 Bright { A_PCTics(1); A_SpidRefire(); }
+            Goto Missile+2;
+        SmoothMissile:
+            SSMA a 20 a_facetarget;
+            SSMA b 2 A_SpidAttack;
+            SSMA c 2;
+            SSMA b 2 A_SpidAttack;
+            SSMA c 2;
+            SSMA c 2 { A_PCTics(1); A_SpidRefire(); }
+            goto SmoothMissile+1;
+
+        Pain:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothPain");
+            SPID I 4 A_PCTics(3);
+            SPID I 4 { A_PCTics(3); A_Pain(); }
+            Goto See;
+        SmoothPain:
+            SPMA a 2;
+            SPMA b 2;
+            SPMA c 4 { A_PCTics(2); A_Pain(); }
+            Goto See;
+
+        Death:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothDeath");
+            SPID J 16 A_Scream;
+            SPID K 6 { A_NoBlocking(); A_HQExplosion(); }
+            SPID L 6 { A_ZPExplosionSound(); A_HQExplosion2(); }
+            SPID M 6 { A_ZPExplosion(); A_HQExplosion3(); A_ZPExplosionSound(); }
+            SPID N 6 { A_GoreExplosion(10); A_ZPExplosion2(); A_HQExplosion4(); A_ZPExplosionSound(); }
+            SPID O 6 { A_ZPExplosionSound(); A_HQExplosion5(); }
+            SPID P 6 { A_ZPExplosion3(); A_HQExplosion6(); A_ZPExplosionSound(); }
+            SPID Q 6 A_ZPSmoke;
+            SPID R 6;
+            SPID SSSS 5 A_ZPSmoke;
+            SPID S -1 A_BossDeath;
+            Stop;
+        SmoothDeath:
+            SDMA a 20 A_Scream;
+            SDMA b 5 A_HQExplosion;
+            SDMA c 5 { A_noblocking(); A_GoreExplosion(10); A_ZPExplosionSound(); }
+            SDMA d 4 A_HQExplosion2;
+            SDMA e 4 A_ZPExplosionSound;
+            SDMA f 4 A_HQExplosion3;
+            SDMA g 4 A_ZPExplosion;
+            SDMA h 4;
+            SDMA i 4 A_ZPExplosion2;
+            SDMA j 4 A_HQExplosion4;
+            SDMA k 4 A_ZPExplosionSound;
+            SDMA l 4 A_HQExplosion5;
+            SDMA m 4 A_ZPExplosion3;
+            SDMA n 4 A_HQExplosion6;
+            SDMA opq 4;
+            SDMA rrrrrr 5 A_ZPSmoke;
+            SDMA r 70;
+            SDMA r -1 a_bossdeath;
+            Stop;
+	}
+
+    void A_ZPExplosionSound()
+    {
+        if (zp_enabled)
+        {
+            A_StartSound("weapons/rocklx", CHAN_BODY);
+        }
+    }
+
+    void A_ZPExplosion()
+    {
+        if (zp_enabled && !hq_enabled)
+        {
+            A_SpawnItemEx("Boom", -60, 60, 24, 0,0,0,0,0);
+            A_SpawnItemEx("Boom", 60, -60, 32, 0,0,0,0,0);
+            A_SpawnItemEx("Boom", -20, 20, 24, 0,0,0,0,0);
+            A_SpawnItemEx("Boom", 20, -20, 32, 0,0,0,0,0);
+            A_SpawnItemEx("Boom", -60, -60, 24, 0,0,0,0,0);
+            A_SpawnItemEx("Boom", 60, 60, 32, 0,0,0,0,0);
+            A_SpawnItemEx("Boom", -20, -20, 24, 0,0,0,0,0);
+            A_SpawnItemEx("Boom", 20, 20, 32, 0,0,0,0,0);
+        }
+    }
+
+    void A_ZPExplosion2()
+    {
+        if (zp_enabled && !hq_enabled)
+        {
+            A_SpawnItem("BigSlowSmoke");
+        }
+    }
+
+    void A_ZPExplosion3()
+    {
+        if (zp_enabled && !hq_enabled)
+        {
+		    for (int i = 0; i < 8; i++) A_SpawnItemEx("ExploFogSpawner",Random(-72,72),Random(-72,72),Random(3,48),0,0,0,0,0);
+        }
+    }
+
+    void A_ZPSmoke()
+    {
+        if (zp_enabled)
+        {
+            A_SpawnItemEx("SlowSmoke",Random(-48,48),Random(-48,48),8,0.01*Random(-50,50),0.01*Random(-50,50),0.01*Random(40,100),0,0,56);
+        }
+    }
+
+    void A_HQExplosion()
+    {
+        if (zp_enabled && hq_enabled)
+        {
+            for (int i = 0; i < 4; i++) A_SpawnItemEx("ExploFxSpawner",Random(-64,64),Random(-64,64),Random(6,72),0,0,0,0,0);
+        }
+    }
+    
+    void A_HQExplosion2()
+    {
+        if (zp_enabled && hq_enabled)
+        {
+            A_SpawnItemEx("ExploFxSpawner",-52,-52,72,0,0,0,0,0);
+        }
+    }
+    
+    void A_HQExplosion3()
+    {
+        if (zp_enabled && hq_enabled)
+        {
+            for (int i = 0; i < 5; i++) A_SpawnItemEx("ExploFxSpawner",Random(-72,72),Random(-72,72),Random(3,32),0,0,0,0,0);
+            for (int i = 0; i < 4; i++) A_SpawnItemEx("ExploFogSpawner",Random(-72,72),Random(-72,72),Random(3,48),0,0,0,0,0);
+        }
+    }
+    
+    void A_HQExplosion4()
+    {
+        if (zp_enabled && hq_enabled)
+        {
+            A_SpawnItem("BigSlowSmoke");
+		    for (int i = 0; i < 5; i++) A_SpawnItemEx("ExploFxSpawner",Random(-72,72),Random(-72,72),Random(3,32),0,0,0,0,0);
+        }
+    }
+    
+    void A_HQExplosion5()
+    {
+        if (zp_enabled && hq_enabled)
+        {
+            A_SpawnItemEx("RandomExplosionSprite", -60, 60, 24, 0,0,0,0,0);
+		    A_SpawnItemEx("RandomExplosionSprite", 60, -60, 32, 0,0,0,0,0);
+		    A_SpawnItemEx("RandomExplosionSprite", -60, -60, 24, 0,0,0,0,0);
+		    A_SpawnItemEx("RandomExplosionSprite", 60, 60, 32, 0,0,0,0,0);
+        }
+    }
+
+    void A_HQExplosion6()
+    {
+        if (zp_enabled && hq_enabled)
+        {
+            for (int i = 0; i < 3; i++) A_SpawnItemEx("ExploFxSpawner",Random(-72,72),Random(-72,72),Random(3,32),0,0,0,0,0);
+            for (int i = 0; i < 4; i++) A_SpawnItemEx("ExploFogSpawner",Random(-72,72),Random(-72,72),Random(3,48),0,0,0,0,0);
+            for (int i = 0; i < 5; i++) A_SpawnItemEx("Boom", Random(-72,72),Random(-72,72),Random(3,48),0,0,0,0,0);
+        }
+    }
+}
+
+extend class PsxActor
+{
+	void A_SpidAttack()
+    {
+        A_PsxBulletAttack(SPREAD_XY, 3, 5, 42);
+    }
+}

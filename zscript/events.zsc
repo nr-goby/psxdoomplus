@@ -1,0 +1,87 @@
+class CEEventHandler : EventHandler
+{
+	CEConfig config;
+	
+	override void OnRegister()
+	{
+		config = CEConfig.Get();
+		MusicOnRegister();
+	}
+	
+	override void NewGame()
+	{
+		FirstTimeSetupNewGame();
+	}
+
+	override void WorldLoaded(WorldEvent e)
+	{
+		LevelUnlockerWorldLoaded(e);
+		BlendHandlerWorldLoaded(e);
+		FireSkyWorldLoaded(e);
+		MapNameWorldLoaded(e);
+	}
+	
+	override void WorldUnloaded(WorldEvent e)
+	{
+		MusicWorldUnloaded(e);
+		WipeWorldUnloaded(e);
+	}
+	
+	override void WorldLinePreActivated(WorldEvent e)
+	{
+		BlinkLocksWorldLinePreActivated(e);
+		WipeWorldLinePreActivated(e);
+	}
+	
+	override void WorldThingSpawned(WorldEvent e)
+	{
+		AspectRatioWorldThingSpawned(e);
+	}
+	
+	override void ConsoleProcess(ConsoleEvent e)
+	{
+		ResetDefaultsConsoleProcess(e);
+	}
+	
+	override void NetworkProcess(ConsoleEvent e)
+	{
+		MusicNetworkProcess(e);
+		FireSkyNetworkProcess(e);
+	}
+	
+	override void InterfaceProcess(ConsoleEvent e)
+	{
+		MusicInterfaceProcess(e);
+	}	
+
+	override void PlayerEntered(PlayerEvent e)
+	{
+		WipePlayerEntered(e);
+	}
+	
+	override void WorldTick()
+	{
+		BlendHandlerWorldTick();
+		WipeWorldTick();
+		PsxLightWorldTick();
+		MusicWorldTick();
+		FireSkyWorldTick();
+		MapNameWorldTick();
+		BlinkLocksWorldTick();
+		AspectRatioWorldTick();
+	}
+	
+	override void UITick()
+	{
+		MusicUITick();
+		BrightnessUiTick();
+		ConsoleUiTick();
+		AspectRatioUITick();
+		ShaderControlUiTick();
+	}
+	
+	override void RenderUnderlay(RenderEvent e)
+	{
+		MapNameRenderUnderlay(e);
+	}
+}

@@ -1,0 +1,278 @@
+class PsxArchvile : PsxActor replaces Archvile
+{
+    Default
+    {
+		//$Title "Archvile"
+	
+        Health 700;
+		Radius 20;
+		Height 56;
+		Mass 500;
+		Speed 15;
+		PainChance 10;
+		Monster;
+		MaxTargetRange 896;
+		+QUICKTORETALIATE 
+		+FLOORCLIP 
+		+NOTARGET
+		SeeSound "vile/sight";
+		PainSound "vile/pain";
+		DeathSound "vile/death";
+		ActiveSound "vile/active";
+		MeleeSound "vile/stop";
+		Obituary "$OB_VILE";
+		Tag "$FN_ARCH";
+        
+        +MOVEWITHSECTOR;
+        PsxActor.FootstepSound "monster/vilestep";
+        PsxActor.DeathThudSound "monster/xvile";
+        +PsxActor.WAITLOOK;
+        +PsxActor.SEETARGET;
+    }
+
+    States
+	{
+        Spawn:
+            VILE A 0 nodelay a_jumpif(IsSmooth(), "SmoothSpawn");
+            VILE AB 10 A_Look;
+            Loop;
+        SmoothSpawn:
+            SVIL AB 10 A_Look;
+		    Loop;
+
+        See:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothSee");
+            VILE AABBC 2 A_VileChase;
+            VILE C 2 { A_VileChase(); A_Footstep(); }
+            VILE DDEEF 2 A_VileChase;
+            VILE F 2 { A_VileChase(); A_Footstep(); }
+            Loop;
+        SmoothSee:
+            VILM abcde 2 A_VileChase;
+            VILM e 2 { A_VileChase(); A_Footstep(); }
+            VILM fghij 2 A_VileChase;
+            VILM j 2 { A_VileChase(); A_Footstep(); }
+            Loop;
+
+        Missile:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothMissile");
+            VILE G 0 BRIGHT A_VileStart;
+            VILE G 10 BRIGHT A_FaceTarget;
+            VILE H 8 BRIGHT A_VileTarget;
+            VILE IJKLMN 8 BRIGHT A_FaceTarget;
+            VILE O 8 BRIGHT A_VileAttack;
+            VILE P 20 BRIGHT; //94
+            Goto See;
+        SmoothMissile:
+            NVIL a 0 bright a_vilestart;
+            NVIL a 3 bright a_facetarget;
+            NVIL b 3 bright a_facetarget;
+            NVIL cdef 3 bright a_facetarget;
+            NVIL f 0 bright a_viletarget;
+            NVIL ghij 3 bright a_facetarget;
+            NVIL k 24 bright a_facetarget;
+            NVIL lmno 3 bright a_facetarget;
+            NVIL p 4 bright a_vileattack;
+            NVIL q 4 bright;
+            NVIL r 20 bright;
+            goto see;
+
+        Heal:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothHeal");
+            VILE [\] 10 BRIGHT;
+            Goto See;
+        SmoothHeal:
+            SVIL XYZYX 2 bright;
+		    Goto See;
+
+        Pain:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothPain");
+            VILE Q 5;
+            VILE Q 5 A_Pain;
+            Goto See;
+        SmoothPain:
+            VILP a 3;
+            VILP b 7 a_pain;
+            Goto See;
+
+        Death:
+            TNT1 A 0 a_jumpif(IsSmooth(), "SmoothDeath");
+            VILE Q 7;
+            VILE R 7 A_Scream;
+            VILE S 7 A_NoBlocking;
+            VILE T 7;
+            VILE U 7 A_DeathThud;
+            VILE VWXY 7;
+            VILE Z -1;
+            Stop;
+        SmoothDeath:
+            VILD A 3;
+            VILD B 3 A_Scream;
+            VILD C 3 A_NoBlocking;
+            VILD DEFG 3;    
+            VILD H 3 A_DeathThud;
+            VILD IJKLM 3;
+            VILD M -1;
+            Stop;
+
+        XDeath:
+			TNT1 A 0 a_jumpif(IsSmooth(), "SmoothXDeath");
+            TNT1 A 0 A_JumpIf(!kch_enabled,"Death");
+            XVIL A 4;
+			XVIL C 2 A_GoreExplosion(8);
+            XVIL E 2;
+			XVIL G 2;
+			XVIL I 2 A_XScream;
+			XVIL K 2 A_NoBlocking;
+            XVIL MO 2;
+			XVIL Q -1;
+            Stop;
+		SmoothXDeath:
+			XVIL A 2;
+            XVIL B 2 A_GoreExplosion(8);
+			XVIL CDE 1;
+			XVIL F 1;
+			XVIL G 1;
+			XVIL H 1 A_XScream;
+			XVIL I 1;
+			XVIL J 1 A_NoBlocking;
+			XVIL KLMNOP 1;
+			XVIL Q -1;
+		    Stop;
+    }
+}
+
+class PsxArchvileFire : PsxActor replaces ArchvileFire
+{
+    Default
+	{
+		+NOBLOCKMAP +NOGRAVITY +ZDOOMTRANS
+		RenderStyle "Add";
+		Alpha 1;
+	}
+
+	States
+	{
+        Spawn:
+            TNT1 A 0 nodelay a_jumpif(zp_enabled && hq_enabled, "HQSpawn");
+            TNT1 A 0 a_jumpif(zp_enabled, "ZPSpawn");
+            FIRE A 2 BRIGHT A_StartFire;
+            FIRE BAB 2 BRIGHT A_Fire;
+            FIRE C 2 BRIGHT A_FireCrackle;
+            FIRE BCBCDCDCDEDED 2 BRIGHT A_Fire;
+            FIRE E 2 BRIGHT A_FireCrackle;
+            FIRE FEFEFGHGHGH 2 BRIGHT A_Fire;
+			TNT1 A 0 A_JumpIf(ce_actortics, "Delay");
+            Stop;
+        ZPSpawn:
+		    TNT1 A 0 
+			{
+				A_SpawnItemEx("SpawnFlames1",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION|SXF_TRANSFERPOINTERS);
+				WorldOffset.Z += 15;
+			}
+			FIR2 A 2 BRIGHT A_StartFire;
+            FIR2 BAB 2 BRIGHT A_Fire;
+            FIR2 C 2 BRIGHT A_FireCrackle;
+            FIR2 BCBCDCDCDEDED 2 BRIGHT A_Fire;
+            FIR2 E 2 BRIGHT A_FireCrackle;
+            FIR2 FEFEFGHGHGH 2 BRIGHT A_Fire;
+			TNT1 A 0 A_JumpIf(ce_actortics, "ZPDelay");
+            Stop;
+        HQSpawn:
+            TNT1 A 0 { A_SetRenderStyle(0.8, STYLE_Add); A_SetScale(0.55); A_StartFire(); }
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_FireCrackle;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_FireCrackle;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            TNT1 AA 1 A_HQFire;
+            TNT1 A 0 A_Fire;
+            BOM6 ABCDEFGHIJ 1 { A_FadeOut(0.02); A_HQFire(); }
+            BOM6 KLMNOPQRST 1 { A_FadeOut(0.02); A_HQFire(); }
+            stop;
+		Delay:
+			FIRE GH 2 BRIGHT A_Fire;
+			Stop;
+		ZPDelay:
+			FIR2 GH 2 BRIGHT A_Fire;
+			Stop;
+	}
+
+    void A_HQFire()
+    {
+		if (isFrozen())
+			return;
+		if (!tracer || !target || !target.Checksight(tracer,0))
+			A_FadeOut(0.1);
+		else if (tracer && target)
+			Warp(tracer,32,8,0,WARPF_INTERPOLATE);
+		if (sprite == GetSpriteIndex("TNT1"))
+			A_SpawnItemEx("ZParticleFire_Yellow",frandom(-10,10),frandom(-10,10),frandom(0,5),frandom(-0.4,0.4),frandom(-0.4,0.4),frandom(0.8,1.5));
+    }
+	
+	override void Tick()
+	{
+		if (zp_enabled && !hq_enabled)
+		{
+			WorldOffset.Z += 0.5;
+		}
+		super.Tick();
+	}
+}

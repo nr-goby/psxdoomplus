@@ -1,0 +1,89 @@
+class CubemapSkyPostProcessor : LevelPostProcessor
+{	
+	void Apply(Name checksum, String mapname)
+	{
+		TextureID nt = TexMan.CheckForTexture("-");
+		if (alt_skies && !CEConfig.Get().isPwad)
+		{
+			switch (level.cluster)
+			{
+				case 1:
+					level.ChangeSky(TexMan.CheckForTexture("SKY01"), nt);
+					break;
+				case 2:
+					level.ChangeSky(TexMan.CheckForTexture("SKY02"), nt);
+					break;
+				case 4:
+					level.ChangeSky(TexMan.CheckForTexture("SKY07"), nt);
+					break;
+				case 5:
+					level.ChangeSky(TexMan.CheckForTexture("SKY04"), nt);
+					break;
+				case 6:
+					level.ChangeSky(TexMan.CheckForTexture("SKY05"), nt);
+					break;
+				case 7:
+					level.ChangeSky(TexMan.CheckForTexture("SKY06"), nt);
+					break;
+				case 8:
+					level.ChangeSky(TexMan.CheckForTexture("SKY03"), nt);
+					break;
+				case 9:
+					level.ChangeSky(TexMan.CheckForTexture("SKY5"), nt);
+					break;
+				default:
+					break;
+			}
+		}
+		
+		if (alt_skybox)
+		{
+			String skytex = TexMan.GetName(level.skytexture1);
+			if (skytex == "SKY01")
+			{
+				level.ChangeSky(TexMan.CheckForTexture("SkyS1"), nt);
+			}
+			else if (skytex == "SKY02")
+			{
+				level.ChangeSky(TexMan.CheckForTexture("SkyS2"), nt);
+			}
+			else if (skytex == "SKY03")
+			{
+				level.ChangeSky(TexMan.CheckForTexture("SkyS3"), nt);
+			}
+			else if (skytex == "SKY04")
+			{
+				level.ChangeSky(TexMan.CheckForTexture("SkyS4"), nt);
+			}
+			else if (skytex == "SKY05")
+			{
+				level.ChangeSky(TexMan.CheckForTexture("SkyS5"), nt);
+			}
+			else if (skytex == "SKY06")
+			{
+				level.ChangeSky(TexMan.CheckForTexture("SkyS6"), nt);
+			}
+			else if (skytex == "SKY07")
+			{
+				level.ChangeSky(TexMan.CheckForTexture("SkyS7"), nt);
+			}
+			else if (skytex == "SKY08")
+			{
+				level.ChangeSky(TexMan.CheckForTexture("SkyS8"), nt);
+			}
+		}
+	}
+}
+
+class FireSkyPostProcessor : LevelPostProcessor
+{	
+	void Apply(Name checksum, String mapname)
+	{
+		if (hq_firesky)
+		{
+			let tex = TexMan.GetName(level.skytexture1);
+			if (tex == "FIRESK00" || tex == "SKY09")
+				level.ChangeSky(TexMan.CheckForTexture("FIRE_S"), TexMan.CheckForTexture("-"));
+		}
+	}
+}

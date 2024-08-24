@@ -1,0 +1,69 @@
+class LevelDecoratorPostProcessor : LevelPostProcessor
+{
+	void Apply(Name checksum, String mapname)
+	{
+        AddLights();
+    }
+
+	void AddLights()
+	{
+		Line line;
+		Side front;
+		for (int i = 0; i < level.lines.Size(); i++)
+		{
+			line = level.lines[i];
+			front = line.sidedef[Line.front];
+
+			String tex = TexMan.GetName(front.GetTexture(Side.mid)).MakeLower();
+			if (tex == "bluesk" || tex == "doorblu2" || tex == "lockblue" || tex == "lockblu1" || tex == "lockblu2")
+			{
+				Vector2 p = GetPerpendicular(front);
+				p = GetCenter(p, GetCenter(front.v1().p, front.v2().p));
+                let h = front.sector.CeilingPlane.ZAtPoint(p) - front.sector.FloorPlane.ZAtPoint(p);
+				SpawnLight((p.x, p.y, h - 6), 0, 0, 255);
+				//SpawnLight((p.x, p.y, Round(int(h / 2.0))), 0, 0, 255);
+				SpawnLight((p.x, p.y, 6), 0, 0, 255);
+			}
+			else if (tex == "yelsk" || tex == "dooryel2" || tex == "lockyel1" || tex == "lockyel2")
+			{
+				Vector2 p = GetPerpendicular(front);
+				p = GetCenter(p, GetCenter(front.v1().p, front.v2().p));
+                let h = front.sector.CeilingPlane.ZAtPoint(p) - front.sector.FloorPlane.ZAtPoint(p);
+				SpawnLight((p.x, p.y, h - 6), 255, 255, 0);
+				//SpawnLight((p.x, p.y, Round(int(h / 2.0))), 255, 255, 0);
+				SpawnLight((p.x, p.y, 6), 255, 255, 0);
+			}
+			else if (tex == "redsk" || tex == "doorred2" || tex == "lockred1" || tex == "lockred2")
+			{
+				Vector2 p = GetPerpendicular(front);
+				p = GetCenter(p, GetCenter(front.v1().p, front.v2().p));
+                let h = front.sector.CeilingPlane.ZAtPoint(p) - front.sector.FloorPlane.ZAtPoint(p);
+				SpawnLight((p.x, p.y, h - 6), 255, 0, 0);
+				//SpawnLight((p.x, p.y, Round(int(h / 2.0))), 255, 0, 0);
+				SpawnLight((p.x, p.y, 6), 255, 0, 0);
+			}
+		}
+	}
+	
+	Vector2 GetCenter(Vector2 a, Vector2 b)
+	{
+		return ((a.x + b.x) / 2.0, (a.y + b.y) / 2.0);
+	}
+	
+	Vector2 GetPerpendicular(Side side)
+	{
+		Vector2 center = GetCenter(side.v1().p, side.v2().p);
+		Vector2 a = (side.v1().p.x - center.x, side.v1().p.y - center.y);
+		a = (-a.y, a.x);
+		return (a.x + center.x, a.y + center.y);
+	}
+	
+	void SpawnLight(Vector3 pos, int red, int green, int blue)
+	{
+		int new = AddThing(9800, pos, 0, SKILLS_ALL, MODES_ALL);
+		SetThingArgument(new, 0, red);
+		SetThingArgument(new, 1, green);
+		SetThingArgument(new, 2, blue);
+		SetThingArgument(new, 3, 32);
+	}
+}

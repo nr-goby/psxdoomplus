@@ -1,0 +1,31 @@
+AddKeySection "$CEKEY_TITLE" "FeatureKeyBinds"
+
+Alias "ToggleTallyScreen" "event ToggleTallyScreen"
+AddMenuKey "$CEKEY_STATS" "ToggleTallyScreen"
+
+Alias "ForceSwapMusic" "netevent ForceSwapMusic"
+AddMenuKey "$CEKEY_MUSIC" "ForceSwapMusic"
+
+AddMenuKey "$CEKEY_MELEE" "+user1"
+
+Alias "DoResurrect" "netevent DoResurrect"
+AddMenuKey "$KEY_RESURRECT" "DoResurrect"
+
+Alias "ClearGore" "netevent EV_ClearGore"
+AddMenuKey "$NASHGOREMNU_CONTROLS_CLEARGORE" "ClearGore"
+
+// Open Progression Menu
+Alias progression-open-menu "netevent progression-open-menu"
+// Purchase Progression Upgrades
+Alias progression-purchase-health-upgrade "netevent progression-purchase-health-upgrade"
+Alias progression-purchase-dr-upgrade "netevent progression-purchase-dr-upgrade"
+Alias progression-purchase-bullet-upgrade "netevent progression-purchase-bullet-upgrade"
+Alias progression-purchase-shell-upgrade "netevent progression-purchase-shell-upgrade"
+Alias progression-purchase-rocket-upgrade "netevent progression-purchase-rocket-upgrade"
+Alias progression-purchase-cell-upgrade "netevent progression-purchase-cell-upgrade"
+Alias progression-purchase-di-upgrade "netevent progression-purchase-di-upgrade"
+
+// Keybinding
+AddKeySection "Progression Menu" SoMUtilityMenu
+AddMenuKey "Open Progression Menu" progression-open-menu
+DefaultBind U progression-open-menu

@@ -1,0 +1,279 @@
+extend class CEExtrasHandler
+{
+	Map<TextureID,String> floors;
+	Map<TextureID,String> centerFloors;
+	Map<TextureID,String> ceilings;
+	Map<TextureID,String> walls;
+	
+	
+	// In the interests of neatness, make each piece of the puzzle a different
+	// function that can be easily commented out for debugging's sake
+	void FancyWorldLoaded(WorldEvent e)
+	{
+		if (cx_fw_enabled && !config.IsExcluded(level.mapname.MakeLower()))
+		{ 
+			ReadFancyLump("wrldsnds");
+			SpawnFloorActors();
+			SpawnFloorActors_OldWay();
+			SpawnCeilingActors();
+			SpawnSkyActors();
+			SpawnWallActors();
+		}
+	}
+	
+	// Spawn Stuff on the floor in a "grid" across all playable map space.
+	// Thanks to Gutawer, PhantomBeta and _Bryan for helping debug this!
+	void SpawnFloorActors()
+    {
+		//32704
+		int spamx = -32448;
+		int spamy = 32448;
+		int spamz = 0;
+
+		Vector2 spam2 = (spamx, spamy);
+		Vector3 spam3 = (spamx, spamy, spamz);
+		
+		bool nospawn;
+
+		while (spamy > -32448)
+		{
+			while (spamx < 32448)
+			{
+				spamz = int(Round(level.PointInSector((spamx, spamy)).floorplane.zAtPoint((spamx, spamy))));
+				if (level.IsPointInLevel(spam3))
+				{
+					//Actor.Spawn("FancyEnvActorFloor", (spamx, spamy, spamz));
+					
+					let floorpic = level.PointInSector((spamx, spamy)).getTexture(Sector.floor);
+					if (floors.CheckKey(floorpic))
+					{
+						let actname = floors.Get(floorpic);						
+						if (actname)
+						{
+							BlockThingsIterator it = BlockThingsIterator.CreateFromPos(spamx, spamy, spamz, spamz, 128, 0);
+							while (it.Next())
+							{
+								Actor mo = it.thing;
+								if (mo is "FancyWorldBase") nospawn = true;
+							}
+							if (!nospawn) Actor.Spawn(actname, (spamx, spamy, spamz));								
+							nospawn = false;
+						}
+					}
+				}
+				spamx += 256;
+				//spamx += 64;
+				spam3 = (spamx, spamy, spamz);
+			}
+			spamx = -32448;
+			spamy -= 256;
+			//spamy -= 128;
+		}
+    }
+	
+	// Spawn stuff on the floor the "old way" (in the center of every sector,
+	// regardless of whether that center is actually in the sector or not.
+	// only useful for things that are very likely gonna be a square.
+	// Devised by Gutawer!
+	void SpawnFloorActors_OldWay()
+	{	
+		for (int i = 0; i < level.Sectors.Size(); i++)
+		{
+			let c = level.Sectors[i].centerspot;
+			//Actor.Spawn("FancyEnvActorFloorOldWay", (c.x, c.y, level.Sectors[i].floorplane.ZAtPoint(c)));
+			
+			if (level.IsPointInLevel((c.x, c.y, level.Sectors[i].floorplane.ZAtPoint(c))))
+			{
+				let floorpic = level.Sectors[i].getTexture(Sector.floor);
+				if (centerfloors.CheckKey(floorpic))
+				{
+					let actname = centerfloors.Get(floorpic);
+					if (actname) Actor.Spawn(actname, (c.x, c.y, level.Sectors[i].floorplane.ZAtPoint(c)));
+				}
+			}
+		}
+	}
+
+	// Spawn Stuff on the ceiling. Same method as with SpawnFloorActors.
+	void SpawnCeilingActors()
+    {
+        //32704
+		int spamx = -32448;
+		int spamy = 32448;
+		int spamz = 0;
+
+		Vector2 spam2 = (spamx, spamy);
+		Vector3 spam3 = (spamx, spamy, spamz);
+
+		while (spamy > -32448)
+		{
+			while (spamx < 32448)
+			{
+				let point = level.PointInSector((spamx, spamy));
+				spamz = int(Round(point.floorplane.zAtPoint((spamx, spamy))));
+				if (level.IsPointInLevel(spam3))
+				{
+					let ceilingpic = point.getTexture(Sector.ceiling);
+					if (ceilings.CheckKey(ceilingpic))
+					{
+						let actname = ceilings.Get(ceilingpic);
+						if (actname) Actor.Spawn(actname, (spamx, spamy, spamz));
+					}
+					//Actor.Spawn("FancyEnvActorCeiling", (spamx, spamy, spamz));
+				}
+				spamx += 256;
+				spam3 = (spamx, spamy, spamz);
+			}
+			spamx = -32448;
+			spamy -= 256;
+		}
+    }
+	
+	// Spawn Stuff on the ceiling. Same method as with SpawnFloorActors, just at
+	// a larger grid size for the sake of performance.
+	void SpawnSkyActors()
+    {
+        //32704
+		int spamx = -32448;
+		int spamy = 32448;
+		int spamz = 0;
+
+		Vector2 spam2 = (spamx, spamy);
+		Vector3 spam3 = (spamx, spamy, spamz);
+		
+		int skipsky = 0;
+		let notex = TexMan.CheckForTexture("-", TexMan.Type_Any);
+
+		while (spamy > -32448)
+		{
+			while (spamx < 32448)
+			{
+				let point = level.PointInSector((spamx, spamy));
+				spamz = int(Round(point.floorplane.zAtPoint((spamx, spamy))));
+				if (level.IsPointInLevel(spam3))
+				{
+					//Actor.Spawn("FancyEnvActorSky", (spamx, spamy, spamz));
+					if (point.getTexture(Sector.ceiling) == skyflatnum &&
+						point.getTexture(Sector.floor) != notex)
+					{
+						Actor.Spawn("FancySectorSky", (spamx, spamy, spamz));
+					}
+					spamx += 1024;
+				}
+				else
+				{
+					spamx += 256;
+				}
+				spam3 = (spamx, spamy, spamz);
+			}
+			spamx = -32448;
+			spamy -= 1024;
+		}
+    }
+
+	// Spawn stuff on walls. Specifically, in the middle of appropriate linedefs.
+	// Thanks Nash and Phantombeta!
+	void SpawnWallActors()
+	{
+		for (int i = 0; i < level.Lines.Size(); i++)
+		{
+			Line l = level.Lines[i];
+			int spamf = 0;
+			int spamc = 0;
+
+			// do front first, then back
+			for (int ii = 0; ii < 2; ii++)
+			{
+				double lineLen = l.delta.Length ();
+				Vector2 spawnCoords = level.Vec2Offset (l.v1.p, l.delta.Unit () * (lineLen * 0.5));
+				spamc = int(Round(level.PointInSector(spawnCoords).ceilingplane.zAtPoint(spawnCoords)));
+				spamf = int(Round(level.PointInSector(spawnCoords).floorplane.zAtPoint(spawnCoords)));
+				
+				if (l.sidedef[ii])
+				{
+					let toppic = l.sidedef[ii].GetTexture(Side.top);
+					if (walls.CheckKey(toppic))
+					{
+						let actname = walls.Get(toppic);
+						if (actname) Actor.Spawn(actname, (spawnCoords,(spamc - 32)));
+					}
+
+					let midpic = l.sidedef[ii].GetTexture(Side.mid);
+					if (walls.CheckKey(midpic))
+					{
+						let actname = walls.Get(midpic);
+						if (actname) Actor.Spawn(actname, (spawnCoords,(spamc - (spamf * 0.5))));
+					}
+
+					let botpic = l.sidedef[ii].GetTexture(Side.bottom);
+					if (walls.CheckKey(botpic))
+					{
+						let actname = walls.Get(botpic);
+						if (actname) Actor.Spawn(actname, (spawnCoords,spamf));
+					}
+				}
+			}
+		}
+	}
+	
+	void ReadFancyLump(String lumpname)
+	{
+		let lump = -1;
+		while (-1 != (lump = Wads.FindLump(lumpname, lump + 1)))
+		{
+			let content = Wads.ReadLump(lump);
+			Array<String> lines;
+			content.Split(lines, "\n");
+			
+			let i = -1;
+			while (++i < lines.Size())
+			{
+				let line = StringUtils.Clean(lines[i].MakeLower());
+				if (!line.Length() || line == "{" || line.Left(2) == "//") continue;
+				
+				if (line == "floors")
+				{
+					while ("}" != (line = StringUtils.Clean(lines[++i]))) MapTexture(line, floors);
+				}
+				else if (line == "centerfloors")
+				{
+					while ("}" != (line = StringUtils.Clean(lines[++i]))) MapTexture(line, centerfloors);
+				}
+				else if (line == "ceilings")
+				{
+					while ("}" != (line = StringUtils.Clean(lines[++i]))) MapTexture(line, ceilings);
+				}
+				else if (line == "walls")
+				{
+					while ("}" != (line = StringUtils.Clean(lines[++i]))) MapTexture(line, walls);
+				}
+			}
+		}
+	}
+	
+	void MapTexture(String line, Map<TextureID,String> texmap)
+	{
+		if (line == "{" || line.Left(2) == "//") return;
+		
+		let comma = line.IndexOf(",");
+		if (comma == -1) return;
+		
+		let texname = line.Left(comma);
+		let tex = TexMan.CheckForTexture(texname);
+		if (!tex.IsValid())
+		{
+			Console.Printf("Warning: invalid FancyWorld texture "..texname);
+			return;
+		}
+		
+		let classname = line.Mid(comma+1);
+		class<FancyWorldBase> cls = classname;
+		if (!cls)
+		{
+			Console.Printf("Warning: FancyWorldBase class "..classname.." not found");
+			return;
+		}
+			
+		texmap.Insert(tex, classname);
+	}
+}

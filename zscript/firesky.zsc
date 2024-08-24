@@ -1,0 +1,225 @@
+extend class CEEventHandler
+{
+	transient Array<Canvas> canvases;
+	Array<String> textures;
+	
+	int fireWidth, fireHeight, fireSize;
+	int frndindex;
+	Color firePal256[256];
+	Array<int> fireBuffer;
+	
+	bool fast;
+	bool fireout;
+	bool flip;
+	
+	static const int rndtable[] = {
+		0,   8, 109, 220, 222, 241, 149, 107,  75, 248, 254, 140,  16,  66 ,
+		74,  21, 211,  47,  80, 242, 154,  27, 205, 128, 161,  89,  77,  36 ,
+		95, 110,  85,  48, 212, 140, 211, 249,  22,  79, 200,  50,  28, 188 ,
+		52, 140, 202, 120,  68, 145,  62,  70, 184, 190,  91, 197, 152, 224 ,
+		149, 104,  25, 178, 252, 182, 202, 182, 141, 197,   4,  81, 181, 242 ,
+		145,  42,  39, 227, 156, 198, 225, 193, 219,  93, 122, 175, 249,   0 ,
+		175, 143,  70, 239,  46, 246, 163,  53, 163, 109, 168, 135,   2, 235 ,
+		25,  92,  20, 145, 138,  77,  69, 166,  78, 176, 173, 212, 166, 113 ,
+		94, 161,  41,  50, 239,  49, 111, 164,  70,  60,   2,  37, 171,  75 ,
+		136, 156,  11,  56,  42, 146, 138, 229,  73, 146,  77,  61,  98, 196 ,
+		135, 106,  63, 197, 195,  86,  96, 203, 113, 101, 170, 247, 181, 113 ,
+		80, 250, 108,   7, 255, 237, 129, 226,  79, 107, 112, 166, 103, 241 ,
+		24, 223, 239, 120, 198,  58,  60,  82, 128,   3, 184,  66, 143, 224 ,
+		145, 224,  81, 206, 163,  45,  63,  90, 168, 114,  59,  33, 159,  95 ,
+		28, 139, 123,  98, 125, 196,  15,  70, 194, 253,  54,  14, 109, 226 ,
+		71,  17, 161,  93, 186,  87, 244, 138,  20,  52, 123, 251,  26,  36 ,
+		17,  46,  52, 231, 232,  76,  31, 221,  84,  37, 216, 165, 212, 106 ,
+		197, 242,  98,  43,  39, 175, 254, 145, 190,  84, 118, 222, 187, 136 ,
+		120, 163, 236, 249
+	};
+	
+	void FireSkyWorldLoaded(WorldEvent e)
+	{
+		[fireWidth, fireHeight] = TexMan.GetSize(TexMan.CheckForTexture("SKY09"));
+		fireSize = fireWidth * fireHeight;
+		if (level.mapname.MakeLower() == "titlemap") fast = true;
+		
+		let tex = level.skytexture1;
+		if (!tex) return;
+		let texname = TexMan.GetName(tex);
+		if ((texname != "FIRESK00" && texname != "SKY09") || textures.Find(texname) != textures.Size()) return;
+		textures.Push(texname);
+		if (textures.Size() <= 0) return;
+		
+		R_InitFirePSX();
+	}
+		
+	void FireSkyWorldTick()
+	{
+		if (textures.Size() <= 0) return;
+		if (canvases.Size() <= 0)
+			foreach (texture : textures) canvases.Push(TexMan.GetCanvas(texture));
+		
+		if (fast || level.maptime & 1) R_FirePSX();
+		
+		//hack
+		let alpha = 255;
+		alpha -= CVar.GetCVar("ce_filter", players[consoleplayer]).GetBool() ? 1 : 0;
+		alpha -= CVar.GetCVar("ce_psxbrightness", players[consoleplayer]).GetBool() ? 2 : 0;
+		
+		foreach(canvas : canvases) R_DrawFirePSX(canvas, alpha);
+	}
+	
+	//for titlemap events (not implemented, transparent canvases are not supported?)
+	void FireSkyNetworkProcess(ConsoleEvent e)
+	{
+		if (e.Name.Left(11) == "FireSkyInit")
+		{
+			let tex = e.Name.Mid(13);
+			if (tex != "") textures.Push(tex);
+			R_InitFirePSX();
+		}
+		else if (e.Name == "FireSkyFade")
+		{
+			fireout = true;
+		}
+		else if (e.Name == "FireSkyFlip")
+		{
+			flip = !flip;
+		}
+	}
+	
+	//gec
+	
+	void R_InitFirePSX()
+	{
+		firePal256[0x00] = Color(0x00,0x00,0x00,0x00);
+		firePal256[0x01] = Color(0xFF,0x18,0x00,0x00);
+		firePal256[0x02] = Color(0xFF,0x29,0x08,0x00);
+		firePal256[0x03] = Color(0xFF,0x42,0x08,0x00);
+		firePal256[0x04] = Color(0xFF,0x51,0x10,0x00);
+		firePal256[0x05] = Color(0xFF,0x63,0x18,0x00);
+		firePal256[0x06] = Color(0xFF,0x73,0x18,0x00);
+		firePal256[0x07] = Color(0xFF,0x8C,0x21,0x00);
+		firePal256[0x08] = Color(0xFF,0x9C,0x29,0x00);
+		firePal256[0x09] = Color(0xFF,0xAD,0x39,0x00);
+		firePal256[0x0A] = Color(0xFF,0xBD,0x42,0x00);
+		firePal256[0x0B] = Color(0xFF,0xC6,0x42,0x00);
+		firePal256[0x0C] = Color(0xFF,0xDE,0x4A,0x00);
+		firePal256[0x0D] = Color(0xFF,0xDE,0x52,0x00);
+		firePal256[0x0E] = Color(0xFF,0xDE,0x52,0x00);
+		firePal256[0x0F] = Color(0xFF,0xD6,0x5A,0x00);
+		firePal256[0x10] = Color(0xFF,0xD6,0x5A,0x00);
+		firePal256[0x11] = Color(0xFF,0xD6,0x63,0x08);
+		firePal256[0x12] = Color(0xFF,0xCE,0x6B,0x08);
+		firePal256[0x13] = Color(0xFF,0xCE,0x73,0x08);
+		firePal256[0x14] = Color(0xFF,0xCE,0x7B,0x08);
+		firePal256[0x15] = Color(0xFF,0xCE,0x84,0x10);
+		firePal256[0x16] = Color(0xFF,0xC6,0x84,0x10);
+		firePal256[0x17] = Color(0xFF,0xC6,0x8C,0x10);
+		firePal256[0x18] = Color(0xFF,0xC6,0x94,0x18);
+		firePal256[0x19] = Color(0xFF,0xBD,0x9C,0x18);
+		firePal256[0x1A] = Color(0xFF,0xBD,0x9C,0x18);
+		firePal256[0x1B] = Color(0xFF,0xBD,0xA5,0x21);
+		firePal256[0x1C] = Color(0xFF,0xBD,0xA5,0x21);
+		firePal256[0x1D] = Color(0xFF,0xBD,0xAD,0x29);
+		firePal256[0x1E] = Color(0xFF,0xB5,0xAD,0x29);
+		firePal256[0x1F] = Color(0xFF,0xB5,0xB5,0x29);
+		firePal256[0x20] = Color(0xFF,0xB5,0xB5,0x31);
+		firePal256[0x21] = Color(0xFF,0xCE,0xCE,0x6B);
+		firePal256[0x22] = Color(0xFF,0xDE,0xDE,0x9C);
+		firePal256[0x23] = Color(0xFF,0xEF,0xEF,0xC6);
+		firePal256[0x24] = Color(0xFF,0xFF,0xFF,0xFF);
+		for(int i = 0x25; i <= 0xFE; i++) firePal256[i] = Color(0xFF,0x00,0x00,0x00);
+		firePal256[0xFF] = Color(0xFF,0xFF,0xFF,0xFF);
+		
+		fireBuffer.Resize(fireSize);
+		for(int i = 0; i < fireSize; i++) 
+		{
+			if (i == 0)
+			{
+				fireBuffer[i] = 0x01;
+			}
+			else if (i < (fireSize - 64))
+			{
+				fireBuffer[i] = 0x00;
+			}
+			else
+			{
+				fireBuffer[i] = 0x24;
+			}
+		}
+	}
+	
+	void R_FirePSX()
+	{
+		if (fireout) Fire_Out();
+	
+		int src = fireWidth;
+		int srcOffset;
+		int x, y;
+		int pixel, counter;
+		do
+		{
+			y = 1;
+			counter = x + 1;
+
+			srcoffset = src + x;
+			do
+			{
+				pixel = fireBuffer[srcoffset];
+				R_SpreadFirePSX(src, srcoffset, pixel, counter);
+				
+				srcoffset += fireWidth;
+				src += fireWidth;
+				y++;
+			
+			}
+			while (y < fireHeight);
+
+			src -= fireSize - fireWidth;
+			x++;
+		} 
+		while (x < fireWidth);
+	}
+	
+	void R_SpreadFirePSX(int src, int srcOffset, int pixel, int counter)
+	{
+		if (pixel != 0)
+		{
+			int randIdx1 = rndtable[(frndindex & 0xff)];
+			int randIdx2 = rndtable[(frndindex + 1) & 0xff];
+			frndindex = ((frndindex + 2) & 0xff);
+
+			fireBuffer[(counter - (randIdx1 & 3) & (fireWidth - 1)) + src - fireWidth] = pixel - (randIdx2 & 1);
+		}
+		else
+		{
+			fireBuffer[srcoffset - fireWidth] = 0;
+		}
+	}
+	
+	void R_DrawFirePsx(Canvas canvas, int alpha)
+	{
+		int i = 0;
+		for (int y = 0; y < fireHeight; y++)
+		{
+			let yCoord = flip ? y : fireHeight-y;
+			for (int x = 0; x < fireWidth; x++)
+			{
+				//skies are drawn upside down
+				canvas.DrawLine(x, 
+					yCoord,
+					x+1,
+					yCoord,
+					firePal256[fireBuffer[i]],
+					alpha);
+				i++;
+			}
+		}
+	}
+	
+	void Fire_Out(void)
+	{
+		for(int i = fireSize - fireWidth; i < fireSize; i++) 
+		{
+			if(fireBuffer[i] != 0) fireBuffer[i] = (fireBuffer[i] - 0x01);
+		}
+	}
+}

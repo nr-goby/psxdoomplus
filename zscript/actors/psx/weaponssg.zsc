@@ -1,0 +1,168 @@
+class PsxSuperShotgun : PsxDoomWeapon replaces SuperShotgun
+{
+    Default
+    {
+		//$Title "Super Shotgun"
+		
+        Weapon.SelectionOrder 400;
+		Weapon.AmmoUse 2;
+		Weapon.AmmoGive 8;
+		Weapon.AmmoType "Shell";
+		Inventory.PickupMessage "$GOTSHOTGUN2";
+		Obituary "$OB_MPSSHOTGUN";
+		Tag "$TAG_SUPERSHOTGUN";
+        
+	    Weapon.SlotPriority 1;
+	    Weapon.SlotNumber 3;
+	    Inventory.Icon "_SG2A0";
+        PsxDoomWeapon.VanillaSprite "SHT2";
+        PsxDoomWeapon.SmoothSprite "PKS2";
+        PsxDoomWeapon.BlackSprite "BSSG";
+        PsxDoomWeapon.ClassicSprite "4HT2";
+        PsxDoomWeapon.WeaponLight "WEAPLIGHT1";
+    }
+
+    States
+    {
+        SwapSprites:
+            SHT2 A 0; PKS2 A 0; BSSG A 0; 4HT2 A 0; 
+			ZHT2 A 0; ZKS2 A 0; ZSSG A 0; 9HT2 A 0;
+            Stop;
+
+        Ready:
+            TNT1 A 1 { A_SwapSSGSprites(); A_WeaponReady(WRF_ALLOWUSER1); }
+            Loop;
+
+        Deselect:
+            TNT1 A 1 { A_SwapSSGSprites(); A_FastLower(); }
+            Loop;
+        
+        Select:
+            TNT1 A 1 { A_SwapSSGSprites(); A_FastRaise(); }
+            Loop;
+
+        Fire:
+		    TNT1 A 0 A_SwapSSGSprites;
+            "####" A 4 A_AdjustTics(2);
+            "####" A 6 { A_FireShotgun2(); A_RecoilPitch(); }
+            "####" B 6;
+            "####" C 6 { A_AdjustTics(8); A_CheckReload(); }
+            "####" D 3 A_OpenShotgun2;
+			"####" D 3 A_Casing;
+            "####" E 6;
+            "####" F 6 A_LoadShotgun2;
+            "####" G 4;
+            "####" H 4 A_CloseShotgun2;
+            "####" A 4 A_ReFire;
+            Goto Ready;
+        SmoothFire:
+		    TNT1 A 0 A_SwapSSGSprites;
+            "####" A 4 A_AdjustTics(2);
+            "####" A 1 { A_FireShotgun2(); A_RecoilPitch(6, 2); }
+            "####" A 4;
+            "####" B 3;
+            "####" CD  2;
+            "####" E 4 { A_AdjustTics(8); A_CheckReload(); }
+            "####" F 2;
+            "####" G 2 { A_Casing(); A_OpenShotgun2(); }
+            "####" H 2;
+            "####" IJK 3;
+            "####" L 2 A_LoadShotgun2;
+            "####" M 3;
+            "####" NOP 1;
+            "####" Q 2;
+            "####" R 2 A_CloseShotgun2;
+            "####" S 2;
+            "####" A 4 A_ReFire;
+            Goto Ready;
+        SmoothSlowFire:
+		    TNT1 A 0 A_SwapSSGSprites;
+            "####" A 5 A_AdjustTics(2);
+            "####" A 1 { A_FireShotgun2(); A_RecoilPitch(6, 2); }
+            "####" A 4;
+            "####" BCD 3;
+            "####" E 5 { A_AdjustTics(8); A_CheckReload(); }
+            "####" F 2;
+            "####" G 2 { A_Casing(); A_OpenShotgun2(); }
+            "####" HIJK 3;
+            "####" L 2 A_LoadShotgun2;
+            "####" M 2;
+            "####" NOPQ 2;
+            "####" R 3 A_CloseShotgun2;
+            "####" S 2;
+            "####" A 5 A_ReFire;
+            Goto Ready;
+
+        Flash:
+			TNT1 A 0 A_JumpIf(ce_altssg, "FlashAlt");
+            SHT2 I 2 Bright A_Light1;
+            SHT2 J 2 Bright A_Light2;
+            Goto LightDone;
+		FlashAlt:
+			ZHT2 I 2 Bright A_Light1;
+            ZHT2 J 2 Bright A_Light2;
+            Goto LightDone;
+		ClassicFlash:
+			TNT1 A 0 A_JumpIf(ce_altssg, "ClassicFlashAlt");
+            4HT2 I 2 Bright A_Light1;
+            4HT2 J 2 Bright A_Light2;
+            Goto LightDone;
+		ClassicFlashAlt:
+            9HT2 I 2 Bright A_Light1;
+            9HT2 J 2 Bright A_Light2;
+            Goto LightDone;
+        SmoothFlash:
+			TNT1 A 0 A_JumpIf(ce_altssg, "SmoothFlashAlt");
+		    SST2 I 2 Bright A_Light2;
+		    SST2 J 2 Bright A_Light1;
+		    Goto LightDone;
+        SmoothFlashAlt:
+		    ZST2 I 2 Bright A_Light2;
+		    ZST2 J 2 Bright A_Light1;
+		    Goto LightDone;
+
+        Spawn:
+            SGN2 A -1;
+            Stop;
+    } 
+	
+	override void PostBeginPlay()
+	{
+		if (ce_gibrules) bEXTREMEDEATH = false;
+		super.PostBeginPlay();
+	}
+
+    action void A_Casing()
+    {
+        if (catoggle)
+        {
+    		A_spawnitemex ("PsxShellCasing", 30, 0, 20, random(0,1), random(-2,-3), random(9,10), 0);
+    		A_spawnitemex ("PsxShellCasing", 30, 0, 20, random(-2,-3), random(-5,-6), random(10,11), 0);
+        }
+    }
+	
+	action void A_AdjustTics(int tics)
+	{
+		if (ce_ssgtics) A_SetTics(tics);
+	}
+	
+	action void A_SwapSSGSprites()
+	{
+		if (!ce_altssg)
+		{
+			A_SwapSprites();
+			return;
+		}
+		A_SwapWeaponSprites("ZHT2", "ZKS2", "ZSSG", "9HT2");
+    }
+}
+
+extend class PsxDoomWeapon
+{
+	action void A_FireShotgun2()
+    {
+        A_GunFlash();
+        A_StartSound ("weapons/sshotf", CHAN_AUTO);
+        A_TracerBullets(11.206055, 7.097466, 20, 5);
+    }
+}

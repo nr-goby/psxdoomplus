@@ -1,0 +1,90 @@
+extend class CEEventHandler
+{
+	MapNameDrawer mapNameDrawer;
+	bool excluded;
+	
+	void MapNameWorldLoaded(WorldEvent e)
+	{
+		excluded = config.IsExcluded(level.mapname);
+		mapNameDrawer = MapNameDrawer.Create();
+	}
+	
+	ui void MapNameRenderUnderlay(RenderEvent e)
+	{
+		if (excluded) return;
+		if (mapNameDrawer) mapNameDrawer.Draw();
+	}
+	
+	void MapNameWorldTick()
+	{
+		if (mapNameDrawer) mapNameDrawer.Tick();
+	}
+}
+
+class PsxMapNameDrawer : MapNameDrawer
+{
+	double titleAlpha;
+	bool titleFadeOut;
+	
+	override void Draw()
+	{
+		if (titleAlpha < 0 ||
+			!CVar.GetCVar("smn_enabled", players[consoleplayer]).GetBool()) return;
+		
+		let scale = StatusBar.GetHudScale();
+		scale.Y *= PsxStatusBar.VSCALE;
+		let y = Screen.GetHeight() / 6.0;
+		String line;
+		
+		let lines = BigFont.BreakLines(level.LevelName, 274);
+		for (int i = 0; i < lines.Count(); i++)
+		{
+			line = lines.StringAt(i);
+			screen.DrawText(BigFont, 
+				Font.CR_UNTRANSLATED,
+				(Screen.GetWidth() - (scale.X * BigFont.StringWidth(line))) / 2.0,
+				y,
+				line,
+				DTA_Alpha, titleAlpha,
+				DTA_ScaleX, scale.X,
+				DTA_ScaleY, scale.Y);
+			y += scale.Y * (BigFont.GetHeight() + 4);
+		}
+			
+		if (!CVar.GetCVar("sma_enabled", players[consoleplayer]).GetBool()) return;
+		
+		lines = SmallFont2.BreakLines(level.AuthorName, 274);
+		for (int i = 0; i < lines.Count(); i++)
+		{
+			line = lines.StringAt(i);
+			screen.DrawText(SmallFont2, 
+				Font.CR_DARKGRAY,
+				(Screen.GetWidth() - (scale.X * SmallFont2.StringWidth(line))) / 2.0,
+				y,
+				line,
+				DTA_Alpha, titleAlpha,
+				DTA_ScaleX, scale.X,
+				DTA_ScaleY, scale.Y);
+			y += scale.Y * (SmallFont2.GetHeight() + 4);
+		}
+	}
+	
+	override void Tick()
+	{
+		if (titleAlpha < 0) return;
+		if (titleAlpha >= 2.0) titleFadeOut = true;
+		titleAlpha += titleFadeOut ? -0.02 : 0.02;
+	}
+}
+
+class MapNameDrawer
+{
+	virtual ui void Draw() { }
+	virtual void Tick() { }
+	
+	static play MapNameDrawer Create()
+	{
+		let obj = new(CEConfig.Get().mnDrawer);
+		return MapNameDrawer(obj);
+	}
+}

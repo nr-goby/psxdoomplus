@@ -1,0 +1,5 @@
+GameDefaults
+{
+	pixelratio = 0.86
+	lightmode = 1
+}
